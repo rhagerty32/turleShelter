@@ -1,0 +1,26 @@
+<!-- The layout.ejs file is the container for all the views. 
+ This will ensure styling is consistent across all pages. 
+ It includes the common elements like the navbar and footer,
+ and dynamically injects the page-specific content. -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%=title%></title>
+    <link rel="stylesheet" href="/css/layout.css" />
+  </head>
+  <body>
+    <%- include('./components/navbar') %>
+
+    <div class="container">
+      <%- include("pages/" + page) %>
+      <!-- Dynamically include the page -->
+    </div>
+
+    <footer>
+      <p>&copy; 2023 Baking Website. All rights reserved.</p>
+    </footer>
+  </body>
+</html>
