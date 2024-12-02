@@ -63,4 +63,76 @@ turtle-shelter-website/
 ├── app.js           # Main application file
 ├── package.json     # NPM configuration
 ├── README.md        # This beautiful guide
+```
 
+---
+
+# 🐢 Turtle Shelter Project: The Turtle Stack
+
+Welcome to the **Turtle Shelter Project**, a nonprofit initiative that makes cozy vests for homeless turtles. This documentation covers the tech stack, lovingly referred to as the "Turtle Stack," and outlines everything from backend services to frontend tools.
+
+---
+
+## 🐢 The Turtle Stack: Overview
+
+### **1. The Shell (Frontend)**  
+The "Shell" forms the protective outer layer of the Turtle Shelter Project's website:
+- **HTML + CSS + JavaScript (TurtleShell Framework)**: The foundational technologies for building a smooth and shiny interface.
+- **EJS (Eco-Friendly JavaScript)**: Templating language that dynamically renders pages as beautifully as a turtle retreats into its shell.
+- **Bootstrap (ShellStrap)**: Ensures the website looks great and adjusts to any device like a turtle peeking out from under its shell.
+
+---
+
+### **2. The Flippers (Backend)**  
+The "Flippers" are the engine of the Turtle Stack, propelling the website forward:
+- **Node.js (SnapperJS)**: A lightweight runtime to keep the backend moving as swiftly as a turtle in water.
+- **Express.js (TurtleExpress)**: The web framework that handles routing and API requests as efficiently as a turtle heading toward lettuce.
+- **MongoDB (TurtleTank)**: A NoSQL database that stores information about turtles, donors, and volunteers.
+
+---
+
+### **3. The Shell Decor (Design)**  
+Keeping the site as stylish as a well-decorated turtle:
+- **Figma (ShellSketch)**: Used to design mockups and turtle-themed illustrations.
+- **FontAwesome (TurtleIcons)**: Includes icons to give the website a "turtley" flair.
+
+---
+
+### **4. The Nest (Hosting)**  
+The "Nest" provides a secure and stable environment for the Turtle Shelter Project to thrive:
+- **Heroku (TurtleNest)**: Deploy the site with minimal hassle and scale as needed.
+- **AWS S3 (SnapperStorage)**: Store images of vests, turtles, and more in a reliable bucket.
+
+---
+
+### **5. The Turtle Team (Collaboration Tools)**  
+No turtle can do it alone! Here’s what keeps the team in sync:
+- **GitHub (TurtleRepo)**: Version control for managing the website's codebase.
+- **Slack (SnapChat)**: A communication tool for the Turtle Shelter team to chat and collaborate.
+
+---
+
+## 🐢 How to Run the Turtle Shelter Project Locally
+
+1. **Clone the Repository**  
+   ```bash
+   git clone https://github.com/turtle-shelter-project/turtle-stack.git
+   ```
+
+2. **Navigate to the Project Directory**  
+   ```bash
+   cd turtle-stack
+   ```
+
+3. **Install Dependencies**  
+   ```bash
+   npm install
+   ```
+
+4. **Start the Development Server**  
+   ```bash
+   npm start
+   ```
+
+5.	**Visit the Site Locally**
+Open http://localhost:5000 in your browser.
