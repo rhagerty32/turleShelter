@@ -36,11 +36,19 @@ router.get("/contact", (req, res) => {
     });
 });
 
-router.get("/shop", (req, res) => {
+router.get("/volunteerRequest", (req, res) => {
     // Render the layout with shop page content in the body
     res.render("layout", {
-        title: "Shop",
-        page: "shop", // Dynamically include the shop page
+        title: "Volunteer Request",
+        page: "volunteerRequest", // Dynamically include the shop page
+    });
+});
+
+router.get("/hostAnEvent", (req, res) => {
+    // Render the layout with shop page content in the body
+    res.render("layout", {
+        title: "Host an Event",
+        page: "hostAnEvent", // Dynamically include the shop page
     });
 });
 

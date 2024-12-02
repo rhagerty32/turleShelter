@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Turtle Shelter - Volunteer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.querySelector('form');
+        const thankYouSection = document.getElementById('thank-you-section');
+        const volunteerForm = document.getElementById('volunteer-form');
+
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+            volunteerForm.classList.add('hidden');
+            thankYouSection.classList.remove('hidden');
+        });
+    });
+</script>
+
+<body class="bg-gray-50 font-sans">
+    <!-- Main Content -->
+    <div class="container mx-auto py-12 px-6 space-y-6">
+        <!-- Thank You Section -->
+        <section id="thank-you-section" class="bg-white p-8 rounded-lg shadow-md mt-5 hidden">
+            <h2 class="text-2xl font-bold text-gray-800">Thank You for Volunteering!</h2>
+            <p class="mt-4 text-gray-700">
+                Your willingness to volunteer is greatly appreciated. Your help will make a significant impact in
+                providing essential Turtle Shelter Vests to those in need.
+            </p>
+            <p class="mt-4 text-gray-700">
+                With your support, we can distribute more high-tech foam vests that keep individuals warm even in
+                extreme cold, helping to save lives and alleviate suffering among the homeless community.
+            </p>
+        </section>
+
+        <!-- Volunteer Form -->
+        <section id="volunteer-form" class="bg-white p-8 rounded-lg shadow-md">
+            <h2 class="text-2xl font-bold text-gray-800">Become a Volunteer</h2>
+            <p class="mt-2 text-gray-600">Fill out the form below to express your interest in volunteering.</p>
+            <form action="#" method="POST" class="mt-6 space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="first-name" class="block text-gray-700 font-medium">First Name</label>
+                        <input type="text" id="first-name" name="first_name" required
+                            class="mt-2 w-full outline-teal-500 px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                    </div>
+                    <div>
+                        <label for="last-name" class="block text-gray-700 font-medium">Last Name</label>
+                        <input type="text" id="last-name" name="last_name" required
+                            class="mt-2 w-full outline-teal-500 px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                    </div>
+                </div>
+                <div>
+                    <label for="skill-level" class="block text-gray-700 font-medium">Skill Level</label>
+                    <select id="skill-level" name="skill_level" required
+                        class="mt-2 w-full px-2 py-2 outline-teal-500 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                        <option value="" disabled selected>Select your skill level</option>
+                        <option value="beginner">Beginner</option>
+                        <option value="intermediate">Intermediate</option>
+                        <option value="expert">Expert</option>
+                    </select>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div>
+                        <label for="city" class="block text-gray-700 font-medium">City</label>
+                        <input type="text" id="city" name="city" required
+                            class="mt-2 w-full outline-teal-500 px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                    </div>
+                    <div>
+                        <label for="state" class="block text-gray-700 font-medium">State</label>
+                        <input type="text" id="state" name="state" required
+                            class="mt-2 w-full outline-teal-500 px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                    </div>
+                    <div>
+                        <label for="zip" class="block text-gray-700 font-medium">Zip Code</label>
+                        <input type="text" id="zip" name="zip" required
+                            class="mt-2 w-full outline-teal-500 px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="phone" class="block text-gray-700 font-medium">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" required
+                            class="mt-2 w-full outline-teal-500 px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                    </div>
+                    <div>
+                        <label for="email" class="block text-gray-700 font-medium">Email</label>
+                        <input type="email" id="email" name="email" required
+                            class="mt-2 w-full outline-teal-500 px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                    </div>
+                </div>
+                <button type="submit"
+                    class="w-full bg-teal-600 transition-all duration-300 text-white font-bold py-3 px-6 rounded-lg shadow hover:bg-teal-700">Submit
+                </button>
+            </form>
+        </section>
+    </div>
+</body>
+
+</html>

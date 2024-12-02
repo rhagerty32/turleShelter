@@ -1,9 +1,30 @@
-<link rel="stylesheet" href="/css/navbar.css" />
-<nav>
-    <ul>
-        <li><a href="/">Home</a></li>
-        <li><a href="/shop">Shop</a></li>
-        <li><a href="/account">Account</a></li>
-        <li><a href="/contact">Contact</a></li>
-    </ul>
+<!-- <link rel="stylesheet" href="/css/navbar.css" /> -->
+
+
+<nav class="fixed bg-white shadow-lg rounded-b-2xl flex flex-row z-50 border-b w-full justify-between px-10 py-2">
+    <a href="/" id="homeLink" class="hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md">Home</a>
+    <a href="/volunteerRequest" id="volunteerLink"
+        class="hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md">Become a Volunteer</a>
+    <a href="/hostAnEvent" id="eventLink"
+        class="hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md">Host an
+        Event</a>
+    <a href="/contact" id="contactLink"
+        class="hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md">Contact</a>
+    <a href="/login" id="contactLink"
+        class="hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md">Login</a>
 </nav>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const currentPath = window.location.pathname;
+        const links = {
+            '/': 'homeLink',
+            '/volunteerRequest': 'volunteerLink',
+            '/hostAnEvent': 'eventLink',
+            '/contact': 'contactLink'
+        };
+        if (links[currentPath]) {
+            document.getElementById(links[currentPath]).classList.add('bg-gray-200');
+        }
+    });
+</script>
