@@ -1,7 +1,6 @@
 const express = require("express");
 const knex = require("../config/db"); // Database connection
 const router = express.Router();
-const knex = require("../config/db"); // Database connection
 
 function checkAuthenticated(req, res, next) {
   if (req.isAuthenticated && req.isAuthenticated()) {
@@ -40,12 +39,12 @@ router.get("/test-db", async (req, res) => {
 
   try {
     // Test: Query the test_table
-    const testTable = await knex.raw("SELECT * FROM test_table;");
+    const testTable = await knex.raw("SELECT * FROM survey;");
     console.log("Test table data:", testTable.rows);
     response.data.testTable = testTable.rows; // Include test table data in the response
   } catch (error) {
-    console.error("Error querying test_table:", error);
-    response.error = `Error querying test_table: ${error.message}`;
+    console.error("Error querying survey:", error);
+    response.error = `Error querying survey: ${error.message}`;
     return res.status(500).json(response); // Return error response
   }
 
