@@ -16,7 +16,7 @@ const knex = require("knex")({
             ca: fs.readFileSync(
               path.join(__dirname, "certs", "us-east-1-bundle.pem")
             ),
-            rejectUnauthorized: true,
+            rejectUnauthorized: false,
           }
         : false,
   },
