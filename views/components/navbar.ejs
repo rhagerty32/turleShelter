@@ -2,36 +2,83 @@
     <a href="/" id="homeLink" class="hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md">
         Home
     </a>
-    <a href="/volunteerRequest" id="volunteerLink"
-        class="hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md">
-        Become a Volunteer
-    </a>
-    <a href="/hostAnEvent" id="eventLink" class="hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md">
-        Host an Event
-    </a>
-    <!-- TODO Eventually the next two need to be behind a password -->
-    <a href="/events" id="contactLink" class="hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md">
-        Events
-    </a>
-    <a href="/volunteers" id="contactLink" class="hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md">
-        Volunteers
-    </a>
-    <a href="/contact" id="contactLink" class="hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md">
-        Contact
-    </a>
-    <a href="/login" id="contactLink" class="hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md">
-        Login
-    </a>
+    <% if (!authenticated) { %>
+        <a href="/volunteerRequest" id="volunteerLink"
+            class="hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md">
+            Become a Volunteer
+        </a>
+        <a href="/hostAnEvent" id="eventLink"
+            class="hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md">
+            Host an Event
+        </a>
+        <% } %>
+            <!-- TODO Eventually the next two need to be behind a password -->
+            <% if (authenticated) { %>
+                <div class="relative group z-50">
+                    <div id="adminLink"
+                        class="hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md cursor-pointer">
+                        Admin
+                    </div>
+                    <div class="absolute hidden group-hover:block bg-white shadow-lg rounded-md pt-2 z-50 border">
+                        <a href="/stats" id="statsLink"
+                            class="block hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md z-50">
+                            Stats
+                        </a>
+                        <a href="/events" id="eventsLink"
+                            class="block hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md">
+                            Events
+                        </a>
+                        <a href="/volunteers" id="volunteersLink"
+                            class="block hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md">
+                            Volunteers
+                        </a>
+                        <a href="/users" id="usersLink"
+                            class="block hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md">
+                            Users
+                        </a>
+                    </div>
+                </div>
+                <% } %>
+                    <a href="/contact" id="contactLink"
+                        class="hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md">
+                        Contact
+                    </a>
+                    <% if (authenticated) { %>
+                        <a href="/logout" id="logoutLink"
+                            class="hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md">
+                            Logout
+                        </a>
+                        <% } else { %>
+                            <a href="/login" id="loginLink"
+                                class="hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md">
+                                Login
+                            </a>
+                            <% } %>
 </nav>
 
 <script>
+    document.getElementById('logoutForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        const form = event.target;
+        const currentPath = window.location.pathname;
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'originalUrl';
+        input.value = currentPath;
+        form.appendChild(input);
+        form.submit();
+    });
+
     document.addEventListener('DOMContentLoaded', function () {
         const currentPath = window.location.pathname;
         const links = {
             '/': 'homeLink',
             '/volunteerRequest': 'volunteerLink',
             '/hostAnEvent': 'eventLink',
-            '/contact': 'contactLink'
+            '/contact': 'contactLink',
+            '/events': 'adminLink',
+            '/volunteers': 'adminLink',
+            '/stats': 'adminLink'
         };
         if (links[currentPath]) {
             document.getElementById(links[currentPath]).classList.add('bg-gray-200');
