@@ -32,8 +32,8 @@ const knex = require("knex")({
         host: process.env.RDS_HOSTNAME || "localhost",
         user: process.env.RDS_USERNAME || "postgres",
         password: process.env.RDS_PASSWORD || "admin",
-        database: process.env.RDS_DB_NAME || "bakery",
-        port: process.env.RDS_PORT || 5432,
+        database: process.env.RDS_DB_NAME || "turtleShelter",
+        port: process.env.RDS_PORT || 5433,
         ssl: process.env.DB_SSL ? { rejectUnauthorized: false } : false
     }
 })
@@ -43,6 +43,38 @@ app.get("/login", (req, res) => {
         originalUrl: req.session.originalUrl || '/'
     });
 });
+
+// Middleware to fetch events data and attach it to the request object before routing
+app.use((req, res, next) => {
+    if (req.path === '/events') {
+        knex('events')
+            .select()
+            .orderBy('date', 'desc')
+            .then(events => {
+                req.events = events;
+                next();
+            })
+            .catch(error => {
+                console.error('Error querying database:', error);
+                res.status(500).send('Internal Server Error');
+            });
+    } else if (req.path === '/volunteers') {
+        knex('volunteer')
+            .select()
+            .orderBy('lastname', 'desc')
+            .then(volunteers => {
+                req.volunteers = volunteers;
+                next();
+            })
+            .catch(error => {
+                console.error('Error querying database:', error);
+                res.status(500).send('Internal Server Error');
+            });
+    } else {
+        next();
+    }
+});
+
 // the routes are imported as pagesRouter and defined in /routes/pageRoutes.js
 // example: if we get a request to /home, the pagesRouter will handle it and render the home page
 app.use("/", pagesRouter);
@@ -75,6 +107,33 @@ app.post('/login', async (req, res) => {
     } catch (error) {
         res.status(500).send('Database query failed: ' + error.message);
     }
+});
+
+app.get('/events', (req, res) => {
+    knex('events')
+        .select(
+            'email',
+            'firstName',
+            'lastName',
+            'skillid',
+            'city',
+            'state',
+            'availability',
+            'discoveryMethod',
+            'notes'
+        )
+        .orderBy('lastname', 'desc')
+        .then(events => {
+            res.render('layout', {
+                title: "Events",
+                page: "events",
+                events: events
+            });
+        })
+        .catch(error => {
+            console.error('Error querying database:', error);
+            res.status(500).send('Internal Server Error');
+        });
 });
 
 app.listen(port, () => {
