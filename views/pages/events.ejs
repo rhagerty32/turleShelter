@@ -13,7 +13,6 @@
     // Show modal for editing event details
     function openModal(event) {
         console.log(event.details);
-        // document.getElementById('modalEventId').value = event.eventId;
         document.getElementById('modaldate').value = new Date(event.date).toISOString().split('T')[0];
         document.getElementById('modalstarttime').value = event.starttime;
         document.getElementById('modaladdress').value = event.address;
@@ -223,8 +222,9 @@
                             <select id="modalstatus" name="status"
                                 class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                                 <option value="Pending">Pending</option>
-                                <option value="Scheduled">Scheduled</option>
                                 <option value="Declined">Declined</option>
+                                <option value="Approved">Approved</option>
+                                <option value="Completed">Completed</option>
                             </select>
                         </div>
                         <div>

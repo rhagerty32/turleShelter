@@ -5,15 +5,13 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Management</title>
+    <title>Volunteer Management</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
 <script>
     // Show modal for editing user details
     function openModal(volunteer) {
-        console.log(volunteer.discoverymethod)
-        document.getElementById('modalUserId').value = volunteer.id;
         document.getElementById('modalFirstName').value = volunteer.firstname;
         document.getElementById('modalLastName').value = volunteer.lastname;
         document.getElementById('modalEmail').value = volunteer.email;
@@ -27,8 +25,31 @@
         document.getElementById('editModal').classList.remove('hidden');
     }
 
-    // Hide modal
-    function closeModal() {
+    function handleMakeAdminClick() {
+        document.getElementById('editVolunteerForm').action = '/makeAdmin';
+        document.getElementById('deleteBtn').classList.add('hidden');
+        document.getElementById('makeAdminBtn').classList.add('hidden');
+        document.getElementById('saveBtn').classList.add('hidden');
+        document.getElementById('submitBtn').classList.remove('hidden');
+        document.getElementById('makeAdminSection').classList.remove('hidden');
+    }
+
+    function handleAddUserClick() {
+        document.getElementById('editVolunteerForm').action = '/makeAdmin';
+        document.getElementById('editVolunteerForm').submit();
+        document.getElementById('submitBtn').classList.add('hidden');
+        document.getElementById('deleteBtn').classList.remove('hidden');
+        document.getElementById('makeAdminBtn').classList.remove('hidden');
+        document.getElementById('saveBtn').classList.remove('hidden');
+    }
+
+    function handleCancel() {
+        document.getElementById('submitBtn').classList.add('hidden');
+        document.getElementById('deleteBtn').classList.remove('hidden');
+        document.getElementById('makeAdminBtn').classList.remove('hidden');
+        document.getElementById('saveBtn').classList.remove('hidden');
+        document.getElementById('makeAdminSection').classList.add('hidden');
+        document.getElementById('editVolunteerForm').action = '/editVolunteer';
         document.getElementById('editModal').classList.add('hidden');
     }
 </script>
@@ -36,7 +57,7 @@
 <body class="bg-gray-50 font-sans">
 
     <div class="container mx-auto py-12 px-6 space-y-6">
-        <h1 class="text-3xl font-bold text-gray-800 mb-8 mt-10">User Management</h1>
+        <h1 class="text-3xl font-bold text-gray-800 mb-8 mt-10">Volunteer Management</h1>
 
         <div class="space-y-4">
             <% if (volunteers && volunteers.length> 0) { %>
@@ -64,8 +85,7 @@
     <div id="editModal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
         <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-3xl">
             <h2 class="text-2xl font-bold text-gray-800 mb-4">Edit User Details</h2>
-            <form action="/edit-user" method="POST">
-                <input type="hidden" id="modalUserId" name="id">
+            <form id="editVolunteerForm" action="/editVolunteer" method="POST">
                 <div class="space-y-4">
 
                     <div class="grid grid-cols-4 gap-4">
@@ -129,21 +149,44 @@
                             </select>
                         </div>
                     </div>
+
+                    <div class="mt-2">
+                        <label for="modalNotes" class="block text-gray-700">Notes</label>
+                        <textarea id="modalNotes" name="notes"
+                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500"></textarea>
+                    </div>
+
+                    <div id="makeAdminSection" class="grid grid-cols-3 gap-4 hidden">
+                        <div>
+                            <label for="modalPassword" class="block text-gray-700">Password</label>
+                            <input type="text" id="modalPassword" name="password"
+                                class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                        </div>
+                        <div>
+                            <label for="modalJobRole" class="block text-gray-700">Job Role</label>
+                            <input type="text" id="modalJobRole" name="jobrole"
+                                class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                        </div>
+                    </div>
+                    <div class="mt-6 flex justify-between gap-4">
+                        <button type="button" onclick="handleCancel()"
+                            class="px-6 py-2 bg-gray-600 text-white rounded-lg shadow-md hover:bg-gray-700">Cancel</button>
+                        <div class="flex flex-row gap-4">
+                            <button id="deleteBtn" type="button"
+                                onclick="document.getElementById('editVolunteerForm').action='/deleteVolunteer'; document.getElementById('editVolunteerForm').submit();"
+                                class="px-6 py-2 bg-red-300 text-white rounded-lg shadow-md hover:bg-red-700">Delete</button>
+                            <button id="makeAdminBtn" type="button" onclick="handleMakeAdminClick()"
+                                class="px-6 py-2 bg-gray-400 text-white rounded-lg shadow-md hover:bg-gray-500">Make
+                                Admin</button>
+                            <button id="saveBtn" type="submit"
+                                class="px-6 py-2 bg-teal-500 text-white rounded-lg shadow-md hover:bg-teal-600">Save</button>
+                            <button id="submitBtn" type="button" onclick="handleAddUserClick()"
+                                class="px-6 py-2 bg-teal-500 text-white rounded-lg shadow-md hover:bg-teal-600 hidden">Submit</button>
+                        </div>
+                    </div>
                 </div>
-                <div class="mt-2">
-                    <label for="modalNotes" class="block text-gray-700">Notes</label>
-                    <textarea id="modalNotes" name="notes"
-                        class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500"></textarea>
-                </div>
-                <div class="mt-6 flex justify-end gap-4">
-                    <button type="button" onclick="closeModal()"
-                        class="px-6 py-2 bg-gray-600 text-white rounded-lg shadow-md hover:bg-gray-700">Cancel</button>
-                    <button type="submit"
-                        class="px-6 py-2 bg-teal-500 text-white rounded-lg shadow-md hover:bg-teal-600">Save</button>
-                </div>
+            </form>
         </div>
-        </form>
-    </div>
     </div>
 
 </body>

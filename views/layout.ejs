@@ -18,9 +18,9 @@
 </head>
 
 <body>
-    <%- include('./components/navbar') %>
+    <%- include('./components/navbar', { authenticated: authenticated }) %>
 
-        <div class="mb-10">
+        <div class="mb-10 z-0">
             <%- include("pages/" + page) %>
                 <!-- Dynamically include the page -->
         </div>
