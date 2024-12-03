@@ -26,23 +26,23 @@ app.use(express.static("public"));
 
 // Configure session management
 app.use(
-  session({
-    secret: "abc123", // Secret used to sign the session ID cookie
-    resave: false, // Do not save session if unchanged
-    saveUninitialized: true, // Save uninitialized sessions
-  })
+    session({
+        secret: "abc123", // Secret used to sign the session ID cookie
+        resave: false, // Do not save session if unchanged
+        saveUninitialized: true, // Save uninitialized sessions
+    })
 );
 
 // Middleware to check if the user is authenticated
 app.use((req, res, next) => {
-  req.isAuthenticated = () => req.session.authenticated; // Define isAuthenticated method
-  next();
+    req.isAuthenticated = () => req.session.authenticated; // Define isAuthenticated method 
+    next();
 });
 
 app.get("/login", (req, res) => {
-  res.render("pages/login", {
-    originalUrl: req.session.originalUrl || "/",
-  });
+    res.render("pages/login", {
+        originalUrl: req.session.originalUrl || "/",
+    });
 });
 
 // Middleware to fetch events data and attach it to the request object before routing
@@ -83,31 +83,31 @@ app.use("/", pagesRouter);
 let authenticated = false;
 
 app.post("/login", async (req, res) => {
-  const username = req.body.username.toLowerCase();
-  const password = req.body.password.toLowerCase();
-  const originalUrl = req.body.originalUrl || "/";
-  try {
-    // Query the user table to find the record
-    const user = await knex("users")
-      .select("*")
-      .where({ username, password }) // Replace with hashed password comparison in production
-      .first(); // Returns the first matching record
+    const username = req.body.username.toLowerCase();
+    const password = req.body.password.toLowerCase();
+    const originalUrl = req.body.originalUrl || "/";
+    try {
+        // Query the user table to find the record
+        const user = await knex("users")
+            .select("*")
+            .where({ username, password }) // Replace with hashed password comparison in production
+            .first(); // Returns the first matching record
 
-    if (user) {
-      req.session.authenticated = true;
-      req.session.user = {
-        username: user.username,
-        email: user.email,
-        fullName: user.full_name, // Assuming the column name is full_name
-      };
-      res.redirect(originalUrl);
-    } else {
-      req.session.authenticated = false;
-      res.redirect("/login");
+        if (user) {
+            req.session.authenticated = true;
+            req.session.user = {
+                username: user.username,
+                email: user.email,
+                fullName: user.full_name, // Assuming the column name is full_name
+            };
+            res.redirect(originalUrl);
+        } else {
+            req.session.authenticated = false;
+            res.redirect("/login");
+        }
+    } catch (error) {
+        res.status(500).send("Database query failed: " + error.message);
     }
-  } catch (error) {
-    res.status(500).send("Database query failed: " + error.message);
-  }
 });
 
 app.get('/events', (req, res) => {
@@ -138,6 +138,6 @@ app.get('/events', (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log("Listening on port " + port);
-  console.log(`Click here to open: http://localhost:${port}`);
+    console.log("Listening on port " + port);
+    console.log(`Click here to open: http://localhost:${port}`);
 });
