@@ -1,6 +1,7 @@
 const express = require("express");
 const knex = require("../config/db"); // Database connection
 const router = express.Router();
+const knex = require("../config/db"); // Database connection
 
 function checkAuthenticated(req, res, next) {
   if (req.isAuthenticated && req.isAuthenticated()) {
@@ -359,19 +360,17 @@ router.post("/editUser", (req, res) => {
     .where({ email })
     .update({ password, jobrole })
     .then(() => {
-      return knex("volunteer")
-        .where({ email })
-        .update({
-          firstname,
-          lastname,
-          phone,
-          skillid,
-          city,
-          state,
-          availability,
-          discoverymethod,
-          notes,
-        });
+      return knex("volunteer").where({ email }).update({
+        firstname,
+        lastname,
+        phone,
+        skillid,
+        city,
+        state,
+        availability,
+        discoverymethod,
+        notes,
+      });
     })
     .then(() => {
       res.redirect("/users");
