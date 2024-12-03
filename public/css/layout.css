@@ -28,6 +28,8 @@ header {
     background: #333;
     color: #fff;
     text-align: center;
+    position: fixed;
+    top: 0;
 }
 
 header h1 {

@@ -5,26 +5,9 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dane's Bakery Login</title>
+    <title>Turtle Shelter Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-
-<style>
-    body {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        background-color: #F2F2F2;
-    }
-
-    form {
-        border-radius: 10px;
-        background-color: white;
-        padding: 40px;
-        box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
-    }
-</style>
 
 <script>
     document.getElementById('loginForm').addEventListener('keydown', function (event) {
@@ -35,24 +18,34 @@
     });
 </script>
 
-<body>
-    <form id="loginForm" action="/login" method="post">
+<body class="bg-gray-50 flex justify-center items-center h-screen">
+    <form id="loginForm" action="/login" method="post" class="bg-white p-8 rounded-lg shadow-md w-full max-w-md border">
         <input type="hidden" id="originalUrl" name="originalUrl" value="<%= originalUrl || '/' %>">
-        <label>Welcome to Dane's Bakery</label>
-        <br><br>
-        <label for="username">Username:</label>
-        <br><br>
-        <input type="text" id="username" name="username" required>
-        <br><br>
-        <label for="password">Password:</label>
-        <br><br>
-        <input type="password" id="password" name="password" required>
-        <br><br>
-        <button type="submit">Login</button>
-        <br><br>
-        <a href="/" class="button">Home</a>
-    </form>
 
+        <h2 class="text-2xl font-bold text-gray-800 mb-4">Welcome to Turtle Shelter</h2>
+        <p class="text-gray-600 mb-6">Please log in to access your account and help support our mission.</p>
+
+        <div class="mb-4">
+            <label for="username" class="block text-gray-700 font-medium">Username:</label>
+            <input type="text" id="username" name="username" required
+                class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+        </div>
+
+        <div class="mb-6">
+            <label for="password" class="block text-gray-700 font-medium">Password:</label>
+            <input type="password" id="password" name="password" required
+                class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+        </div>
+
+        <button type="submit"
+            class="w-full bg-teal-600 text-white font-bold py-3 px-6 rounded-lg shadow hover:bg-teal-700 transition-all duration-300">
+            Login
+        </button>
+
+        <div class="mt-4 text-center">
+            <a href="/" class="text-teal-600 hover:underline">Back to Home</a>
+        </div>
+    </form>
 </body>
 
 </html>

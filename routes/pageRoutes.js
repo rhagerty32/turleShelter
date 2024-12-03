@@ -11,17 +11,16 @@ function checkAuthenticated(req, res, next) {
 
 // Define routes for each page
 router.get("/", (req, res) => {
-    // Render the layout with home page content in the body
     res.render("layout", {
         title: "Home",
-        page: "home", // Dynamically include the home page
+        page: "home",
     });
 });
 
 router.get("/account", checkAuthenticated, (req, res) => {
     res.render("layout", {
         title: "Account",
-        page: "account", // Dynamically include the account page
+        page: "account",
         user: {
             username: req.session.user.username,
         }
@@ -29,18 +28,39 @@ router.get("/account", checkAuthenticated, (req, res) => {
 });
 
 router.get("/contact", (req, res) => {
-    // Render the layout with contact page content in the body
     res.render("layout", {
         title: "Contact",
-        page: "contact", // Dynamically include the contact page
+        page: "contact",
     });
 });
 
-router.get("/shop", (req, res) => {
-    // Render the layout with shop page content in the body
+router.get("/volunteerRequest", (req, res) => {
     res.render("layout", {
-        title: "Shop",
-        page: "shop", // Dynamically include the shop page
+        title: "Volunteer Request",
+        page: "volunteerRequest",
+    });
+});
+
+router.get("/hostAnEvent", (req, res) => {
+    res.render("layout", {
+        title: "Host an Event",
+        page: "hostAnEvent",
+    });
+});
+
+router.get("/events", (req, res) => {
+    res.render("layout", {
+        title: "Events",
+        page: "events",
+        events: req.events,
+    });
+});
+
+router.get("/volunteers", (req, res) => {
+    res.render("layout", {
+        title: "Volunteers",
+        page: "volunteers",
+        volunteers: req.volunteers,
     });
 });
 

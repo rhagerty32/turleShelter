@@ -12,6 +12,7 @@
         Lighter Gray: #333
         Darker Gray: #1F1F1F
     -->
+
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -120,19 +121,29 @@
         .text-center {
             text-align: center;
         }
+
+        .headerImg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
     </style>
 </head>
 
 <body>
     <header>
-        <h1>STARTS WITH YOU</h1>
+        <img class="headerImg"
+            src="https://images.squarespace-cdn.com/content/v1/5b5a266fcef372310148d6d6/1567462206269-3U6NXPS9IWC1S97PD39J/Picture11.jpg?format=2500w"
+            alt="Turtle Shelter Logo">
+        <h1 class="font-bold">STARTS WITH YOU</h1>
         <p>Helping to save lives of people experiencing homelessness</p>
         <a href="#learn-more" class="btn">Learn More</a>
     </header>
 
-    <div class="container">
-        <div class="section">
-            <h2>What is a Turtle Shelter Vest?</h2>
+    <div class="container flex flex-col gap-6">
+        <div class="bg-white p-10 rounded-lg shadow-md flex flex-col gap-4">
+            <h2 class="text-3xl text-black">What is a Turtle Shelter Vest?</h2>
             <p>
                 A high-tech but simple solution to help save lives: a portable "shelter" you can carry with you, just
                 like a turtle... and YOU can help!
@@ -148,28 +159,29 @@
             </p>
         </div>
 
-        <div class="section about-action">
-            <div>
-                <h2>About</h2>
-                <p>
-                    Jen's story, from homelessness to saving lives, plus our mission, team, and all about the tech that
-                    makes our vests so special.
-                </p>
-                <a href="#" class="btn">Learn More →</a>
+        <div class="flex flex-row gap-6">
+            <div class="bg-white p-10 rounded-lg shadow-md flex flex-row gap-4">
+                <div class="flex flex-col gap-4 justify-between">
+                    <h2 class="text-3xl text-black">Take Action</h2>
+                    <p>
+                        Ready to take the next step? You can become a volunteer so we can keep you updated on events
+                        near you!
+                    </p>
+                    <a href="volunteerRequest" class="btn w-fit">Volunteer →</a>
+                </div>
             </div>
-            <img src="Original logo low resolution.png" alt="Turtle Shelter Logo">
-        </div>
 
-        <div class="section about-action">
-            <div>
-                <h2>Take Action</h2>
-                <p>
-                    Ready to take the next step? You can request vests, donate, make vests yourself, or organize an
-                    event!
-                </p>
-                <a href="#" class="btn">Find Out How →</a>
+            <div class="bg-white p-10 rounded-lg shadow-md flex flex-row gap-4">
+                <div class="flex flex-col gap-4 justify-between">
+                    <h2 class="text-3xl text-black">Host an Event</h2>
+                    <p>
+                        Hosting an event brings your community together and makes an impact. Organize a vest-making
+                        workshop, fundraiser, or awareness campaign to support our mission and save lives.
+                    </p>
+                    <a href="/hostAnEvent" class="btn w-fit">Become a Host →</a>
+                </div>
             </div>
-            <img src="20181225_165049+%281%29.jpg" alt="Turtle Shelter Recipients">
+
         </div>
     </div>
 </body>
