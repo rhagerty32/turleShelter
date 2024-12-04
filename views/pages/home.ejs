@@ -35,7 +35,7 @@
         }
 
         header {
-            background: url('header-image.jpg') no-repeat center center/cover;
+            background: lightgray;
             height: 400px;
             display: flex;
             flex-direction: column;
@@ -156,9 +156,13 @@
     <script>
         function removeFlex () {
             if (window.innerWidth < 768) {
-            document.getElementById("volunteerHostDiv").classList.remove("flex", "flex-row");
+                document.getElementById("volunteerHostDiv").classList.remove("flex", "flex-row");
+                document.getElementById("hostDiv").classList.add("mt-2")
+                document.getElementById("youHave..").classList.remove("mb-6");
             }else{
                 document.getElementById("volunteerHostDiv").classList.add("flex", "flex-row");
+                document.getElementById("hostDiv").classList.remove("mt-2")
+                document.getElementById("youHave..").classList.add("mb-6");
             }
         }
         window.addEventListener('resize', () => {
@@ -203,22 +207,22 @@
             </p>
             <ul style="padding-left: 20px;">
                 <li class="flex items-center">Prevents hypothermia in temperatures down to
-                    <span class="font-semibold text-3xl m-2" style="color: #35B3A8;">-10&deg;F</span>.
+                    <span class="font-semibold text-3xl m-2" style="color: #35B3A8;">-10&deg;F</span>
                 </li>
                 <br>
                 <li>Keeps you warm even when wet.</li>
             </ul>            
         </div>
         
-        <p class="text-2xl text-gray-700 mb-6 text-center">
+        <p id="youHave.."class="text-2xl text-gray-700 mb-6 text-center">
             <strong>YOU</strong> have the power to make a real difference!
         </p>
         <div id="volunteerHostDiv" class="flex flex-row gap-6">
             <!-- Volunteer Section -->
-            <div class="bg-white p-6 rounded-lg shadow-md flex-1 flex-row gap-4">
+            <div class="bg-white p-2 rounded-lg shadow-md flex-1 flex-row gap-4">
                 <div class=" gap-4 justify-between">
                     <div id="volunteerHead" class="containerHead">
-                        <div id="volunteerBtn-text">
+                        <div id="volunteerBtn-text" class="m-3">
                             <a href="volunteerRequest" class="btn w-full max-w-xs whitespace-nowrap flex items-center gap-2">
                                 Volunteer →
                             </a>
@@ -229,10 +233,10 @@
             </div>
         
             <!-- Host an Event Section -->
-            <div class="bg-white p-6 rounded-lg shadow-md flex-1 flex-row gap-4 mt-2">
+            <div id="hostDiv" class="bg-white p-2 rounded-lg shadow-md flex-1 flex-row gap-4">
                 <div class="gap-4 justify-between">
                     <div id="hostHead" class="containerHead">
-                        <div id="hostBtn-text">
+                        <div id="hostBtn-text" class="m-3">
                             <a href="/hostAnEvent" class="btn w-full max-w-xs whitespace-nowrap flex items-center gap-2">
                                 Host an Event →
                             </a>
