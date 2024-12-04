@@ -100,14 +100,14 @@
                             month: 'short' , day: 'numeric' }) %> @ <%= new Date('1970-01-01T' +
                                 event.starttime).toLocaleTimeString('en-US', { hour: '2-digit' , minute: '2-digit' }) %>
                                 - <%= new Date(new Date('1970-01-01T' + event.starttime).getTime() +
-                                    event.plannedduration.hours * 60 * 60 * 1000).toLocaleTimeString('en-US', {
+                                    event.plannedduration * 60 * 60 * 1000).toLocaleTimeString('en-US', {
                                     hour: '2-digit' , minute: '2-digit' }) %>
                     </p>
                 </div>
                 <div>
                     <label class="block text-gray-700">Status</label>
                     <p
-                        class="mt-2 text-gray-600 font-bold <%= event.status === 'Scheduled' ? 'text-green-600' : (event.status === 'Pending' ? 'text-yellow-600' : '') %>">
+                        class="mt-2 text-gray-600 font-bold <%= event.status === 'Completed' ? 'text-green-600' : (event.status === 'Pending' ? 'text-yellow-600' : 'text-sky-500') %>">
                         <%= event.status %>
                     </p>
                 </div>
@@ -241,16 +241,16 @@
             <h2 class="text-2xl font-bold text-gray-800 mb-4">Event Information</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="hidden"><input type="hidden" name="eventid" value="<%= event.eventid %>"></div>
- 
- 
+
+
                 <!-- ORGANIZATION -->
                 <div>
                     <label for="organization" class="block text-gray-700">Organization</label>
                     <input name="organization" type="text" id="organization" value="<%= event.organization %>"
                         class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                 </div>
- 
- 
+
+
                 <!-- STATUS -->
                 <div>
                     <label for="status" class="block text-gray-700">Status</label>
@@ -262,8 +262,8 @@
                         <option value="Completed" <%=event.status==='Completed' ? 'selected' : '' %>>Completed</option>
                     </select>
                 </div>
- 
- 
+
+
                 <!-- START DATE/TIME -->
                 <div class="grid grid-cols-3 gap-4">
                     <div>
@@ -280,12 +280,12 @@
                     <div>
                         <label for="plannedduration" class="block text-gray-700">Planned Duration (hrs)</label>
                         <input name="plannedduration" type="number" id="plannedduration"
-                            value="<%= event.plannedduration.hours %>"
+                            value="<%= event.plannedduration %>"
                             class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                     </div>
                 </div>
- 
- 
+
+
                 <!-- ADDRESS -->
                 <div class="grid grid-cols-4 gap-4">
                     <div>
@@ -361,8 +361,8 @@
                             class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                     </div>
                 </div>
- 
- 
+
+
                 <!-- SERVICE TYPE -->
                 <div>
                     <label for="servicetypeid" class="block text-gray-700">Service Type</label>
@@ -375,16 +375,16 @@
                             </option>
                             <% }); %>
                     </select>
-                        <% servicetypes.forEach(function(servicetype) { %>
-                            <option value="<%= servicetype.servicetypeid %>"
-                                <%=servicetype.description===event.description ? 'selected' : '' %>
-                                ><%= servicetype.description %>
-                            </option>
-                            <% }); %>
-                    </select>
+                    <% servicetypes.forEach(function(servicetype) { %>
+                        <option value="<%= servicetype.servicetypeid %>" <%=servicetype.description===event.description
+                            ? 'selected' : '' %>
+                            ><%= servicetype.description %>
+                        </option>
+                        <% }); %>
+                            </select>
                 </div>
- 
- 
+
+
                 <!-- JEN RELATED STUFF -->
                 <div class="grid grid-cols-2 gap-4">
                     <div>
@@ -408,8 +408,8 @@
                             class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                     </div>
                 </div>
- 
- 
+
+
                 <!-- EQUIPMENT -->
                 <div class="grid grid-cols-2 gap-4">
                     <div>
@@ -424,8 +424,8 @@
                             class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                     </div>
                 </div>
- 
- 
+
+
                 <!-- ATTENDEES -->
                 <div class="grid grid-cols-4 gap-4">
                     <div>
@@ -452,8 +452,8 @@
                             class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                     </div>
                 </div>
- 
- 
+
+
                 <!-- VENUE INFO -->
                 <div class="grid grid-cols-4 gap-4">
                     <div>
@@ -479,16 +479,16 @@
                             class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                     </div>
                 </div>
- 
- 
+
+
                 <!-- DETAILS -->
                 <div>
                     <label for="details" class="block text-gray-700">Details</label>
                     <textarea name="details" id="details"
                         class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500"><%= event.details %></textarea>
                 </div>
- 
- 
+
+
                 <div class="grid grid-cols-3 gap-4 completedEvent hidden">
                     <!-- TEMP -->
                     <div class="completedEvent hidden">
@@ -496,16 +496,16 @@
                         <input name="temp" type="text" id="temp" value="<%= event.temp %>"
                             class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                     </div>
- 
- 
+
+
                     <!-- HEAD COUNT -->
                     <div class="completedEvent hidden">
                         <label for="headcount" class="block text-gray-700">Head Count</label>
                         <input name="headcount" type="number" id="headcount" value="<%= event.headcount %>"
                             class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                     </div>
- 
- 
+
+
                     <!-- SERVICE HOURS -->
                     <div class="completedEvent hidden">
                         <label for="servicehours" class="block text-gray-700">Service Hours</label>
@@ -513,8 +513,8 @@
                             class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                     </div>
                 </div>
- 
- 
+
+
                 <!-- ITEM AND QUANTITY -->
                 <div id="itemsSection" class="flex flex-col completedEvent hidden">
                     <div id="itemDiv" class="grid grid-cols-2 gap-4">
@@ -544,8 +544,8 @@
                     </div>
                 </div>
             </div>
- 
- 
+
+
             <!-- TEMPLATE FOR NEW ITEM -->
             <template id="itemTemplate">
                 <div>
@@ -565,8 +565,8 @@
                         class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                 </div>
             </template>
- 
- 
+
+
             <script>
                 function addItem() {
                     const template = document.getElementById('itemTemplate').content.cloneNode(true);
@@ -574,8 +574,8 @@
                 }
             </script>
         </form>
- 
- 
+
+
     </div>
     </div>
 

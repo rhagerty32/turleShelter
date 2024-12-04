@@ -8,7 +8,7 @@ const knex = require("knex")({
         user: process.env.RDS_USERNAME || "postgres",
         password: process.env.RDS_PASSWORD || "admin",
         database: process.env.RDS_DB_NAME || "turtleShelter",
-        port: process.env.RDS_PORT || 5432,
+        port: process.env.RDS_PORT || 5433,
         // enable SSL to connect to the AWS database
         ssl:
             process.env.DB_SSL === "true"
