@@ -17,7 +17,7 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 
-<body>
+<body class="h-screen flex flex-col">
     <%- include('./components/navbar', { authenticated: authenticated }) %>
 
         <div class="mb-10 z-0">
@@ -25,7 +25,7 @@
                 <!-- Dynamically include the page -->
         </div>
 
-        <footer>
+        <footer class="mt-auto">
             <p>&copy; 2024 Turtle Shelter Project</p>
         </footer>
 </body>
