@@ -73,8 +73,6 @@
     // Function to show the dropdown when the admin button is hovered over
     function handleAdminHover(event) {
         const dropdown = document.getElementById('dropdownDiv');
-        console.log('hovered');
-        
         // Add 'block' to make the dropdown visible
         dropdown.classList.remove('hidden');
     }
@@ -106,17 +104,6 @@
         <a href="/" id="homeLink" class="navButton hover:bg-gray-400 transition-all duration-150 py-1 px-2 rounded-md cursor-pointer text-lg">
             Home
         </a>
-        <!-- <% if (!authenticated) { %>
-            <a href="/volunteerRequest" id="volunteerLink"
-                class="navButton hover:bg-gray-400 transition-all duration-150 py-1 px-2 rounded-md text-lg">
-                Volunteer
-            </a>
-            <a href="/hostAnEvent" id="eventLink"
-                class="navButton hover:bg-gray-400 transition-all duration-150 py-1 px-2 rounded-md text-lg">
-                Host an Event
-            </a>
-            <% } %> -->
-                <!-- TODO Eventually the next two need to be behind a password -->
             <% if (authenticated) { %>
                 <div class="relative z-50">
                     <div onmouseover="handleAdminHover()" onmouseleave="handleAdminLeave()" id="adminLink"
