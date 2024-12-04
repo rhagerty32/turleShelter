@@ -16,6 +16,7 @@
         document.getElementById('editButton').classList.add('hidden');
         document.getElementById('editSection').classList.remove('hidden');
         document.getElementById('cancelButton').classList.remove('hidden');
+        document.getElementById('deleteButton').classList.remove('hidden');
         document.getElementById('saveButton').classList.remove('hidden');
     }
 
@@ -25,10 +26,18 @@
         document.getElementById('editButton').classList.remove('hidden');
         document.getElementById('editSection').classList.add('hidden');
         document.getElementById('cancelButton').classList.add('hidden');
+        document.getElementById('deleteButton').classList.add('hidden');
         document.getElementById('saveButton').classList.add('hidden');
     }
+
     function saveChanges() {
         closeModal();
+        document.getElementById('editSection').submit();
+    }
+
+    function deleteEvent() {
+        closeModal();
+        document.getElementById('editSection').action = '/deleteEvent';
         document.getElementById('editSection').submit();
     }
 
@@ -63,7 +72,7 @@
             <a href="/events" class="px-4 py-2 mt-10 bg-gray-100 text-gray-800 rounded-md hover:bg-gray-200">Back to
                 Events</a>
             <h1 class="text-3xl font-bold text-gray-800 mb-2 mt-10">
-                <%= event.organization %>'s Event
+                <%= event && event.organization ? event.organization + "'s Event" : "Distribution Event" %>
             </h1>
             <div class="flex flex-row gap-4">
 
@@ -76,12 +85,17 @@
                     class="px-4 py-2 bg-gray-400 text-white rounded-md hover:bg-gray-500 mt-10 hidden">
                     Cancel
                 </button>
+                <button id="deleteButton" onclick="deleteEvent()"
+                    class="px-4 py-2 bg-red-300 text-white rounded-md hover:bg-red-400 mt-10 hidden">
+                    Delete
+                </button>
                 <button id="saveButton" onclick="saveChanges()"
                     class="px-4 py-2 bg-teal-500 text-white rounded-md hover:bg-teal-600 mt-10 hidden">
                     Save
                 </button>
             </div>
         </div>
+
         <!-- ^ VIEWER -->
         <div id="viewSection" class="bg-white p-6 rounded-xl shadow-md mt-6 border">
             <div class="flex flex-row justify-between">
@@ -242,11 +256,10 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="hidden"><input type="hidden" name="eventid" value="<%= event.eventid %>"></div>
 
-
                 <!-- ORGANIZATION -->
                 <div>
                     <label for="organization" class="block text-gray-700">Organization</label>
-                    <input name="organization" type="text" id="organization" value="<%= event.organization %>"
+                    <input name="organization" type="text" id="organization" value="<%= event.organization || '' %>"
                         class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                 </div>
 
@@ -404,7 +417,8 @@
                     </div>
                     <div>
                         <label for="jenstorylength" class="block text-gray-700">Jen Story Length (mins)</label>
-                        <input name="jenstorylength" type="text" id="jenstorylength" value="<%= event.jenstorylength %>"
+                        <input name="jenstorylength" type="text" id="jenstorylength" min="0"
+                            value="<%= event.jenstorylength %>"
                             class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                     </div>
                 </div>
@@ -414,12 +428,12 @@
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label for="sergers" class="block text-gray-700">Sergers</label>
-                        <input name="sergers" type="number" id="sergers" value="<%= event.sergers %>"
+                        <input name="sergers" type="number" id="sergers" min="0" value="<%= event.sergers %>"
                             class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                     </div>
                     <div>
                         <label for="sewingmachines" class="block text-gray-700">Sewing Machines</label>
-                        <input name="sewingmachines" type="number" id="sewingmachines"
+                        <input name="sewingmachines" type="number" min="0" id="sewingmachines"
                             value="<%= event.sewingmachines %>"
                             class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                     </div>
@@ -430,25 +444,26 @@
                 <div class="grid grid-cols-4 gap-4">
                     <div>
                         <label for="childrenunder10" class="block text-gray-700">Children < 10</label>
-                                <input name="childrenunder10" type="number" id="childrenunder10"
+                                <input name="childrenunder10" type="number" min="0" id="childrenunder10"
                                     value="<%= event.childrenunder10 %>"
                                     class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                     </div>
                     <div>
                         <label for="adultparticipants" class="block text-gray-700">Adults</label>
-                        <input name="adultparticipants" type="number" id="adultparticipants"
+                        <input name="adultparticipants" type="number" min="1" id="adultparticipants"
                             value="<%= event.adultparticipants %>"
                             class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                     </div>
                     <div>
                         <label for="advancedsewers" class="block text-gray-700">Adv. Sewers</label>
-                        <input name="advancedsewers" type="number" id="advancedsewers"
+                        <input name="advancedsewers" type="number" min="0" id="advancedsewers"
                             value="<%= event.advancedsewers %>"
                             class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                     </div>
                     <div>
                         <label for="basicsewers" class="block text-gray-700">Basic Sewers</label>
-                        <input name="basicsewers" type="number" id="basicsewers" value="<%= event.basicsewers %>"
+                        <input name="basicsewers" type="number" id="basicsewers" min="0"
+                            value="<%= event.basicsewers %>"
                             class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                     </div>
                 </div>
@@ -458,23 +473,23 @@
                 <div class="grid grid-cols-4 gap-4">
                     <div>
                         <label for="venuesize" class="block text-gray-700">Venue Size</label>
-                        <input name="venuesize" type="text" id="venuesize" value="<%= event.venuesize %>"
+                        <input name="venuesize" type="text" id="venuesize" min="0" value="<%= event.venuesize %>"
                             class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                     </div>
                     <div>
                         <label for="numrooms" class="block text-gray-700">Rooms</label>
-                        <input name="numrooms" type="number" id="numrooms" value="<%= event.numrooms %>"
+                        <input name="numrooms" type="number" id="numrooms" min="0" value="<%= event.numrooms %>"
                             class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                     </div>
                     <div>
                         <label for="numtablesround" class="block text-gray-700">Round Tables</label>
-                        <input name="numtablesround" type="number" id="numtablesround"
+                        <input name="numtablesround" type="number" min="0" id="numtablesround"
                             value="<%= event.numtablesround %>"
                             class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                     </div>
                     <div>
                         <label for="numtablesrectangle" class="block text-gray-700">Rect. Tables</label>
-                        <input name="numtablesrectangle" type="number" id="numtablesrectangle"
+                        <input name="numtablesrectangle" type="number" min="0" id="numtablesrectangle"
                             value="<%= event.numtablesrectangle %>"
                             class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                     </div>
