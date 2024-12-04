@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Turtle Shelter - How'd you hear about us?</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.querySelector('form');
+        const thankYouSection = document.getElementById('thank-you-section');
+        const contactForm = document.getElementById('contact-form');
+
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+            contactForm.classList.add('hidden');
+            thankYouSection.classList.remove('hidden');
+        });
+    });
+</script>
+
+<body class="bg-gray-50 font-sans">
+    <!-- Main Content -->
+    <div class="container mx-auto py-12 px-6 space-y-6">
+        <!-- Thank You Section -->
+        <section id="thank-you-section" class="bg-white p-8 rounded-lg shadow-md mt-5 hidden">
+            <h2 class="text-2xl font-bold text-gray-800">Thank You for Letting us Know!</h2>
+            <p class="mt-4 text-gray-700">
+                We appreciate you helping us out.
+            </p>
+        </section>
+
+        <!-- Contact Form -->
+        <section id="contact-form" class="bg-white p-8 rounded-lg shadow-md">
+            <h2 class="text-2xl font-bold text-gray-800">How'd you hear about us?</h2>
+            <p class="mt-2 text-gray-600">Please select an option below:</p>
+            <form action="/submitDiscoveryMethod" method="POST" class="mt-6 space-y-6">
+                <div>
+                    <label for="discoverymethod" class="block text-gray-700 font-medium">Discovery Method</label>
+                    <select id="discoverymethod" name="discoverymethod" required
+                        class="mt-2 w-full px-2 py-2 outline-teal-500 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                        <option value="" disabled selected>Select a method</option>
+                        <option value="Family">Family</option>
+                        <option value="Friend">Friend</option>
+                        <option value="Past Event">Past Event</option>
+                        <option value="Social Media">Social Media</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <button type="submit"
+                    class="w-full bg-teal-600 transition-all duration-300 text-white font-bold py-3 px-6 rounded-lg shadow hover:bg-teal-700">
+                    Submit
+                </button>
+            </form>
+        </section>
+    </div>
+</body>
+
+</html>
