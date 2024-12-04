@@ -11,265 +11,225 @@
 
 <script>
     // Show modal for editing event details
-    function openModal(event) {
-        console.log(event.details);
-        document.getElementById('modaldate').value = new Date(event.date).toISOString().split('T')[0];
-        document.getElementById('modalstarttime').value = event.starttime;
-        document.getElementById('modaladdress').value = event.address;
-        document.getElementById('modalzip').value = event.zip;
-        document.getElementById('modalfirstname').value = event.firstname;
-        document.getElementById('modallastname').value = event.lastname;
-        document.getElementById('modalorganization').value = event.organization;
-        document.getElementById('modalemail').value = event.email;
-        document.getElementById('modalphone').value = event.phone;
-        document.getElementById('modalgroupsize').value = event.groupsize;
-        document.getElementById('modalbasicsewers').value = event.basicsewers;
-        document.getElementById('modaladvancedsewers').value = event.advancedsewers;
-        document.getElementById('modalsewingmachines').value = event.sewingmachines;
-        document.getElementById('modalsergers').value = event.sergers;
-        document.getElementById('modalstatus').value = event.status;
-        document.getElementById('modaldonatedto').value = event.donatedto;
-        document.getElementById('modaljenstory').value = event.jenstory;
-        document.getElementById('modalduration').value = event.duration;
-        document.getElementById('modalservicetypeid').value = event.servicetypeid;
-        document.getElementById('modaldetails').value = event.details;
-        document.getElementById('editModal').classList.remove('hidden');
+    function openModal() {
+        document.getElementById('addModal').classList.remove('hidden');
     }
 
     // Hide modal
-    function closeModal() {
-        document.getElementById('editModal').classList.add('hidden');
+    function handleCancel() {
+        document.getElementById('addModal').classList.add('hidden');
     }
 </script>
 
 <body class="bg-gray-50 font-sans">
 
     <div class="container mx-auto py-12 px-6 space-y-6">
-        <h1 class="text-3xl font-bold text-gray-800 mb-8 mt-10">Upcoming Events</h1>
+        <div class="flex flex-row justify-between items-center mt-6">
+            <h2 class="text-2xl font-bold text-gray-800">All Events</h2>
+            <button onclick="openModal({})" class="px-4 py-2 bg-teal-500 text-white rounded-md hover:bg-teal-600">
+                Add Event
+            </button>
+        </div>
 
         <div class="space-y-4">
             <% if (events && events.length> 0) { %>
                 <% events.forEach(event=> { %>
-                    <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg cursor-pointer"
-                        onclick="openModal(<%= JSON.stringify(event) %>)">
-                        <h3 class="text-xl font-semibold text-gray-700">
-                            <%= new Date(event.date).toLocaleDateString('en-US', { year: 'numeric' , month: 'short' ,
-                                day: 'numeric' }) %> - <%= event.firstname %>
-                                    <%= event.lastname %>
-                        </h3>
-                        <p class="mt-2 text-gray-600">
-                            <%= event.address %>, <%= event.zip %>
-                        </p>
-                        <p class="mt-2 text-gray-600">Group Size: <%= event.groupsize %>
-                        </p>
+                    <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg cursor-pointer flex flex-row"
+                        onclick="window.location.href = '/events/' + '<%= event.eventid %>';">
+                        <div class="flex flex-col">
+                            <h3 class="text-xl font-semibold text-gray-700">
+                                <%= new Date(event.date).toLocaleDateString('en-US', { year: 'numeric' , month: 'short'
+                                    , day: 'numeric' }) %> - <%= event.organization %> - <%= event.status %>
+                            </h3>
+                            <p class="mt-2 text-gray-600">
+                                <%= event.address %>, <%= event.city %>
+                                        <%= event.state %>
+                            </p>
+                        </div>
                     </div>
-                    <% }) %>
-                        <% } else { %>
-                            <div class="bg-white p-6 rounded-lg shadow-md">
-                                <p class="text-gray-700">No events available. Here is some dummy data:</p>
-                                <div class="mt-4">
-                                    <p><strong>Event Date:</strong> 2024-12-15</p>
-                                    <p><strong>Address:</strong> 123 Turtle St, 84123</p>
-                                    <p><strong>Requester:</strong> John Doe</p>
-                                </div>
-                            </div>
-                            <% } %>
         </div>
+        <% }) %>
+            <% } else { %>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <p class="text-gray-700">No events available.</p>
+                </div>
+                <% } %>
+    </div>
     </div>
 
-    <!-- Modal for editing event -->
-    <div id="editModal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
-        <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-3xl">
-            <h2 class="text-2xl font-bold text-gray-800 mb-4">Edit Event Details</h2>
-            <form action="/edit-event" method="POST">
-                <input type="hidden" id="modalEventId" name="eventId">
-                <div class="space-y-4">
-                    <div class="flex flex-row gap-4">
-                        <div>
-                            <label for="modalfirstname" class="block text-gray-700">
-                                First Name
-                            </label>
-                            <input type="text" id="modalfirstname" name="firstname"
-                                class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500"
-                                required>
-                        </div>
-                        <div>
-                            <label for="modallastname" class="block text-gray-700">
-                                Last Name
-                            </label>
-                            <input type="text" id="modallastname" name="lastname"
-                                class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500"
-                                required>
-                        </div>
+    <!-- ^ ADD EVENT -->
+    <div id="addModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50 hidden">
+        <form id="addEventForm" action="/addEvent" method="POST"
+            class="bg-white p-8 rounded-lg shadow-md w-fit max-w-6xl">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Event Information</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-                        <div>
-                            <label for="modalemail" class="block text-gray-700">
-                                Email
-                            </label>
-                            <input type="text" id="modalemail" name="email"
-                                class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500"
-                                required>
-                        </div>
-                        <div>
-                            <label for="modalphone" class="block text-gray-700">
-                                Phone Number
-                            </label>
-                            <input type="text" id="modalphone" name="phone"
-                                class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500"
-                                required>
-                        </div>
-                    </div>
+                <!-- ORGANIZATION -->
+                <div>
+                    <label for="organization" class="block text-gray-700">Organization</label>
+                    <input type="text" id="organization" value=""
+                        class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label for="modaldate" class="block text-gray-700">
-                                Event Date
-                            </label>
-                            <input type="date" id="modaldate" name="date"
-                                class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500"
-                                required>
-                        </div>
-                        <div>
-                            <label for="modalstarttime" class="block text-gray-700">
-                                Start Time
-                            </label>
-                            <input type="time" id="modalstarttime" name="starttime"
-                                class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
-                        </div>
-                    </div>
+                <!-- STATUS -->
+                <div>
+                    <label for="status" class="block text-gray-700">Status</label>
+                    <select id="status"
+                        class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                        <option value="Pending">Pending</option>
+                        <option value="Scheduled">Scheduled</option>
+                        <option value="Completed">Completed</option>
+                    </select>
+                </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label for="modaladdress" class="block text-gray-700">
-                                Street Address
-                            </label>
-                            <input type="text" id="modaladdress" name="address"
-                                class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500"
-                                required>
-                        </div>
-                        <div>
-                            <label for="modalzip" class="block text-gray-700">
-                                Zip Code
-                            </label>
-                            <input type="text" id="modalzip" name="zip"
-                                class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500"
-                                required>
-                        </div>
+                <!-- START DATE/TIME -->
+                <div class="grid grid-cols-3 gap-4">
+                    <div>
+                        <label for="date" class="block text-gray-700">Date</label>
+                        <input type="date" id="date" value=""
+                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                     </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div>
-                            <label for="modalorganization" class="block text-gray-700">
-                                Organization
-                            </label>
-                            <input type="text" id="modalorganization" name="organization"
-                                class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500"
-                                required>
-                        </div>
-                        <div>
-                            <label for="modalgroupsize" class="block text-gray-700">
-                                Group Size
-                            </label>
-                            <input type="number" id="modalgroupsize" name="groupsize"
-                                class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500"
-                                required>
-                        </div>
-                        <div>
-                            <label for="modalduration" class="block text-gray-700">
-                                Event Duration (Hours)
-                            </label>
-                            <input type="number" id="modalduration" name="duration"
-                                class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
-                        </div>
+                    <div>
+                        <label for="starttime" class="block text-gray-700">Start Time</label>
+                        <input type="time" id="starttime" value=""
+                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                     </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                        <div>
-                            <label for="modalbasicsewers" class="block text-gray-700">
-                                Basic Sewers
-                            </label>
-                            <input type="number" id="modalbasicsewers" name="basicsewers"
-                                class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
-                        </div>
-                        <div>
-                            <label for="modaladvancedsewers" class="block text-gray-700">
-                                Advanced Sewers
-                            </label>
-                            <input type="number" id="modaladvancedsewers" name="advancedsewers"
-                                class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
-                        </div>
-                        <div>
-                            <label for="modalsewingmachines" class="block text-gray-700"></label>
-                            Sewing Machines
-                            </label>
-                            <input type="number" id="modalsewingmachines" name="sewingmachines"
-                                class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
-                        </div>
-                        <div>
-                            <label for="modalsergers" class="block text-gray-700">
-                                Sergers
-                            </label>
-                            <input type="number" id="modalsergers" name="sergers"
-                                class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div>
-                            <label for="modalstatus" class="block text-gray-700">
-                                Request Status
-                            </label>
-                            <select id="modalstatus" name="status"
-                                class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
-                                <option value="Pending">Pending</option>
-                                <option value="Declined">Declined</option>
-                                <option value="Approved">Approved</option>
-                                <option value="Completed">Completed</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label for="modaldonatedto" class="block text-gray-700"></label>
-                            Completed/Donated To
-                            </label>
-                            <input type="text" id="modaldonatedto" name="donatedto"
-                                class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
-                        </div>
-                        <div>
-                            <label for="modaljenstory" class="block text-gray-700"></label>
-                            Request Jen Story
-                            </label>
-                            <select id="modaljenstory" name="jenstory"
-                                class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
-                                <option value="true">Yes</option>
-                                <option value="false">No</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label for="modalservicetypeid" class="block text-gray-700"></label>
-                            Service Type
-                            </label>
-                            <textarea id="modalservicetypeid" name="servicetypeid"
-                                class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500"></textarea>
-                        </div>
-                        <div>
-                            <label for="modaldetails" class="block text-gray-700"></label>
-                            Event Description
-                            </label>
-                            <textarea id="modaldetails" name="details"
-                                class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500"></textarea>
-                        </div>
-                    </div>
-
-                    <div class="mt-6 flex justify-end gap-4">
-                        <button type="button" class="px-6 py-2 bg-gray-500 text-white rounded-md"
-                            onclick="closeModal()">Cancel</button>
-                        <button type="submit" class="px-6 py-2 bg-teal-600 text-white rounded-md">Save Changes</button>
+                    <div>
+                        <label for="plannedduration" class="block text-gray-700">Planned Duration (hrs)</label>
+                        <input type="number" id="plannedduration" value=""
+                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                     </div>
                 </div>
-            </form>
-        </div>
+
+                <!-- ADDRESS -->
+                <div class="grid grid-cols-4 gap-4">
+                    <div>
+                        <label for="address" class="block text-gray-700">Address</label>
+                        <input type="text" id="address" value=""
+                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                    </div>
+                    <div>
+                        <label for="city" class="block text-gray-700">City</label>
+                        <input type="text" id="city" value=""
+                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                    </div>
+                    <div>
+                        <label for="state" class="block text-gray-700">State</label>
+                        <input type="text" id="state" value=""
+                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                    </div>
+                    <div>
+                        <label for="zip" class="block text-gray-700">Zip Code</label>
+                        <input type="text" id="zip" value=""
+                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                    </div>
+                </div>
+
+                <!-- SERVICE TYPE -->
+                <div>
+                    <label for="servicetypeid" class="block text-gray-700">Service Type ID</label>
+                    <input type="text" id="servicetypeid" value=""
+                        class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                </div>
+
+                <!-- JEN RELATED STUFF -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="jenstory" class="block text-gray-700">Jen Story</label>
+                        <div class="mt-2">
+                            <label class="inline-flex items-center">
+                                <input type="radio" name="jenstory" value="true" class="form-radio">
+                                <span class="ml-2">Requested</span>
+                            </label>
+                            <label class="inline-flex items-center ml-6">
+                                <input type="radio" name="jenstory" value="false" class="form-radio">
+                                <span class="ml-2">Not Requested</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="jenstorylength" class="block text-gray-700">Jen Story Length (mins)</label>
+                        <input type="text" id="jenstorylength" value=""
+                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                    </div>
+                </div>
+
+                <!-- EQUIPMENT -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="sergers" class="block text-gray-700">Sergers</label>
+                        <input type="number" id="sergers" value=""
+                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                    </div>
+                    <div>
+                        <label for="sewingmachines" class="block text-gray-700">Sewing Machines</label>
+                        <input type="number" id="sewingmachines" value=""
+                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                    </div>
+                </div>
+
+                <!-- ATTENDEES -->
+                <div class="grid grid-cols-4 gap-4">
+                    <div>
+                        <label for="childrenunder10" class="block text-gray-700">Children < 10</label>
+                                <input type="number" id="childrenunder10" value=""
+                                    class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                    </div>
+                    <div>
+                        <label for="adultparticipants" class="block text-gray-700">Adults</label>
+                        <input type="number" id="adultparticipants" value=""
+                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                    </div>
+                    <div>
+                        <label for="advancedsewers" class="block text-gray-700">Adv. Sewers</label>
+                        <input type="number" id="advancedsewers" value=""
+                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                    </div>
+                    <div>
+                        <label for="basicsewers" class="block text-gray-700">Basic Sewers</label>
+                        <input type="number" id="basicsewers" value=""
+                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                    </div>
+                </div>
+
+                <!-- VENUE INFO -->
+                <div class="grid grid-cols-4 gap-4">
+                    <div>
+                        <label for="venuesize" class="block text-gray-700">Venue sq. ft.</label>
+                        <input type="text" id="venuesize" value=""
+                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                    </div>
+                    <div>
+                        <label for="numrooms" class="block text-gray-700">Rooms</label>
+                        <input type="number" id="numrooms" value=""
+                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                    </div>
+                    <div>
+                        <label for="numtablesround" class="block text-gray-700">Round Tables</label>
+                        <input type="number" id="numtablesround" value=""
+                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                    </div>
+                    <div>
+                        <label for="numtablesrectangle" class="block text-gray-700">Rect. Tables</label>
+                        <input type="number" id="numtablesrectangle" value=""
+                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                    </div>
+                </div>
+
+                <!-- DETAILS -->
+                <div>
+                    <label for="details" class="block text-gray-700">Details</label>
+                    <textarea id="details"
+                        class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500"></textarea>
+                </div>
+            </div>
+            <div class="mt-6 flex justify-between gap-4">
+                <button type="button" onclick="handleCancel()"
+                    class="px-6 py-2 bg-gray-600 text-white rounded-lg shadow-md hover:bg-gray-700">Cancel</button>
+                <button id="saveBtn" type="submit"
+                    class="px-6 py-2 bg-teal-500 text-white rounded-lg shadow-md hover:bg-teal-600">Save</button>
+            </div>
+    </div>
     </div>
 
 </body>

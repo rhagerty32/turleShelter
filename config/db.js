@@ -10,12 +10,15 @@ const knex = require("knex")({
     database: process.env.RDS_DB_NAME || "turtleShelter",
     port: process.env.RDS_PORT || 5432,
     // enable SSL to connect to the AWS database
-    ssl: process.env.DB_SSL
-      ? {
-          ca: fs.readFileSync("certs/us-east-1-bundle.pem"),
-          rejectUnauthorized: true,
-        }
-      : false,
+    ssl:
+      process.env.DB_SSL === "true"
+        ? {
+            ca: fs.readFileSync(
+              path.join(__dirname, "certs", "us-east-1-bundle.pem")
+            ),
+            rejectUnauthorized: false,
+          }
+        : false,
   },
 });
 
