@@ -112,7 +112,7 @@
             justify-content: space-between;
             align-items: center;
         }
-        @media (max-width: 768px) {
+        @media (max-width: 1000px) {
             header {
                 height: 300px;
             }
@@ -154,8 +154,9 @@
         }
     </style>
     <script>
+        // stack the host and volunteer div instead of side by side
         function removeFlex () {
-            if (window.innerWidth < 768) {
+            if (window.innerWidth < 1000) {
                 document.getElementById("volunteerHostDiv").classList.remove("flex", "flex-row");
                 document.getElementById("hostDiv").classList.add("mt-2")
                 document.getElementById("youHave..").classList.remove("mb-6");
@@ -218,20 +219,19 @@
             <strong>YOU</strong> have the power to make a real difference!
         </p>
         <div id="volunteerHostDiv" class="flex flex-row gap-6">
-            <!-- Volunteer Section -->
             <div class="bg-white p-2 rounded-lg shadow-md flex-1 flex-row gap-4">
-                <div class=" gap-4 justify-between">
+                <div class="gap-4 justify-between">
                     <div id="volunteerHead" class="containerHead">
                         <div id="volunteerBtn-text" class="m-3">
                             <a href="volunteerRequest" class="btn w-full max-w-xs whitespace-nowrap flex items-center gap-2">
                                 Volunteer →
                             </a>
                         </div> 
-                        <img src="images/volunteer.jfif" alt="Volunteer" class="w-1/2 rounded-lg">
+                        <img src="images/volunteer.jfif" alt="Volunteer" class="w-1/2 h-64 object-cover rounded-lg">
                     </div>
                 </div>
             </div>
-        
+            
             <!-- Host an Event Section -->
             <div id="hostDiv" class="bg-white p-2 rounded-lg shadow-md flex-1 flex-row gap-4">
                 <div class="gap-4 justify-between">
@@ -241,10 +241,11 @@
                                 Host an Event →
                             </a>
                         </div>
-                        <img src="images/hostEvent.jpg" alt="Host an Event" class="w-1/2 rounded-lg">
+                        <img src="images/hostEvent.jpg" alt="Host an Event" class="w-1/2 h-64 object-cover rounded-lg">
                     </div>
                 </div>
             </div>
+            
         </div>       
     </div>
 </body>

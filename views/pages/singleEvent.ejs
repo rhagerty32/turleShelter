@@ -31,35 +31,29 @@
         closeModal();
         document.getElementById('editSection').submit();
     }
+
+    function toggleStatus() {
+        const status = document.getElementById('status').value;
+        const completedEvent = document.getElementsByClassName('completedEvent');
+        if (status === 'Completed') {
+            for (let i in completedEvent) {
+                completedEvent[i].classList.remove('hidden');
+            }
+        } else {
+            for (let i in completedEvent) {
+                completedEvent[i].classList.add('hidden');
+            }
+        }
+    }
 </script>
 
 <!-- 
-
-eventid,
-starttime,
-address,
-zip,
-status,
-plannedduration,
-details,
-date,
-city,
-state,
-servicetypeid,
-jenstorylength,
-jenstory,
-sergers,
-sewingmachines,
-childrenunder10,
-advancedsewers,
-basicsewers,
-adultparticipants,
-organization,
-venuesize,
-numrooms,
-numtablesround,
-numtablesrectangle
-
+    if disrubution event:
+        temp
+    else:
+        head count
+        service hours
+        item and quantity
 -->
 
 <body class="bg-gray-50 font-sans">
@@ -112,7 +106,8 @@ numtablesrectangle
                 </div>
                 <div>
                     <label class="block text-gray-700">Status</label>
-                    <p class="mt-2 text-gray-600 font-bold <%= event.status === 'Scheduled' ? 'text-green-600' : '' %>">
+                    <p
+                        class="mt-2 text-gray-600 font-bold <%= event.status === 'Scheduled' ? 'text-green-600' : (event.status === 'Pending' ? 'text-yellow-600' : '') %>">
                         <%= event.status %>
                     </p>
                 </div>
@@ -123,9 +118,9 @@ numtablesrectangle
                     </p>
                 </div>
                 <div>
-                    <label class="block text-gray-700">Service Type ID</label>
+                    <label class="block text-gray-700">Service Type</label>
                     <p class="mt-2 text-gray-600">
-                        <%= event.servicetypeid %>
+                        <%= event.description %>
                     </p>
                 </div>
 
@@ -373,6 +368,13 @@ numtablesrectangle
                     <label for="servicetypeid" class="block text-gray-700">Service Type</label>
                     <select name="servicetypeid" id="servicetypeid"
                         class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                        <% servicetypes.forEach(function(servicetype) { %>
+                            <option value="<%= servicetype.servicetypeid %>"
+                                <%=servicetype.description===event.description ? 'selected' : '' %>
+                                ><%= servicetype.description %>
+                            </option>
+                            <% }); %>
+                    </select>
                         <% servicetypes.forEach(function(servicetype) { %>
                             <option value="<%= servicetype.servicetypeid %>"
                                 <%=servicetype.description===event.description ? 'selected' : '' %>

@@ -10,6 +10,17 @@
    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
+<style>
+    .toggle-checkbox:checked {
+        right: 0;
+        border-color: #4fd1c5;
+    }
+
+    .toggle-checkbox {
+        transition: right 0.5s ease-in-out;
+    }
+</style>
+
 
 <style>
    .toggle-checkbox:checked {
@@ -53,6 +64,22 @@
            }
        }
    }
+
+    function toggleEventType() {
+        const eventType = document.getElementById('eventType');
+        const eventTypeLabel = document.getElementById('eventTypeLabel');
+        const elements = document.getElementsByClassName('distributionEvent');
+
+        for (let i in elements) {
+            if (eventType.checked) {
+                elements[i].classList.add('hidden');
+                document.getElementById('addEventForm').action = '/addDistributionEvent';
+            } else {
+                elements[i].classList.remove('hidden');
+                document.getElementById('addEventForm').action = '/addServiceEvent';
+            }
+        }
+    }
 </script>
 
 

@@ -114,10 +114,10 @@ router.get("/logout", async (req, res) => {
 });
 
 router.get("/stats", checkAuthenticated, (req, res) => {
-  res.render("layout", {
-      title: "Stats",
-      page: "stats",
-  });
+    res.render("layout", {
+        title: "Stats",
+        page: "stats",
+    });
 });
 
 router.get("/contact", (req, res) => {
@@ -141,10 +141,40 @@ router.get("/hostAnEvent", (req, res) => {
     });
 });
 
+router.get("/events", checkAuthenticated, (req, res) => {
+    knex("events as e")
+        .join("eventdates as ed", "e.eventid", "ed.eventid")
+        .join("dates as d", "ed.dateid", "d.dateid")
+        .join("location as l", "e.zip", "l.zip")
+        .join("eventrequest as er", "e.eventid", "er.eventid")
+        .select(
+            "d.date",
+            "er.organization",
+            "e.status",
+            "e.address",
+            "l.city",
+            "l.state",
+            "e.eventid"
+        )
+        .then((events) => {
+            knex("servicetypes")
+                .select()
+                .then((servicetypes) => {
+                    res.render("layout", {
+                        title: "Events",
+                        page: "events",
+                        events: events,
+                        servicetypes: servicetypes,
+                    });
+                });
+        })
+        .catch((error) => {
+            console.error("Error querying database:", error);
+            res.status(500).send("Internal Server Error");
+        });
+});
 
-router.post("/addServiceEvent", (req, res) => {
-    // Destructure incoming data from the form
-    console.log("adding event")
+router.post("/addEvent", (req, res) => {
     const {
         organization,
         status,
@@ -455,16 +485,14 @@ router.post("/addDistributionEvent", (req, res) => {
                 });
         })
         .catch((error) => {
-            console.error("Error querying database:", error);
+            console.error("Error updating volunteer:", error);
             res.status(500).send("Internal Server Error");
         });
- });
- 
- 
- router.get('/events/:eventid', (req, res) => {
+})
+
+router.get('/events/:eventid', (req, res) => {
     const eventid = req.params.eventid;
- 
- 
+
     knex('events as e')
         .join('eventdates as ed', 'e.eventid', 'ed.eventid')
         .join('dates as d', 'ed.dateid', 'd.dateid')
@@ -521,31 +549,29 @@ router.post("/addDistributionEvent", (req, res) => {
             console.error('Error querying database:', error);
             res.status(500).send('Internal Server Error');
         });
- });
- 
+});
 
 router.get("/volunteers", checkAuthenticated, (req, res) => {
-  knex("volunteer")
-      .select()
-      .orderBy("lastname", "asc")
-      .then((volunteers) => {
-          knex("skilllevel")
-              .select()
-              .orderBy("skillid", "asc")
-              .then((skilllevel) => {
-                  res.render("layout", {
-                      title: "Volunteers",
-                      page: "volunteers",
-                      volunteers: volunteers,
-                      skilllevel: skilllevel,
-                  });
-              })
-
-      })
-      .catch((error) => {
-          console.error("Error querying database:", error);
-          res.status(500).send("Internal Server Error");
-      });
+    knex("volunteer")
+        .select()
+        .orderBy("lastname", "asc")
+        .then((volunteers) => {
+            knex("skilllevel")
+                .select()
+                .orderBy("skillid", "asc")
+                .then((skilllevel) => {
+                    res.render("layout", {
+                        title: "Volunteers",
+                        page: "volunteers",
+                        volunteers: volunteers,
+                        skilllevel: skilllevel,
+                    });
+                })
+        })
+        .catch((error) => {
+            console.error("Error querying database:", error);
+            res.status(500).send("Internal Server Error");
+        });
 });
 
 router.post("/editVolunteer", (req, res) => {
