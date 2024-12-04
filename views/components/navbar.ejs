@@ -1,4 +1,4 @@
-<script>
+<script>    
     // to toggle the link text based on the background
     let txtColor = 'text-black';
     if (window.location.pathname === '/') {
@@ -15,108 +15,65 @@
         }
     });
 
-    function mobileTextToggle() {
-        if (window.innerWidth < 1000) {
-            document.getElementById('eventLink').textContent = 'Host';
+    function makeLinksBurger () {
+        const linkDiv = document.getElementById('linksDiv');
+        if (window.innerWidth < 768) {
+            linkDiv.classList.add('hidden');
+            document.getElementById('burgerMenuDiv').classList.remove('hidden');
+        }else{
+            linkDiv.classList.remove('hidden');
+            document.getElementById('burgerMenuDiv').classList.add('hidden');
+        }
+    }  
+
+    // Function to handle clicks outside the menu to close it
+    function closeMenuOnClickOutside(event) {
+        const linkDiv = document.getElementById('linksDiv');
+        const burgerMenuDiv = document.getElementById('burgerMenuDiv');
+        
+        // Check if the click target is outside the menu and burger icon
+        if (!burgerMenuDiv.contains(event.target) && !linkDiv.contains(event.target)) {
+            linkDiv.classList.add('hidden'); // Show the links div if clicked outside
+            document.getElementById('navTitle').classList.remove('hidden');
+        }
+    }
+
+    // Add the event listener for clicks outside the menu
+    window.addEventListener('click', closeMenuOnClickOutside);
+
+    function toggleBurger() {
+        const title = document.getElementById('navTitle');
+        const linkDiv = document.getElementById('linksDiv');
+        if (title.classList.contains('hidden')) {
+            title.classList.remove('hidden');
+            linkDiv.classList.add('hidden');
         } else {
-            document.getElementById('eventLink').textContent = 'Host an Event';
-            function makeLinksBurger() {
-                const linkDiv = document.getElementById('linksDiv');
-                if (window.innerWidth < 768) {
-                    linkDiv.classList.add('hidden');
-                    document.getElementById('burgerMenuDiv').classList.remove('hidden');
-                } else {
-                    linkDiv.classList.remove('hidden');
-                    document.getElementById('burgerMenuDiv').classList.add('hidden');
-                }
-            }
+            linkDiv.classList.remove('hidden');
+            title.classList.add('hidden');
+        }
+    }
 
-            function makeLinksBurger() {
-                homeLinks = document.getElementsByClassName('navButton');
-                if (window.innerWidth < 1000) {
-                    for (let i = 0; i < homeLinks.length; i++) {
-                        homeLinks[i].classList.add('hidden');
-                    }
-                } else {
-                    for (let i = 0; i < homeLinks.length; i++) {
-                        homeLinks[i].classList.remove('hidden');
-                    }
-                    // Function to handle clicks outside the menu to close it
-                    function closeMenuOnClickOutside(event) {
-                        const linkDiv = document.getElementById('linksDiv');
-                        const burgerMenuDiv = document.getElementById('burgerMenuDiv');
+    // event handlers for mobile responsiveness
+    window.addEventListener('resize', () => {
+        makeLinksBurger();
+        // able to add more function here on the same event listener
+    });
 
-                        // Check if the click target is outside the menu and burger icon
-                        if (!burgerMenuDiv.contains(event.target) && !linkDiv.contains(event.target)) {
-                            linkDiv.classList.add('hidden'); // Show the links div if clicked outside
-                            document.getElementById('navTitle').classList.remove('hidden');
-                        }
-                    }
-
-                    // Add the event listener for clicks outside the menu
-                    window.addEventListener('click', closeMenuOnClickOutside);
-
-                    function toggleBurger() {
-                        const title = document.getElementById('navTitle');
-                        const linkDiv = document.getElementById('linksDiv');
-                        if (title.classList.contains('hidden')) {
-                            title.classList.remove('hidden');
-                            linkDiv.classList.add('hidden');
-                        } else {
-                            linkDiv.classList.remove('hidden');
-                            title.classList.add('hidden');
-                        }
-                    }
-
-                    // event handlers for mobile responsiveness
-                    window.addEventListener('resize', () => {
-                        makeLinksBurger();
-                        // able to add more function here on the same event listener
-                    });
-
-                    window.addEventListener('load', () => {
-                        makeLinksBurger();
-                    });
+    window.addEventListener('load', () => {
+        makeLinksBurger();
+    });
 </script>
 
-<nav
-    class="absolute top-0 left-0 right-0 rounded-b-2xl flex flex-wrap z-50 justify-between items-center px-4 py-2 bg-none">
-    <h2 id="navTitle" class="text-2xl font-bold text-white flex-shrink-0 max-w-full md:text-3xl">
-        Turtle Shelter<br>Project
 
-        <nav id="navBar"
-            class="absolute top-0 left-0 right-0 rounded-b-2xl flex flex-wrap z-50 justify-between items-center px-4 py-2 bg-none">
-            <h2 id="navTitle" class="font-bold flex-shrink-0 max-w-full md:text-3xl" style="color: #40d6ca;">
-                Turtle Shelter Project
-            </h2>
-            <div id="burgerMenuDiv" class="hidden">
-                <svg xmlns="http://www.w3.org/2000/svg" id="burgerMenu" class="ionicon w-12 h-12" viewBox="0 0 512 512">
-                    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10"
-                        stroke-width="48" d="M88 152h336M88 256h336M88 360h336" />
-                </svg>
-
-            </div>
-            <a href="/" id="homeLink"
-                class="navButton hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md cursor-pointer text-lg">
-                Home
-            </a>
-            <% if (!authenticated) { %>
-                <a href="/volunteerRequest" id="volunteerLink"
-                    class="navButton hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md text-lg">
-                    Volunteer
-                </a>
-                <a href="/hostAnEvent" id="eventLink"
-                    class="navButton hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md text-lg">
-                    Host an Event
-                </a>
-                <% } %>
-                    <!-- TODO Eventually the next two need to be behind a password -->
-                    <div id="linksDiv" class="flex flex-wrap z-50 justify-between items-center px-4 py-2 bg-none">
-                        <a href="/" id="homeLink"
-                            class="navButton hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md cursor-pointer text-lg">
-                            Home
-                        </a>
-                        <!-- <% if (!authenticated) { %>
+<nav id="navBar" class="absolute top-0 left-0 right-0 rounded-b-2xl flex flex-wrap z-50 justify-between items-center px-4 py-2 bg-none">
+    <h2 id="navTitle" class="font-bold flex-shrink-0 max-w-full md:text-3xl" style="color: #40d6ca;">
+        Turtle Shelter Project
+    </h2>
+    <div id = "linksDiv" class="flex flex-wrap z-50 justify-between items-center px-4 py-2 bg-none">
+        <a href="/" id="homeLink" class="navButton hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md cursor-pointer text-lg">
+            Home
+        </a>
+        <!-- <% if (!authenticated) { %>
             <a href="/volunteerRequest" id="volunteerLink"
                 class="navButton hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md text-lg">
                 Volunteer
@@ -126,82 +83,80 @@
                 Host an Event
             </a>
             <% } %> -->
-                        <!-- TODO Eventually the next two need to be behind a password -->
-                        <% if (authenticated) { %>
-                            <div class="relative group z-50">
-                                <div id="adminLink"
-                                    class="navButton hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md cursor-pointer text-lg">
-                                    Admin
-                                </div>
-                                <div
-                                    class="absolute hidden group-hover:block bg-white shadow-lg rounded-md pt-2 z-50 border">
-                                    <a href="/stats" id="statsLink"
-                                        class="block hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md z-50">
-                                        Stats
-                                    </a>
-                                    <a href="/events" id="eventsLink"
-                                        class="block hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md ">
-                                        Events
-                                    </a>
-                                    <a href="/volunteers" id="volunteersLink"
-                                        class="block hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md">
-                                        Volunteers
-                                    </a>
-                                </div>
-                            </div>
+                <!-- TODO Eventually the next two need to be behind a password -->
+            <% if (authenticated) { %>
+                <div class="relative group z-50">
+                    <div id="adminLink"
+                        class="navButton hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md cursor-pointer text-lg">
+                        Admin
+                    </div>
+                    <div class="absolute hidden group-hover:block bg-white shadow-lg rounded-md pt-2 z-50 border">
+                        <a href="/stats" id="statsLink"
+                            class="block hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md z-50">
+                            Stats
+                        </a>
+                        <a href="/events" id="eventsLink"
+                            class="block hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md ">
+                            Events
+                        </a>
+                        <a href="/volunteers" id="volunteersLink"
+                            class="block hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md">
+                            Volunteers
+                        </a>
+                        <a href="/users" id="usersLink"
+                            class="block hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md">
+                            Users
+                        </a>
+                    </div>
+                </div>
+                <% } %>
+                    <a href="/contact" id="contactLink"
+                        class="navButton hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md cursor-pointer text-lg">
+                        Contact
+                    </a>
+                    <% if (authenticated) { %>
+                        <a href="/logout" id="logoutLink"
+                            class="navButton hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md cursor-pointer text-lg">
+                            Logout
+                        </a>
+                        <% } else { %>
+                            <a href="/login" id="loginLink"
+                                class="navButton hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md cursor-pointer text-lg">
+                                Login
+                            </a>
                             <% } %>
-                                <a href="/contact" id="contactLink"
-                                    class="navButton hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md cursor-pointer text-lg">
-                                    Contact
-                                </a>
-                                <% if (authenticated) { %>
-                                    <a href="/logout" id="logoutLink"
-                                        class="navButton hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md cursor-pointer text-lg">
-                                        Logout
-                                    </a>
-                                    <% } else { %>
-                                        <a href="/login" id="loginLink"
-                                            class="navButton hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md cursor-pointer text-lg">
-                                            Login
-                                        </a>
-                                        <% } %>
-                    </div>
-                    <div id="burgerMenuDiv" class="ml-auto flex items-center justify-end hidden">
-                        <svg xmlns="http://www.w3.org/2000/svg" onclick="toggleBurger()" id="burgerMenu"
-                            class="ionicon w-12 h-12 cursor-pointer transform transition-transform duration-150 hover:scale-110"
-                            viewBox="0 0 512 512">
-                            <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10"
-                                stroke-width="48" d="M88 152h336M88 256h336M88 360h336" />
-                        </svg>
-                    </div>
-        </nav>
+    </div>
+    <div id="burgerMenuDiv" class="ml-auto flex items-center justify-end hidden">
+        <svg xmlns="http://www.w3.org/2000/svg" onclick="toggleBurger()" id="burgerMenu" class="ionicon w-12 h-12 cursor-pointer transform transition-transform duration-150 hover:scale-110" viewBox="0 0 512 512"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="48" d="M88 152h336M88 256h336M88 360h336"/></svg>
+    </div>
+</nav>
 
-        <script>
-                            document.getElementById('logoutForm').addEventListener('submit', function (event) {
-                                event.preventDefault();
-                                const form = event.target;
-                                const currentPath = window.location.pathname;
-                                const input = document.createElement('input');
-                                input.type = 'hidden';
-                                input.name = 'originalUrl';
-                                input.value = currentPath;
-                                form.appendChild(input);
-                                form.submit();
-                            });
+<script>
+    document.getElementById('logoutForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        const form = event.target;
+        const currentPath = window.location.pathname;
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'originalUrl';
+        input.value = currentPath;
+        form.appendChild(input);
+        form.submit();
+    });
 
-                            document.addEventListener('DOMContentLoaded', function () {
-                                const currentPath = window.location.pathname;
-                                const links = {
-                                    '/': 'homeLink',
-                                    '/volunteerRequest': 'volunteerLink',
-                                    '/hostAnEvent': 'eventLink',
-                                    '/contact': 'contactLink',
-                                    '/events': 'adminLink',
-                                    '/volunteers': 'adminLink',
-                                    '/stats': 'adminLink'
-                                };
-                                if (links[currentPath]) {
-                                    document.getElementById(links[currentPath]).classList.add('bg-gray-200');
-                                }
-                            });
-        </script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const currentPath = window.location.pathname;
+        const links = {
+            '/': 'homeLink',
+            '/volunteerRequest': 'volunteerLink',
+            '/hostAnEvent': 'eventLink',
+            '/contact': 'contactLink',
+            '/events': 'adminLink',
+            '/volunteers': 'adminLink',
+            '/stats': 'adminLink'
+        };
+        if (links[currentPath]) {
+            document.getElementById(links[currentPath]).classList.add('bg-gray-200');
+        }
+    });
+</script>
