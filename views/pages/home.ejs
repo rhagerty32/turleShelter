@@ -74,14 +74,13 @@
 
         header .btn {
             margin: 20px;
-            z-index: 2;
             position: relative;
         }
 
         .btn {
             display: inline-block;
             padding: 10px 20px;
-            font-size: 1rem;
+            font-size: 1.35rem;
             color: #fff;
             background: #35B3A8;
             border: none;
@@ -113,32 +112,100 @@
             justify-content: space-between;
             align-items: center;
         }
+        @media (max-width: 768px) {
+            header {
+                height: 300px;
+            }
+
+            header h1 {
+                font-size: 2rem;
+            }
+
+            header p {
+                font-size: 1rem;
+            }
+
+            .btn {
+                padding: 8px 16px;
+                font-size: 1.1rem;
+            }
+
+            .container {
+                padding: 0 10px;
+            }
+
+            .containerHead {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .containerHead img {
+                width: 100%;
+                margin-top: 10px;
+            }
+
+            .homeBtnDiv {
+                flex-direction: column;
+            }
+
+            .homeBtnDiv .btn {
+                margin: 10px 0;
+            }
+        }
     </style>
+    <script>
+        function removeFlex () {
+            if (window.innerWidth < 768) {
+            document.getElementById("volunteerHostDiv").classList.remove("flex", "flex-row");
+            }else{
+                document.getElementById("volunteerHostDiv").classList.add("flex", "flex-row");
+            }
+        }
+        window.addEventListener('resize', () => {
+            removeFlex();
+        });
+
+        window.addEventListener('load', () => {
+            removeFlex();
+        });
+    </script>
 </head>
 
 <body>
-    <header class="z-10">
-        <img class="headerImg z-0"
-            src="https://images.squarespace-cdn.com/content/v1/5b5a266fcef372310148d6d6/1567462206269-3U6NXPS9IWC1S97PD39J/Picture11.jpg?format=2500w"
-            alt="Turtle Shelter Logo">
-        <p class="z-10">Helping to save lives of people experiencing homelessness</p>
+    <header class="z-0" style="position: relative; overflow: hidden;">
+        <!-- Content -->
+        <p id="homeMessage" class="z-10 p-4">Helping to save lives of people experiencing homelessness</p>
         <h1 class="font-bold z-10">STARTS WITH YOU</h1>
-        <div id="homeBtnDiv">
-            <a href="#learn-more" class="btn z-0">Learn More</a>
-            <a href="#donate" class="btn z-0">Donate</a>
+        <div id="homeBtnDiv" class="z-50">
+            <a href="#learn-more" class="btn">Learn More</a>
+            <a href="#donate" class="btn">Donate</a>
         </div>
+    
+        <!-- Responsive SVG -->
+        <svg 
+            class="z-10" 
+            xmlns="http://www.w3.org/2000/svg" 
+            viewBox="0 0 1442 319" 
+            style="position: absolute; bottom: 0; left: 0; width: 100%; height: auto;">
+            <path 
+                fill=#f9f9f9
+                fill-opacity="1" 
+                d="M0,192L60,202.7C120,213,240,235,360,240C480,245,600,235,720,218.7C840,203,960,181,1080,176C1200,171,1320,181,1380,186.7L1440,192L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z">
+            </path>
+        </svg>
     </header>
+    
 
     <div class="container flex flex-col gap-6">
-        <div class="bg-white p-10 rounded-lg shadow-md flex flex-col gap-4">
-            <h2 class="text-3xl font-bold text-black">What is a Turtle Shelter Vest?</h2>
+        <div class="bg-white p-6 rounded-lg shadow-md flex flex-col gap-4">
             <p class="text-lg text-gray-700 mb-3">
-                A portable, high-tech solution designed to provide warmth and protection, just like a turtle’s shell. Simple, effective, and life-saving.
+                <strong class="text-black text-xl">Turtle Vest: </strong>A portable, high-tech solution designed to provide warmth and protection, just like a turtle’s shell. Simple, effective, and life-saving.
             </p>
             <ul style="padding-left: 20px;">
-                <li class="flex items-center">Prevents hypothermia temperatures down to
+                <li class="flex items-center">Prevents hypothermia in temperatures down to
                     <span class="font-semibold text-3xl m-2" style="color: #35B3A8;">-10&deg;F</span>.
                 </li>
+                <br>
                 <li>Keeps you warm even when wet.</li>
             </ul>            
         </div>
@@ -146,35 +213,35 @@
         <p class="text-2xl text-gray-700 mb-6 text-center">
             <strong>YOU</strong> have the power to make a real difference!
         </p>
-        <div class="flex flex-row gap-6">
-            <div class="bg-white p-10 rounded-lg shadow-md flex flex-row gap-4">
-                <div class="flex flex-col gap-4 justify-between">
+        <div id="volunteerHostDiv" class="flex flex-row gap-6">
+            <!-- Volunteer Section -->
+            <div class="bg-white p-6 rounded-lg shadow-md flex-1 flex-row gap-4">
+                <div class=" gap-4 justify-between">
                     <div id="volunteerHead" class="containerHead">
-                        <h2 class="text-3xl text-black">Take Action</h2>
-                        <a href="volunteerRequest" class="btn w-fit">Volunteer →</a>
+                        <div id="volunteerBtn-text">
+                            <a href="volunteerRequest" class="btn w-full max-w-xs whitespace-nowrap flex items-center gap-2">
+                                Volunteer →
+                            </a>
+                        </div> 
+                        <img src="images/volunteer.jfif" alt="Volunteer" class="w-1/2 rounded-lg">
                     </div>
-                    <p>
-                        Ready to take the next step? You can become a volunteer so we can keep you updated on events
-                        near you!
-                    </p>
-
                 </div>
             </div>
-
-            <div class="bg-white p-10 rounded-lg shadow-md flex flex-row gap-4">
-                <div class="flex flex-col gap-4 justify-between">
-                    <div id="volunteerHead" class="containerHead">
-                        <h2 class="text-3xl text-black">Host an Event</h2>
-                        <a href="/hostAnEvent" class="btn w-fit">Become a Host →</a>
+        
+            <!-- Host an Event Section -->
+            <div class="bg-white p-6 rounded-lg shadow-md flex-1 flex-row gap-4 mt-2">
+                <div class="gap-4 justify-between">
+                    <div id="hostHead" class="containerHead">
+                        <div id="hostBtn-text">
+                            <a href="/hostAnEvent" class="btn w-full max-w-xs whitespace-nowrap flex items-center gap-2">
+                                Host an Event →
+                            </a>
+                        </div>
+                        <img src="images/hostEvent.jpg" alt="Host an Event" class="w-1/2 rounded-lg">
                     </div>
-                    <p>
-                        Hosting an event brings your community together and makes an impact. Organize a vest-making
-                        workshop, fundraiser, or awareness campaign to support our mission and save lives.
-                    </p>
                 </div>
             </div>
-
-        </div>
+        </div>       
     </div>
 </body>
 

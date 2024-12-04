@@ -22,7 +22,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Serve static files (CSS, JavaScript, images) from the "public" folder
 // Example usage in views: <link rel="stylesheet" href="/styles.css">
-app.use(express.static("public"));
+app.use(express.static("public")); 
 
 // Configure session management
 app.use(
