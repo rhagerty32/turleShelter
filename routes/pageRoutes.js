@@ -113,13 +113,10 @@ router.get("/logout", async (req, res) => {
     });
 });
 
-router.get("/account", checkAuthenticated, (req, res) => {
+router.get("/stats", checkAuthenticated, (req, res) => {
     res.render("layout", {
-        title: "Account",
-        page: "account",
-        user: {
-            username: req.session.user.username,
-        },
+        title: "Stats",
+        page: "stats",
     });
 });
 
@@ -160,11 +157,16 @@ router.get("/events", checkAuthenticated, (req, res) => {
             "e.eventid"
         )
         .then((events) => {
-            res.render("layout", {
-                title: "Events",
-                page: "events",
-                events: events,
-            });
+            knex("servicetypes")
+                .select()
+                .then((servicetypes) => {
+                    res.render("layout", {
+                        title: "Events",
+                        page: "events",
+                        events: events,
+                        servicetypes: servicetypes,
+                    });
+                });
         })
         .catch((error) => {
             console.error("Error querying database:", error);
@@ -275,6 +277,7 @@ router.get('/events/:eventid', (req, res) => {
         .join('dates as d', 'ed.dateid', 'd.dateid')
         .join('location as l', 'e.zip', 'l.zip')
         .join('eventrequest as er', 'e.eventid', 'er.eventid')
+        .join('servicetypes as st', 'er.servicetypeid', 'st.servicetypeid')
         .select(
             'e.eventid',
             'e.starttime',
@@ -299,17 +302,22 @@ router.get('/events/:eventid', (req, res) => {
             'er.venuesize',
             'er.numrooms',
             'er.numtablesround',
-            'er.numtablesrectangle'
+            'er.numtablesrectangle',
+            'st.description'
         )
         .where('e.eventid', eventid)
         .first()
         .then((event) => {
-            console.log(event)
-            res.render('layout', {
-                title: 'Single Event',
-                page: 'singleEvent',
-                event: event
-            });
+            knex('servicetypes')
+                .select()
+                .then((servicetypes) => {
+                    res.render('layout', {
+                        title: 'Single Event',
+                        page: 'singleEvent',
+                        event: event,
+                        servicetypes: servicetypes
+                    });
+                })
         })
         .catch((error) => {
             console.error('Error querying database:', error);
@@ -322,11 +330,18 @@ router.get("/volunteers", checkAuthenticated, (req, res) => {
         .select()
         .orderBy("lastname", "asc")
         .then((volunteers) => {
-            res.render("layout", {
-                title: "Volunteers",
-                page: "volunteers",
-                volunteers: volunteers,
-            });
+            knex("skilllevel")
+                .select()
+                .orderBy("skillid", "asc")
+                .then((skilllevel) => {
+                    res.render("layout", {
+                        title: "Volunteers",
+                        page: "volunteers",
+                        volunteers: volunteers,
+                        skilllevel: skilllevel,
+                    });
+                })
+
         })
         .catch((error) => {
             console.error("Error querying database:", error);

@@ -27,35 +27,29 @@
         document.getElementById('cancelButton').classList.add('hidden');
         document.getElementById('saveButton').classList.add('hidden');
     }
+
+    function toggleStatus() {
+        const status = document.getElementById('status').value;
+        const completedEvent = document.getElementsByClassName('completedEvent');
+        if (status === 'Completed') {
+            for (let i in completedEvent) {
+                completedEvent[i].classList.remove('hidden');
+            }
+        } else {
+            for (let i in completedEvent) {
+                completedEvent[i].classList.add('hidden');
+            }
+        }
+    }
 </script>
 
 <!-- 
-
-eventid,
-starttime,
-address,
-zip,
-status,
-plannedduration,
-details,
-date,
-city,
-state,
-servicetypeid,
-jenstorylength,
-jenstory,
-sergers,
-sewingmachines,
-childrenunder10,
-advancedsewers,
-basicsewers,
-adultparticipants,
-organization,
-venuesize,
-numrooms,
-numtablesround,
-numtablesrectangle
-
+    if disrubution event:
+        temp
+    else:
+        head count
+        service hours
+        item and quantity
 -->
 
 <body class="bg-gray-50 font-sans">
@@ -108,7 +102,8 @@ numtablesrectangle
                 </div>
                 <div>
                     <label class="block text-gray-700">Status</label>
-                    <p class="mt-2 text-gray-600 font-bold <%= event.status === 'Scheduled' ? 'text-green-600' : '' %>">
+                    <p
+                        class="mt-2 text-gray-600 font-bold <%= event.status === 'Scheduled' ? 'text-green-600' : (event.status === 'Pending' ? 'text-yellow-600' : '') %>">
                         <%= event.status %>
                     </p>
                 </div>
@@ -119,9 +114,9 @@ numtablesrectangle
                     </p>
                 </div>
                 <div>
-                    <label class="block text-gray-700">Service Type ID</label>
+                    <label class="block text-gray-700">Service Type</label>
                     <p class="mt-2 text-gray-600">
-                        <%= event.servicetypeid %>
+                        <%= event.description %>
                     </p>
                 </div>
 
@@ -253,7 +248,8 @@ numtablesrectangle
                 <div>
                     <label for="status" class="block text-gray-700">Status</label>
                     <select id="status"
-                        class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                        class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500"
+                        onchange="toggleStatus()">
                         <option value="Pending" <%=event.status==='Pending' ? 'selected' : '' %>>Pending</option>
                         <option value="Scheduled" <%=event.status==='Scheduled' ? 'selected' : '' %>>Scheduled</option>
                         <option value="Completed" <%=event.status==='Completed' ? 'selected' : '' %>>Completed</option>
@@ -293,8 +289,60 @@ numtablesrectangle
                     </div>
                     <div>
                         <label for="state" class="block text-gray-700">State</label>
-                        <input type="text" id="state" value="<%= event.state %>"
-                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                        <select id="state" name="state"
+                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                            <option value="" disabled selected>Select State</option>
+                            <option value="AL">Alabama</option>
+                            <option value="AK">Alaska</option>
+                            <option value="AZ">Arizona</option>
+                            <option value="AR">Arkansas</option>
+                            <option value="CA">California</option>
+                            <option value="CO">Colorado</option>
+                            <option value="CT">Connecticut</option>
+                            <option value="DE">Delaware</option>
+                            <option value="FL">Florida</option>
+                            <option value="GA">Georgia</option>
+                            <option value="HI">Hawaii</option>
+                            <option value="ID">Idaho</option>
+                            <option value="IL">Illinois</option>
+                            <option value="IN">Indiana</option>
+                            <option value="IA">Iowa</option>
+                            <option value="KS">Kansas</option>
+                            <option value="KY">Kentucky</option>
+                            <option value="LA">Louisiana</option>
+                            <option value="ME">Maine</option>
+                            <option value="MD">Maryland</option>
+                            <option value="MA">Massachusetts</option>
+                            <option value="MI">Michigan</option>
+                            <option value="MN">Minnesota</option>
+                            <option value="MS">Mississippi</option>
+                            <option value="MO">Missouri</option>
+                            <option value="MT">Montana</option>
+                            <option value="NE">Nebraska</option>
+                            <option value="NV">Nevada</option>
+                            <option value="NH">New Hampshire</option>
+                            <option value="NJ">New Jersey</option>
+                            <option value="NM">New Mexico</option>
+                            <option value="NY">New York</option>
+                            <option value="NC">North Carolina</option>
+                            <option value="ND">North Dakota</option>
+                            <option value="OH">Ohio</option>
+                            <option value="OK">Oklahoma</option>
+                            <option value="OR">Oregon</option>
+                            <option value="PA">Pennsylvania</option>
+                            <option value="RI">Rhode Island</option>
+                            <option value="SC">South Carolina</option>
+                            <option value="SD">South Dakota</option>
+                            <option value="TN">Tennessee</option>
+                            <option value="TX">Texas</option>
+                            <option value="UT">Utah</option>
+                            <option value="VT">Vermont</option>
+                            <option value="VA">Virginia</option>
+                            <option value="WA">Washington</option>
+                            <option value="WV">West Virginia</option>
+                            <option value="WI">Wisconsin</option>
+                            <option value="WY">Wyoming</option>
+                        </select>
                     </div>
                     <div>
                         <label for="zip" class="block text-gray-700">Zip Code</label>
@@ -305,9 +353,16 @@ numtablesrectangle
 
                 <!-- SERVICE TYPE -->
                 <div>
-                    <label for="servicetypeid" class="block text-gray-700">Service Type ID</label>
-                    <input type="text" id="servicetypeid" value="<%= event.servicetypeid %>"
+                    <label for="servicetypeid" class="block text-gray-700">Service Type</label>
+                    <select id="servicetypeid"
                         class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                        <% servicetypes.forEach(function(servicetype) { %>
+                            <option value="<%= servicetype.servicetypeid %>"
+                                <%=servicetype.description===event.description ? 'selected' : '' %>
+                                ><%= servicetype.description %>
+                            </option>
+                            <% }); %>
+                    </select>
                 </div>
 
                 <!-- JEN RELATED STUFF -->
@@ -402,8 +457,86 @@ numtablesrectangle
                     <textarea id="details"
                         class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500"><%= event.details %></textarea>
                 </div>
+
+                <div class="grid grid-cols-3 gap-4 completedEvent hidden">
+                    <!-- TEMP -->
+                    <div class="completedEvent hidden">
+                        <label for="temp" class="block text-gray-700">Temperature</label>
+                        <input type="text" id="temp" value="<%= event.temp %>"
+                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                    </div>
+
+                    <!-- HEAD COUNT -->
+                    <div class="completedEvent hidden">
+                        <label for="headcount" class="block text-gray-700">Head Count</label>
+                        <input type="number" id="headcount" value="<%= event.headcount %>"
+                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                    </div>
+
+                    <!-- SERVICE HOURS -->
+                    <div class="completedEvent hidden">
+                        <label for="servicehours" class="block text-gray-700">Service Hours</label>
+                        <input type="number" id="servicehours" value="<%= event.servicehours %>"
+                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                    </div>
+                </div>
+
+                <!-- ITEM AND QUANTITY -->
+                <div id="itemsSection" class="flex flex-col completedEvent hidden">
+                    <div id="itemDiv" class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="item" class="block text-gray-700">Item</label>
+                            <select id="item"
+                                class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                                <option value="item1" <%=event.item==='item1' ? 'selected' : '' %>>Item 1</option>
+                                <option value="item2" <%=event.item==='item2' ? 'selected' : '' %>>Item 2</option>
+                                <option value="item3" <%=event.item==='item3' ? 'selected' : '' %>>Item 3</option>
+                                <option value="item4" <%=event.item==='item4' ? 'selected' : '' %>>Item 4</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="quantity" class="block text-gray-700">Quantity</label>
+                            <input type="number" id="quantity" value="<%= event.quantity %>"
+                                class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                        </div>
+                    </div>
+                    <!-- ADD ITEM BUTTON -->
+                    <div class="col-span-2">
+                        <button type="button" onclick="addItem()"
+                            class="mt-4 px-4 py-2 bg-teal-500 text-white rounded-md hover:bg-teal-600">
+                            Add Item
+                        </button>
+                    </div>
+                </div>
             </div>
+
+            <!-- TEMPLATE FOR NEW ITEM -->
+            <template id="itemTemplate">
+                <div>
+                    <label for="item" class="block text-gray-700">Item</label>
+                    <select id="item"
+                        class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                        <option value="item1">Item 1</option>
+                        <option value="item2">Item 2</option>
+                        <option value="item3">Item 3</option>
+                        <option value="item4">Item 4</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="quantity" class="block text-gray-700">Quantity</label>
+                    <input type="number" id="quantity"
+                        class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                </div>
+            </template>
+
+            <script>
+                function addItem() {
+                    const template = document.getElementById('itemTemplate').content.cloneNode(true);
+                    document.querySelector('#itemsSection .grid').appendChild(template);
+                }
+            </script>
         </div>
+    </div>
     </div>
     </div>
 

@@ -17,18 +17,18 @@
     function mobileTextToggle() {
         if (window.innerWidth < 1000) {
             document.getElementById('eventLink').textContent = 'Host';
-        }else{
+        } else {
             document.getElementById('eventLink').textContent = 'Host an Event';
         }
     }
 
-    function makeLinksBurger () {
+    function makeLinksBurger() {
         homeLinks = document.getElementsByClassName('navButton');
         if (window.innerWidth < 1000) {
             for (let i = 0; i < homeLinks.length; i++) {
                 homeLinks[i].classList.add('hidden');
             }
-        }else{
+        } else {
             for (let i = 0; i < homeLinks.length; i++) {
                 homeLinks[i].classList.remove('hidden');
             }
@@ -48,15 +48,20 @@
     });
 </script>
 
-<nav class="absolute top-0 left-0 right-0 rounded-b-2xl flex flex-wrap z-50 justify-between items-center px-4 py-2 bg-none">
+<nav
+    class="absolute top-0 left-0 right-0 rounded-b-2xl flex flex-wrap z-50 justify-between items-center px-4 py-2 bg-none">
     <h2 id="navTitle" class="text-2xl font-bold text-white flex-shrink-0 max-w-full md:text-3xl">
         Turtle Shelter<br>Project
     </h2>
     <div id="burgerMenuDiv" class="hidden">
-        <svg xmlns="http://www.w3.org/2000/svg" id="burgerMenu" class="ionicon w-12 h-12" viewBox="0 0 512 512"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="48" d="M88 152h336M88 256h336M88 360h336"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" id="burgerMenu" class="ionicon w-12 h-12" viewBox="0 0 512 512">
+            <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="48"
+                d="M88 152h336M88 256h336M88 360h336" />
+        </svg>
 
     </div>
-    <a href="/" id="homeLink" class="navButton hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md cursor-pointer text-lg">
+    <a href="/" id="homeLink"
+        class="navButton hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md cursor-pointer text-lg">
         Home
     </a>
     <% if (!authenticated) { %>
@@ -88,10 +93,6 @@
                         <a href="/volunteers" id="volunteersLink"
                             class="block hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md">
                             Volunteers
-                        </a>
-                        <a href="/users" id="usersLink"
-                            class="block hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md">
-                            Users
                         </a>
                     </div>
                 </div>
