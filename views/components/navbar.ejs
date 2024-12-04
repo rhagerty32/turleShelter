@@ -1,4 +1,5 @@
-<script>    
+<script> 
+    let burgerView = false;
     // to toggle the link text based on the background
     let txtColor = 'text-black';
     if (window.location.pathname === '/') {
@@ -20,21 +21,25 @@
         if (window.innerWidth < 768) {
             linkDiv.classList.add('hidden');
             document.getElementById('burgerMenuDiv').classList.remove('hidden');
+            burgerView = true;
         }else{
             linkDiv.classList.remove('hidden');
             document.getElementById('burgerMenuDiv').classList.add('hidden');
+            burgerView = false;
         }
     }  
 
     // Function to handle clicks outside the menu to close it
     function closeMenuOnClickOutside(event) {
-        const linkDiv = document.getElementById('linksDiv');
-        const burgerMenuDiv = document.getElementById('burgerMenuDiv');
-        
-        // Check if the click target is outside the menu and burger icon
-        if (!burgerMenuDiv.contains(event.target) && !linkDiv.contains(event.target)) {
-            linkDiv.classList.add('hidden'); // Show the links div if clicked outside
-            document.getElementById('navTitle').classList.remove('hidden');
+        if (burgerView){
+            const linkDiv = document.getElementById('linksDiv');
+            const burgerMenuDiv = document.getElementById('burgerMenuDiv');
+            
+            // Check if the click target is outside the menu and burger icon
+            if (!burgerMenuDiv.contains(event.target) && !linkDiv.contains(event.target)) {
+                linkDiv.classList.add('hidden'); // Show the links div if clicked outside
+                document.getElementById('navTitle').classList.remove('hidden');
+            }
         }
     }
 
