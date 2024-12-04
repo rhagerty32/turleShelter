@@ -141,39 +141,6 @@ router.get("/hostAnEvent", (req, res) => {
     });
 });
 
-router.get("/events", checkAuthenticated, (req, res) => {
-    knex("events as e")
-        .join("eventdates as ed", "e.eventid", "ed.eventid")
-        .join("dates as d", "ed.dateid", "d.dateid")
-        .join("location as l", "e.zip", "l.zip")
-        .join("eventrequest as er", "e.eventid", "er.eventid")
-        .select(
-            "d.date",
-            "er.organization",
-            "e.status",
-            "e.address",
-            "l.city",
-            "l.state",
-            "e.eventid"
-        )
-        .then((events) => {
-            knex("servicetypes")
-                .select()
-                .then((servicetypes) => {
-                    res.render("layout", {
-                        title: "Events",
-                        page: "events",
-                        events: events,
-                        servicetypes: servicetypes,
-                    });
-                });
-        })
-        .catch((error) => {
-            console.error("Error querying database:", error);
-            res.status(500).send("Internal Server Error");
-        });
-});
-
 router.post("/addServiceEvent", (req, res) => {
     const {
         organization,
@@ -459,11 +426,12 @@ router.post("/editEvent", (req, res) => {
 
 
   router.get("/events", checkAuthenticated, (req, res) => {
+    console.log("getting events")
     knex("events as e")
-        .join("eventdates as ed", "e.eventid", "ed.eventid")
-        .join("dates as d", "ed.dateid", "d.dateid")
-        .join("location as l", "e.zip", "l.zip")
-        .join("eventrequest as er", "e.eventid", "er.eventid")
+        .leftJoin("eventdates as ed", "e.eventid", "ed.eventid")
+        .leftJoin("dates as d", "ed.dateid", "d.dateid")
+        .leftJoin("location as l", "e.zip", "l.zip")
+        .leftJoin("eventrequest as er", "e.eventid", "er.eventid")
         .select(
             "d.date",
             "er.organization",
@@ -477,6 +445,7 @@ router.post("/editEvent", (req, res) => {
             knex("servicetypes")
                 .select()
                 .then((servicetypes) => {
+                  console.log(JSON.stringify(events, null, 2))
                     res.render("layout", {
                         title: "Events",
                         page: "events",
