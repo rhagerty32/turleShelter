@@ -15,13 +15,19 @@
         document.getElementById('modalFirstName').value = volunteer.firstname;
         document.getElementById('modalLastName').value = volunteer.lastname;
         document.getElementById('modalEmail').value = volunteer.email;
-        document.getElementById('modalPhoneNumber').value = volunteer.phone;
+        document.getElementById('modalPhoneNumber').value = volunteer.phonenumber;
         document.getElementById('modalSkillId').value = volunteer.skillid;
         document.getElementById('modalCity').value = volunteer.city;
         document.getElementById('modalState').value = volunteer.state;
+        document.getElementById('modalZip').value = volunteer.zip;
         document.getElementById('modalNotes').value = volunteer.notes;
         document.getElementById('modalAvailability').value = volunteer.availability;
         document.getElementById('modalDiscoveryMethod').value = volunteer.discoverymethod;
+        document.getElementById('modalRange').value = volunteer.range;
+        document.getElementById('modalLeader').checked = volunteer.leader;
+        document.getElementById('modalTeacher').checked = volunteer.teacher;
+        document.getElementById('modalPassword').value = volunteer.password;
+        document.getElementById('modalJobRole').value = volunteer.jobrole;
         document.getElementById('editModal').classList.remove('hidden');
     }
 
@@ -109,12 +115,12 @@
                         </div>
                         <div>
                             <label for="modalPhoneNumber" class="block text-gray-700">Phone Number</label>
-                            <input type="text" id="modalPhoneNumber" name="phone"
+                            <input type="text" id="modalPhoneNumber" name="phonenumber"
                                 class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-3 gap-4">
                         <div>
                             <label for="modalCity" class="block text-gray-700">City</label>
                             <input type="text" id="modalCity" name="city"
@@ -125,22 +131,32 @@
                             <input type="text" id="modalState" name="state"
                                 class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
                         </div>
+                        <div>
+                            <label for="modalZip" class="block text-gray-700">Zip</label>
+                            <input type="text" id="modalZip" name="zip"
+                                class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                        </div>
                     </div>
                     <div class="grid grid-cols-3 gap-4">
-                        <div>
-                            <label for="modalSkillId" class="block text-gray-700">Skill ID</label>
-                            <input type="text" id="modalSkillId" name="skillid"
-                                class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                        <div class="flex flex-col">
+                            <label for="modalSkillId" class="block text-gray-700">Skill Level</label>
+                            <select id="modalSkillId" name="skillid" class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                                <% skilllevel.forEach(skill => { %>
+                                    <option value="<%= skill.skillid %>" <%= skill.skillid === skill.skillid ? 'selected' : '' %> >
+                                        <%= skill.description %>
+                                    </option>
+                                <% }) %>
+                            </select>
                         </div>
-                        <div>
+                        <div class="flex flex-col">
                             <label for="modalAvailability" class="block text-gray-700">Availability</label>
                             <input type="text" id="modalAvailability" name="availability"
-                                class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                                   class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
                         </div>
-                        <div>
+                        <div class="flex flex-col">
                             <label for="modalDiscoveryMethod" class="block text-gray-700">Discovery Method</label>
                             <select id="modalDiscoveryMethod" name="discoverymethod"
-                                class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                                    class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
                                 <option value="Family">Family</option>
                                 <option value="Friend">Friend</option>
                                 <option value="Other">Other</option>
@@ -149,12 +165,37 @@
                             </select>
                         </div>
                     </div>
-
-                    <div class="mt-2">
-                        <label for="modalNotes" class="block text-gray-700">Notes</label>
-                        <textarea id="modalNotes" name="notes"
-                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500"></textarea>
+                    <div class="grid grid-cols-3 gap-4">
+                        <!-- Range (on the left) -->
+                        <div class="flex flex-col">
+                            <label for="modalRange" class="block text-gray-700">Range (in miles)</label>
+                            <input type="text" id="modalRange" name="range"
+                                class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500" >
+                        </div>
+                        
+                        <!-- Teacher and Leader (on the same row, Teacher above Leader) -->
+                        <div class="flex flex-col space-y-2">
+                            <div class="flex items-center space-x-2 justify-start">
+                                <label for="modalTeacher" class="block text-gray-700">Teacher</label>
+                                <input type="checkbox" id="modalTeacher" name="teacher"
+                                    class="w-4 h-4 border rounded-lg focus:ring-teal-500 focus:border-teal-500">
+                            </div>
+                            
+                            <div class="flex items-center space-x-2 justify-start">
+                                <label for="modalLeader" class="block text-gray-700">Leader</label>
+                                <input type="checkbox" id="modalLeader" name="leader"
+                                    class="w-4 h-4 border rounded-lg focus:ring-teal-500 focus:border-teal-500">
+                            </div>
+                        </div>
+                        
+                        <!-- Notes (on the right) -->
+                        <div class="flex flex-col col-span-1">
+                            <label for="modalNotes" class="block text-gray-700">Notes</label>
+                            <textarea id="modalNotes" name="notes"
+                                class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500"></textarea>
+                        </div>
                     </div>
+                    
 
                     <div id="makeAdminSection" class="grid grid-cols-3 gap-4 hidden">
                         <div>

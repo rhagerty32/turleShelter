@@ -88,7 +88,7 @@ router.post("/login", async (req, res) => {
   const originalUrl = req.body.originalUrl || "/stats";
   try {
     // Query the user table to find the record
-    const user = await knex("login")
+    const user = await knex("volunteer")
       .select()
       .where({ email, password }) // Replace with hashed password comparison in production
       .first(); // Returns the first matching record
@@ -168,12 +168,22 @@ router.get("/events", checkAuthenticated, (req, res) => {
 router.get("/volunteers", checkAuthenticated, (req, res) => {
   knex("volunteer")
     .select()
+    .join("location","location.zip","volunteer.zip")
     .orderBy("lastname", "asc")
     .then((volunteers) => {
-      res.render("layout", {
-        title: "Volunteers",
-        page: "volunteers",
-        volunteers: volunteers,
+      knex("skilllevel")
+      .select()
+      .then((skilllevel) => {
+        res.render("layout", {
+          title: "Volunteers",
+          page: "volunteers",
+          volunteers: volunteers,
+          skilllevel: skilllevel,
+        });
+      })
+      .catch((error) => {
+        console.error("Error querying database:", error);
+        res.status(500).send("Internal Server Error");
       });
     })
     .catch((error) => {
@@ -187,14 +197,22 @@ router.post("/editVolunteer", (req, res) => {
     firstname,
     lastname,
     email,
-    phone,
+    phonenumber,
     skillid,
     city,
     state,
     availability,
     discoverymethod,
     notes,
+    zip,
+    range,
+    leader,
+    teacher,
+    password,
+    jobrole
   } = req.body;
+  const isleader = leader === 'on';
+  const isteacher = teacher === 'on';
 
   knex("volunteer")
     .where({ email })
@@ -202,16 +220,35 @@ router.post("/editVolunteer", (req, res) => {
       email,
       firstname,
       lastname,
-      phone,
+      phonenumber,
       skillid,
-      city,
-      state,
       availability,
       discoverymethod,
       notes,
+      zip,
+      range,
+      leader: isleader,
+      teacher: isteacher,
+      password,
+      jobrole
     })
     .then(() => {
-      res.redirect("/volunteers");
+      knex("location")
+        .insert({
+          zip,
+          city,
+          state
+        })
+        .onConflict("zip") // Assuming zip is a unique field
+        .merge() // This will update the record if there's a conflict on the "zip" field
+        .then(() => {
+          res.redirect("/volunteers");
+        })
+        .catch((error) => {
+          console.error("Error updating volunteer:", error);
+          res.status(500).send("Internal Server Error");
+        });
+          
     })
     .catch((error) => {
       console.error("Error updating volunteer:", error);
