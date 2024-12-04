@@ -65,27 +65,15 @@
         }
     }
 
-    function toggleEventType() {
-        const eventType = document.getElementById('eventType');
-        const eventTypeLabel = document.getElementById('eventTypeLabel');
-        const elements = document.getElementsByClassName('distributionEvent');
-
-        for (let i in elements) {
-            if (eventType.checked) {
-                elements[i].classList.add('hidden');
-                document.getElementById('addEventForm').action = '/addDistributionEvent';
-            } else {
-                elements[i].classList.remove('hidden');
-                document.getElementById('addEventForm').action = '/addServiceEvent';
-            }
-        }
+    function saveDistributionEvent() {
+        const form = document.getElementById('addEventForm');
+        form.action = '/addDistributionEvent';
+        form.submit();
     }
 </script>
 
 
 <body class="bg-gray-50 font-sans">
-
-
     <div class="container mx-auto py-12 px-6 space-y-6">
         <div class="flex flex-row justify-between items-center mt-6">
             <h2 class="text-2xl font-bold text-gray-800">All Events</h2>
@@ -93,8 +81,6 @@
                 Add Event
             </button>
         </div>
-
-
         <div class="space-y-4">
             <% if (events && events.length> 0) { %>
                 <% events.forEach(event=> { %>
@@ -367,7 +353,7 @@
 
 
                 <!-- DETAILS -->
-                <div class="distributionEvent">
+                <div>
                     <label for="details" class="block text-gray-700">Details</label>
                     <textarea name="details" id="details"
                         class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500"></textarea>
@@ -376,7 +362,7 @@
             <div class="mt-6 flex justify-between gap-4">
                 <button type="button" onclick="handleCancel()"
                     class="px-6 py-2 bg-gray-600 text-white rounded-lg shadow-md hover:bg-gray-700">Cancel</button>
-                <button id="saveBtn" type="submit"
+                <button id="saveBtn" type="submit" onclick="saveDistributionEvent()"
                     class="px-6 py-2 bg-teal-500 text-white rounded-lg shadow-md hover:bg-teal-600">Save</button>
             </div>
     </div>
