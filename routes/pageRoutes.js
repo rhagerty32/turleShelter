@@ -550,6 +550,20 @@ router.post("/editVolunteer", (req, res) => {
             res.status(500).send("Internal Server Error");
         });
 });
+router.post("/deleteEvent", (req, res) => {
+  const { eventid } = req.body;
+
+  knex("events")
+      .where({ eventid })
+      .del()
+      .then(() => {
+        res.redirect("/events");
+      })
+      .catch((error) => {
+          console.error("Error deleting event:", error);
+          res.status(500).send("Internal Server Error");
+      });
+});
 
 router.post("/deleteVolunteer", (req, res) => {
     const { email } = req.body;
