@@ -2,17 +2,29 @@
     let burgerView = false;
     // to toggle the link text based on the background
     let txtColor = 'text-black';
+    let titleColor = 'rgb(13 148 136 / 80%)';
+
+    // Check if we're on the homepage and adjust colors accordingly
     if (window.location.pathname === '/') {
         txtColor = 'text-white';
+        titleColor = '#40d6ca';
     }
 
-    // Set the text color class dynamically based on the current path. So the text shows on the background
     document.addEventListener('DOMContentLoaded', () => {
-        // Get all the elements with the class name 'navButton'
+        // Get all elements with the class name 'navButton'
         const homeLinks = document.getElementsByClassName('navButton');
-        // Use a for loop to iterate over the HTMLCollection
-        for (let i = 0; i < homeLinks.length; i++) {
-            homeLinks[i].classList.add(txtColor);
+        
+        // Check if elements with the class 'navButton' exist
+        if (homeLinks.length > 0) {
+            for (let i = 0; i < homeLinks.length; i++) {
+                homeLinks[i].classList.add(txtColor);
+            }
+        }
+
+        // Check if the element with the id 'navTitle' exists
+        const navTitle = document.getElementById('navTitle');
+        if (navTitle) {
+            navTitle.style.color = titleColor;
         }
     });
 
@@ -71,7 +83,7 @@
 
 
 <nav id="navBar" class="absolute top-0 left-0 right-0 rounded-b-2xl flex flex-wrap z-50 justify-between items-center px-4 py-2 bg-none">
-    <h2 id="navTitle" class="font-bold flex-shrink-0 max-w-full md:text-3xl" style="color: #40d6ca;">
+    <h2 id="navTitle" class="font-bold flex-shrink-0 max-w-full md:text-3xl">
         Turtle Shelter Project
     </h2>
     <div id = "linksDiv" class="flex flex-wrap z-50 justify-between items-center px-4 py-2 bg-none">
