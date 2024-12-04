@@ -103,10 +103,6 @@ router.get("/hostAnEvent", (req, res) => {
         });
         })
       })
-      .catch((error) => {
-          console.error("Error querying database:", error);
-          res.status(500).send("Internal Server Error");
-      });  
 
 router.post("/addServiceEvent", (req, res) => {
     const {
@@ -431,11 +427,11 @@ router.get('/events/:eventid', (req, res) => {
     const eventid = req.params.eventid;
 
     knex('events as e')
-        .join('eventdates as ed', 'e.eventid', 'ed.eventid')
-        .join('dates as d', 'ed.dateid', 'd.dateid')
-        .join('location as l', 'e.zip', 'l.zip')
-        .join('eventrequest as er', 'e.eventid', 'er.eventid')
-        .join('servicetypes as st', 'er.servicetypeid', 'st.servicetypeid')
+        .leftJoin('eventdates as ed', 'e.eventid', 'ed.eventid')
+        .leftJoin('dates as d', 'ed.dateid', 'd.dateid')
+        .leftJoin('location as l', 'e.zip', 'l.zip')
+        .leftJoin('eventrequest as er', 'e.eventid', 'er.eventid')
+        .leftJoin('servicetypes as st', 'er.servicetypeid', 'st.servicetypeid')
         .select(
             'e.eventid',
             'e.starttime',
