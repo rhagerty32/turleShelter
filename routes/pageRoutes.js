@@ -210,45 +210,45 @@ router.post("/addServiceEvent", (req, res) => {
       // Step 1: Insert data into the "events" table and get the generated eventid
       knex("events")
         .insert({
-          starttime: starttime || null,
-          address: address || null,
-          zip: zip || null,
-          status: status || null,
-          plannedduration: plannedduration || null,
-          details: details || null,
+          starttime: starttime || '00:00:00',
+          address: address || '',
+          zip: zip || '00000',
+          status: status || "",
+          plannedduration: plannedduration || 0.0,
+          details: details || '',
         })
         .returning("eventid") // Return the generated eventid
         .then(([ eventid ]) => {
             // Step 2: Use the eventid to insert related data into the "eventrequest" table
             knex("eventrequest")
                 .insert({
-                  eventid: eventid.eventid || null, // Use the generated eventid
-                  servicetypeid: servicetypeid || null,
-                  jenstorylength: jenstorylength || null,
-                  jenstory: jenstory || null,
-                  sergers: sergers || null,
-                  sewingmachines: sewingmachines || null,
-                  childrenunder10: childrenunder10 || null,
-                  advancedsewers: advancedsewers || null,
-                  basicsewers: basicsewers || null,
-                  adultparticipants: adultparticipants || null,
-                  organization: organization || null,
-                  venuesize: venuesize || null,
-                  numrooms: numrooms || null,
-                  numtablesround: numtablesround || null,
-                  numtablesrectangle: numtablesrectangle || null,
+                  eventid: eventid.eventid || 0, // Use the generated eventid
+                  servicetypeid: servicetypeid || 1,
+                  jenstorylength: jenstorylength || 0,
+                  jenstory: jenstory || 0,
+                  sergers: sergers || 0,
+                  sewingmachines: sewingmachines || 0,
+                  childrenunder10: childrenunder10 || 0,
+                  advancedsewers: advancedsewers || 0,
+                  basicsewers: basicsewers || 0,
+                  adultparticipants: adultparticipants || 0,
+                  organization: organization || '',
+                  venuesize: venuesize || 0,
+                  numrooms: numrooms || 0,
+                  numtablesround: numtablesround || 0,
+                  numtablesrectangle: numtablesrectangle || 0,
                   
                 })
                 .then(() => {
                     // Step 3: Check if the provided date already exists in the "dates" table
                     knex("dates")
-                      .insert({ date: date || null })
+                      .insert({ date: date || '2020-01-01' })
                       .returning("dateid")
                       .then(([newDateId]) => {
                           const dateId = newDateId.dateid; // Extract dateid here
 
                           knex("eventdates")
-                              .insert({ eventid:eventid.eventid || null, dateid: dateId || null})
+                              .insert({ eventid:eventid.eventid || 0, dateid: dateId || 0})
                               .onConflict(["eventid", "dateid"]) // Handle duplicate key
                               .ignore()
                               .then(() => {
@@ -304,24 +304,24 @@ router.post("/addDistributionEvent", (req, res) => {
       .then(() => {
         knex("events")
           .insert({
-            starttime: starttime || null,
-            address: address || null,
-            zip: zip || null,
-            status: status || null,
-            plannedduration: plannedduration || null,
-            details: details || null,
+            starttime: starttime || "00:00:00",
+            address: address || '',
+            zip: zip || '',
+            status: status || '',
+            plannedduration: plannedduration || 0,
+            details: details || '',
           })
           .returning("eventid") // Return the generated eventid
           .then(([ eventid ]) => {
                       // Step 3: Check if the provided date already exists in the "dates" table
                       knex("dates")
-                        .insert({ date:date || null })
+                        .insert({ date:date || "2020-01-01" })
                         .returning("dateid")
                         .then(([newDateId]) => {
                             const dateId = newDateId.dateid; // Extract dateid here
                             const eventId = eventid.eventid
                             knex("eventdates")
-                                .insert({ eventid:eventId || null, dateid: dateId || null})
+                                .insert({ eventid:eventId || 0, dateid: dateId || 0})
                                 .onConflict(["eventid", "dateid"]) // Handle duplicate key
                                 .ignore()
                                 .then(() => {
@@ -344,117 +344,117 @@ router.post("/addDistributionEvent", (req, res) => {
           });
         });
 
-  router.post("/editEvent", (req, res) => {
-      // Destructure incoming data from the form
-      console.log("editing event")
-      console.log(req.body); // Log the whole body to verify eventid is included
-      const {
-          organization,
-          status,
-          date,
-          starttime,
-          plannedduration,
-          address,
-          city,
-          state,
-          zip,
-          servicetypeid,
-          jenstory,
-          jenstorylength,
-          sergers,
-          sewingmachines,
-          childrenunder10,
-          adultparticipants,
-          advancedsewers,
-          basicsewers,
-          venuesize,
-          numrooms,
-          numtablesround,
-          numtablesrectangle,
-          details,
-          eventid
-      } = req.body;
-      console.log(new Date(date))
-      
-      // Step 5: Insert or update the location table with zip, city, and state
-      knex("location")
-        .insert({ zip:zip || null, city:city || null, state:state || null})
-        .onConflict("zip") // If zip exists, update city/state
-        .merge() // Merge updates for existing zip
-        .then(() => {
-          // Step 1: Update the "events" table with the provided eventid
-          knex("events")
-            .where({ eventid })
-            .update({
-              starttime: starttime || null,
-              address: address || null,
-              zip: zip || null,
-              status: status || null,
-              plannedduration: plannedduration || null,
-              details: details || null,
-            })
-            .then(() => {
-                // Step 2: Update data in the "eventrequest" table
-                knex("eventrequest")
-                  .where({ eventid })
-                  .update({
-                    servicetypeid: servicetypeid || null,
-                    jenstorylength: jenstorylength || null,
-                    jenstory: jenstory || null,
-                    sergers: sergers || null,
-                    sewingmachines: sewingmachines || null,
-                    childrenunder10: childrenunder10 || null,
-                    advancedsewers: advancedsewers || null,
-                    basicsewers: basicsewers || null,
-                    adultparticipants: adultparticipants || null,
-                    organization: organization || null,
-                    venuesize: venuesize || null,
-                    numrooms: numrooms || null,
-                    numtablesround: numtablesround || null,
-                    numtablesrectangle: numtablesrectangle || null,                    
+router.post("/editEvent", (req, res) => {
+    // Destructure incoming data from the form
+    console.log("editing event")
+    console.log(req.body); // Log the whole body to verify eventid is included
+    const {
+        organization,
+        status,
+        date,
+        starttime,
+        plannedduration,
+        address,
+        city,
+        state,
+        zip,
+        servicetypeid,
+        jenstory,
+        jenstorylength,
+        sergers,
+        sewingmachines,
+        childrenunder10,
+        adultparticipants,
+        advancedsewers,
+        basicsewers,
+        venuesize,
+        numrooms,
+        numtablesround,
+        numtablesrectangle,
+        details,
+        eventid
+    } = req.body;
+    console.log(new Date(date))
+    
+    // Step 5: Insert or update the location table with zip, city, and state
+    knex("location")
+      .insert({ zip:zip || '', city:city || '', state:state || ''})
+      .onConflict("zip") // If zip exists, update city/state
+      .merge() // Merge updates for existing zip
+      .then(() => {
+        // Step 1: Update the "events" table with the provided eventid
+        knex("events")
+          .where({ eventid })
+          .update({
+            starttime: starttime || '00:00:00',
+            address: address || '',
+            zip: zip || '',
+            status: status || '',
+            plannedduration: plannedduration || 0,
+            details: details || '',
+          })
+          .then(() => {
+              // Step 2: Update data in the "eventrequest" table
+              knex("eventrequest")
+                .where({ eventid })
+                .update({
+                  servicetypeid: servicetypeid || 0,
+                  jenstorylength: jenstorylength || 0,
+                  jenstory: jenstory || 0,
+                  sergers: sergers || 0,
+                  sewingmachines: sewingmachines || 0,
+                  childrenunder10: childrenunder10 || 0,
+                  advancedsewers: advancedsewers || 0,
+                  basicsewers: basicsewers || 0,
+                  adultparticipants: adultparticipants || 0,
+                  organization: organization || '',
+                  venuesize: venuesize || 0,
+                  numrooms: numrooms || 0,
+                  numtablesround: numtablesround || 0,
+                  numtablesrectangle: numtablesrectangle || 0,                    
+                })
+                .then(() => {
+                    // Step 3: Check if the provided date already exists in the "dates" table
+                    knex("dates")
+                      .insert({ date:date || '2020-01-01' })
+                      .onConflict("date") // Handle conflicts based on the "date" field
+                      .merge() // If the date already exists, merge the update
+                      .returning("dateid")
+                      .then(([newDateId]) => {
+                          const dateId = newDateId.dateid; // Extract dateid here
+
+                          // Update the eventdates table with the new dateid
+                          knex("eventdates")
+                              .where({ eventid })  // Ensure we are updating the correct eventid
+                              .update({ dateid: dateId || 0})
+                              .then(() => {
+                                  res.redirect(`/events/${eventid}`); // Correct URL with eventid
+                              })
+                              .catch((err) => {
+                                  console.error("EventDates error:", err);
+                                  res.status(500).send("Error updating eventdates");
+                              });
+                      })
+                      .catch((err) => {
+                          console.error("Dates error:", err);
+                          res.status(500).send("Error updating date");
+                      });
                   })
-                  .then(() => {
-                      // Step 3: Check if the provided date already exists in the "dates" table
-                      knex("dates")
-                        .insert({ date:date || null })
-                        .onConflict("date") // Handle conflicts based on the "date" field
-                        .merge() // If the date already exists, merge the update
-                        .returning("dateid")
-                        .then(([newDateId]) => {
-                            const dateId = newDateId.dateid; // Extract dateid here
-  
-                            // Update the eventdates table with the new dateid
-                            knex("eventdates")
-                                .where({ eventid })  // Ensure we are updating the correct eventid
-                                .update({ dateid: dateId || null})
-                                .then(() => {
-                                    res.redirect(`/events/${eventid}`); // Correct URL with eventid
-                                })
-                                .catch((err) => {
-                                    console.error("EventDates error:", err);
-                                    res.status(500).send("Error updating eventdates");
-                                });
-                        })
-                        .catch((err) => {
-                            console.error("Dates error:", err);
-                            res.status(500).send("Error updating date");
-                        });
-                    })
-                    .catch((err) => {
-                        console.error("EventRequest error:", err);
-                        res.status(500).send("Error updating eventRequest");
-                    });
-            })
-            .catch((err) => {
-                console.error("Events error:", err);
-                res.status(500).send("Error updating events");
-            });
-        })
-        .catch((err) => {
-            console.error("Location error:", err);
-            res.status(500).send("Error updating location");
-        });
-  });
+                  .catch((err) => {
+                      console.error("EventRequest error:", err);
+                      res.status(500).send("Error updating eventRequest");
+                  });
+          })
+          .catch((err) => {
+              console.error("Events error:", err);
+              res.status(500).send("Error updating events");
+          });
+      })
+      .catch((err) => {
+          console.error("Location error:", err);
+          res.status(500).send("Error updating location");
+      });
+});
       
 
 
@@ -592,16 +592,16 @@ router.post("/editVolunteer", (req, res) => {
     knex("volunteer")
         .where({ email })
         .update({
-          email: email || null,
-          firstname: firstname || null,
-          lastname: lastname || null,
-          phone: phone || null,
-          skillid: skillid || null,
-          city: city || null,
-          state: state || null,
-          availability: availability || null,
-          discoverymethod: discoverymethod || null,
-          notes: notes || null,
+          email: email || '',
+          firstname: firstname || '',
+          lastname: lastname || '',
+          phone: phone || '',
+          skillid: skillid || 0,
+          city: city || '',
+          state: state || '',
+          availability: availability || '',
+          discoverymethod: discoverymethod || '',
+          notes: notes || '',
           
         })
         .then(() => {
@@ -633,16 +633,16 @@ router.post("/makeAdmin", (req, res) => {
         .insert({ email, password, jobrole })
         .then(() => {
             return knex("volunteer").update({
-              firstname: firstname || null,
-              lastname: lastname || null,
-              email: email || null,
-              phone: phone || null,
-              skillid: skillid || null,
-              city: city || null,
-              state: state || null,
-              availability: availability || null,
-              discoverymethod: discoverymethod || null,
-              notes: notes || null,
+              firstname: firstname || '',
+              lastname: lastname || '',
+              email: email || '',
+              phone: phone || '',
+              skillid: skillid || 0,
+              city: city || '',
+              state: state || '',
+              availability: availability || '',
+              discoverymethod: discoverymethod || '',
+              notes: notes || '',
               
             });
         })
@@ -713,16 +713,16 @@ router.post("/addUser", (req, res) => {
         .insert({ email, password, jobrole })
         .then(() => {
             return knex("volunteer").insert({
-              firstname: firstname || null,
-              lastname: lastname || null,
-              email: email || null,
-              phone: phone || null,
-              skillid: skillid || null,
-              city: city || null,
-              state: state || null,
-              availability: availability || null,
-              discoverymethod: discoverymethod || null,
-              notes: notes || null,
+              firstname: firstname || '',
+              lastname: lastname || '',
+              email: email || '',
+              phone: phone || '',
+              skillid: skillid || 0,
+              city: city || '',
+              state: state || '',
+              availability: availability || '',
+              discoverymethod: discoverymethod || '',
+              notes: notes || '',
               
             });
         })
@@ -756,15 +756,15 @@ router.post("/editUser", (req, res) => {
         .update({ password, jobrole })
         .then(() => {
             return knex("volunteer").where({ email }).update({
-              firstname: firstname || null,
-              lastname: lastname || null,
-              phone: phone || null,
-              skillid: skillid || null,
-              city: city || null,
-              state: state || null,
-              availability: availability || null,
-              discoverymethod: discoverymethod || null,
-              notes: notes || null,
+              firstname: firstname || '',
+              lastname: lastname || '',
+              phone: phone || '',
+              skillid: skillid || 0,
+              city: city || '',
+              state: state || '',
+              availability: availability || '',
+              discoverymethod: discoverymethod || '',
+              notes: notes || '',
               
             });
         })
