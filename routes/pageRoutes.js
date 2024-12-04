@@ -85,10 +85,16 @@ router.get("/contact", (req, res) => {
 });
 
 router.get("/volunteerRequest", (req, res) => {
-    res.render("layout", {
+  knex("skilllevel")
+    .select()
+    .then((skilllevel) => {
+      res.render("layout", {
+
         title: "Volunteer Request",
         page: "volunteerRequest",
+        skilllevel:skilllevel
     });
+  })
 });
 
 router.get("/hostAnEvent", (req, res) => {
@@ -545,48 +551,6 @@ router.post("/editVolunteer", (req, res) => {
         });
 });
 
-router.post("/makeAdmin", (req, res) => {
-    const {
-        firstname,
-        lastname,
-        email,
-        password,
-        phone,
-        jobrole,
-        skillid,
-        city,
-        state,
-        availability,
-        discoverymethod,
-        notes,
-    } = req.body;
-
-    knex("login")
-        .insert({ email, password, jobrole })
-        .then(() => {
-            return knex("volunteer").update({
-              firstname: firstname || '',
-              lastname: lastname || '',
-              email: email || '',
-              phone: phone || '',
-              skillid: skillid || 0,
-              city: city || '',
-              state: state || '',
-              availability: availability || '',
-              discoverymethod: discoverymethod || '',
-              notes: notes || '',
-              
-            });
-        })
-        .then(() => {
-            res.redirect("/volunteers");
-        })
-        .catch((error) => {
-            console.error("Error making admin:", error);
-            res.status(500).send("Internal Server Error");
-        });
-});
-
 router.post("/deleteVolunteer", (req, res) => {
     const { email } = req.body;
 
@@ -594,117 +558,10 @@ router.post("/deleteVolunteer", (req, res) => {
         .where({ email })
         .del()
         .then(() => {
-            res.redirect("/volunteers");
+          res.redirect("/volunteers");
         })
         .catch((error) => {
             console.error("Error deleting volunteer:", error);
-            res.status(500).send("Internal Server Error");
-        });
-});
-
-router.get("/users", checkAuthenticated, (req, res) => {
-    knex("login")
-        .join("volunteer", "login.email", "volunteer.email")
-        .join("skilllevel", "volunteer.skillid", "skilllevel.skillid")
-        .select(
-            "volunteer.*",
-            "login.password",
-            "login.jobrole",
-            "skilllevel.description"
-        )
-        .then((users) => {
-            res.render("layout", {
-                title: "Users",
-                page: "users",
-                users: users,
-            });
-        })
-        .catch((error) => {
-            console.error("Error querying database:", error);
-            res.status(500).send("Internal Server Error");
-        });
-});
-
-router.post("/addUser", (req, res) => {
-    const {
-        firstname,
-        lastname,
-        email,
-        password,
-        phone,
-        jobrole,
-        skillid,
-        city,
-        state,
-        availability,
-        discoverymethod,
-        notes,
-    } = req.body;
-
-    knex("login")
-        .insert({ email, password, jobrole })
-        .then(() => {
-            return knex("volunteer").insert({
-              firstname: firstname || '',
-              lastname: lastname || '',
-              email: email || '',
-              phone: phone || '',
-              skillid: skillid || 0,
-              city: city || '',
-              state: state || '',
-              availability: availability || '',
-              discoverymethod: discoverymethod || '',
-              notes: notes || '',
-              
-            });
-        })
-        .then(() => {
-            res.redirect("/users");
-        })
-        .catch((error) => {
-            console.error("Error adding user:", error);
-            res.status(500).send("Internal Server Error");
-        });
-});
-
-router.post("/editUser", (req, res) => {
-    const {
-        firstname,
-        lastname,
-        email,
-        password,
-        phone,
-        jobrole,
-        skillid,
-        city,
-        state,
-        availability,
-        discoverymethod,
-        notes,
-    } = req.body;
-
-    knex("login")
-        .where({ email })
-        .update({ password, jobrole })
-        .then(() => {
-            return knex("volunteer").where({ email }).update({
-              firstname: firstname || '',
-              lastname: lastname || '',
-              phone: phone || '',
-              skillid: skillid || 0,
-              city: city || '',
-              state: state || '',
-              availability: availability || '',
-              discoverymethod: discoverymethod || '',
-              notes: notes || '',
-              
-            });
-        })
-        .then(() => {
-            res.redirect("/users");
-        })
-        .catch((error) => {
-            console.error("Error updating user:", error);
             res.status(500).send("Internal Server Error");
         });
 });
@@ -713,24 +570,6 @@ router.get("/login", (req, res) => {
     res.render("pages/login", {
         originalUrl: req.session.originalUrl || "/",
     });
-});
-
-router.post("/deleteUser", (req, res) => {
-    const { email } = req.body;
-
-    knex("volunteer")
-        .where({ email })
-        .del()
-        .then(() => {
-            return knex("login").where({ email }).del();
-        })
-        .then(() => {
-            res.redirect("/users");
-        })
-        .catch((error) => {
-            console.error("Error deleting user:", error);
-            res.status(500).send("Internal Server Error");
-        });
 });
 
 router.post("/logout", (req, res) => {
