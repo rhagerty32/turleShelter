@@ -39,20 +39,17 @@
     // Show modal for editing event details
     function openModal() {
         document.getElementById('addModal').classList.remove('hidden');
-    }
-
+    };
 
     // Hide modal
     function handleCancel() {
         document.getElementById('addModal').classList.add('hidden');
-    }
-
+    };
 
     function toggleEventType() {
         const eventType = document.getElementById('eventType');
         const eventTypeLabel = document.getElementById('eventTypeLabel');
         const elements = document.getElementsByClassName('distributionEvent');
-
 
         for (let i in elements) {
             if (eventType.checked) {
@@ -61,15 +58,15 @@
             } else {
                 elements[i].classList.remove('hidden');
                 document.getElementById('addEventForm').action = '/addServiceEvent';
-            }
-        }
-    }
+            };
+        };
+    };
 
     function saveDistributionEvent() {
         const form = document.getElementById('addEventForm');
         form.action = '/addDistributionEvent';
         form.submit();
-    }
+    };
 </script>
 
 
@@ -109,8 +106,6 @@
             </div>
             <% } %>
     </div>
-    </div>
-
 
     <!-- ^ ADD EVENT -->
     <div id="addModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50 hidden">
@@ -167,7 +162,7 @@
                     </div>
                     <div>
                         <label for="plannedduration" class="block text-gray-700">Planned Duration (hrs)</label>
-                        <input name="plannedduration" required type="number" id="plannedduration" value=""
+                        <input name="plannedduration" required type="number" id="plannedduration" min="0" value=""
                             class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                     </div>
                 </div>
@@ -281,7 +276,7 @@
                     </div>
                     <div>
                         <label for="jenstorylength" class="block text-gray-700">Jen Story Length (mins)</label>
-                        <input name="jenstorylength" required type="text" id="jenstorylength" value=""
+                        <input name="jenstorylength" required type="text" id="jenstorylength" min="0" value=""
                             class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                     </div>
                 </div>
@@ -291,12 +286,12 @@
                 <div class="distributionEvent grid grid-cols-2 gap-4">
                     <div>
                         <label for="sergers" class="block text-gray-700">Sergers</label>
-                        <input name="sergers" type="number" id="sergers" value=""
+                        <input name="sergers" type="number" id="sergers" min="0" value=""
                             class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                     </div>
                     <div>
                         <label for="sewingmachines" class="block text-gray-700">Sewing Machines</label>
-                        <input name="sewingmachines" type="number" id="sewingmachines" value=""
+                        <input name="sewingmachines" type="number" id="sewingmachines" min="0" value=""
                             class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                     </div>
                 </div>
@@ -306,22 +301,22 @@
                 <div class="distributionEvent grid grid-cols-4 gap-4">
                     <div>
                         <label for="childrenunder10" class="block text-gray-700">Children < 10</label>
-                                <input name="childrenunder10" type="number" id="childrenunder10" value=""
+                                <input name="childrenunder10" type="number" min="0" id="childrenunder10" value=""
                                     class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                     </div>
                     <div>
                         <label for="adultparticipants" class="block text-gray-700">Adults</label>
-                        <input name="adultparticipants" type="number" id="adultparticipants" value=""
+                        <input name="adultparticipants" type="number" min="1" id="adultparticipants" value=""
                             class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                     </div>
                     <div>
                         <label for="advancedsewers" class="block text-gray-700">Adv. Sewers</label>
-                        <input name="advancedsewers" type="number" id="advancedsewers" value=""
+                        <input name="advancedsewers" type="number" min="0" id="advancedsewers" value=""
                             class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                     </div>
                     <div>
                         <label for="basicsewers" class="block text-gray-700">Basic Sewers</label>
-                        <input name="basicsewers" type="number" id="basicsewers" value=""
+                        <input name="basicsewers" type="number" id="basicsewers" min="0" value=""
                             class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                     </div>
                 </div>
@@ -331,22 +326,22 @@
                 <div class="distributionEvent grid grid-cols-4 gap-4">
                     <div>
                         <label for="venuesize" class="block text-gray-700">Venue sq. ft.</label>
-                        <input name="venuesize" type="text" id="venuesize" value=""
+                        <input name="venuesize" type="text" id="venuesize" min="0" value=""
                             class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                     </div>
                     <div>
                         <label for="numrooms" class="block text-gray-700">Rooms</label>
-                        <input name="numrooms" required type="number" id="numrooms" value=""
+                        <input name="numrooms" required type="number" id="numrooms" min="0" value=""
                             class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                     </div>
                     <div>
                         <label for="numtablesround" class="block text-gray-700">Round Tables</label>
-                        <input name="numtablesround" type="number" id="numtablesround" value=""
+                        <input name="numtablesround" type="number" id="numtablesround" min="0" value=""
                             class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                     </div>
                     <div>
                         <label for="numtablesrectangle" class="block text-gray-700">Rect. Tables</label>
-                        <input name="numtablesrectangle" type="number" id="numtablesrectangle" value=""
+                        <input name="numtablesrectangle" type="number" id="numtablesrectangle" min="0" value=""
                             class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                     </div>
                 </div>
@@ -365,10 +360,8 @@
                 <button id="saveBtn" type="submit" onclick="saveDistributionEvent()"
                     class="px-6 py-2 bg-teal-500 text-white rounded-lg shadow-md hover:bg-teal-600">Save</button>
             </div>
+        </form>
     </div>
-
-
 </body>
-
 
 </html>
