@@ -26,6 +26,13 @@
             width: 100%;
             margin: 0 auto;
         }
+        
+        .homeBtnDiv {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+        }
 
         header {
             background: url('header-image.jpg') no-repeat center center/cover;
@@ -66,7 +73,7 @@
         }
 
         header .btn {
-            margin-top: 20px;
+            margin: 20px;
             z-index: 2;
             position: relative;
         }
@@ -97,7 +104,14 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            object-position: top;
             pointer-events: none;
+        }
+        .containerHead {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
         }
     </style>
 </head>
@@ -107,49 +121,56 @@
         <img class="headerImg z-0"
             src="https://images.squarespace-cdn.com/content/v1/5b5a266fcef372310148d6d6/1567462206269-3U6NXPS9IWC1S97PD39J/Picture11.jpg?format=2500w"
             alt="Turtle Shelter Logo">
-        <h1 class="font-bold z-10">STARTS WITH YOU</h1>
         <p class="z-10">Helping to save lives of people experiencing homelessness</p>
-        <a href="#learn-more" class="btn z-0">Learn More</a>
+        <h1 class="font-bold z-10">STARTS WITH YOU</h1>
+        <div id="homeBtnDiv">
+            <a href="#learn-more" class="btn z-0">Learn More</a>
+            <a href="#donate" class="btn z-0">Donate</a>
+        </div>
     </header>
 
     <div class="container flex flex-col gap-6">
         <div class="bg-white p-10 rounded-lg shadow-md flex flex-col gap-4">
-            <h2 class="text-3xl text-black">What is a Turtle Shelter Vest?</h2>
-            <p>
-                A high-tech but simple solution to help save lives: a portable "shelter" you can carry with you, just
-                like a turtle... and YOU can help!
+            <h2 class="text-3xl font-bold text-black">What is a Turtle Shelter Vest?</h2>
+            <p class="text-lg text-gray-700 mb-3">
+                A portable, high-tech solution designed to provide warmth and protection, just like a turtle’s shell. Simple, effective, and life-saving.
             </p>
-            <p>
-                One winter when Jen was homeless, 7 of her friends froze to death. Jen is no longer homeless and has
-                figured out a solution: high-tech foam vests that are inexpensive, keep a person warm to 10 degrees
-                below zero, help SAVE lives, and alleviate suffering.
-            </p>
-            <p>
-                YOU can request vests for your community—and you can make vests and have your friends, business
-                colleagues, church members, or club make vests, too!
-            </p>
+            <ul style="padding-left: 20px;">
+                <li class="flex items-center">Prevents hypothermia temperatures down to
+                    <span class="font-semibold text-3xl m-2" style="color: #35B3A8;">-10&deg;F</span>.
+                </li>
+                <li>Keeps you warm even when wet.</li>
+            </ul>            
         </div>
-
+        
+        <p class="text-2xl text-gray-700 mb-6 text-center">
+            <strong>YOU</strong> have the power to make a real difference!
+        </p>
         <div class="flex flex-row gap-6">
             <div class="bg-white p-10 rounded-lg shadow-md flex flex-row gap-4">
                 <div class="flex flex-col gap-4 justify-between">
-                    <h2 class="text-3xl text-black">Take Action</h2>
+                    <div id="volunteerHead" class="containerHead">
+                        <h2 class="text-3xl text-black">Take Action</h2>
+                        <a href="volunteerRequest" class="btn w-fit">Volunteer →</a>
+                    </div>
                     <p>
                         Ready to take the next step? You can become a volunteer so we can keep you updated on events
                         near you!
                     </p>
-                    <a href="volunteerRequest" class="btn w-fit">Volunteer →</a>
+
                 </div>
             </div>
 
             <div class="bg-white p-10 rounded-lg shadow-md flex flex-row gap-4">
                 <div class="flex flex-col gap-4 justify-between">
-                    <h2 class="text-3xl text-black">Host an Event</h2>
+                    <div id="volunteerHead" class="containerHead">
+                        <h2 class="text-3xl text-black">Host an Event</h2>
+                        <a href="/hostAnEvent" class="btn w-fit">Become a Host →</a>
+                    </div>
                     <p>
                         Hosting an event brings your community together and makes an impact. Organize a vest-making
                         workshop, fundraiser, or awareness campaign to support our mission and save lives.
                     </p>
-                    <a href="/hostAnEvent" class="btn w-fit">Become a Host →</a>
                 </div>
             </div>
 

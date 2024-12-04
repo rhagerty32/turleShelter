@@ -88,7 +88,7 @@ router.post("/login", async (req, res) => {
   const originalUrl = req.body.originalUrl || "/stats";
   try {
     // Query the user table to find the record
-    const user = await knex("login")
+    const user = await knex("volunteer")
       .select()
       .where({ email, password }) // Replace with hashed password comparison in production
       .first(); // Returns the first matching record

@@ -1,14 +1,51 @@
-<nav class="fixed bg-white shadow-lg rounded-b-2xl flex flex-row z-50 border-b w-full justify-between px-10 py-2">
-    <a href="/" id="homeLink" class="hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md">
+<script>
+    let txtColor = 'text-black';
+    if (window.location.pathname === '/') {
+        txtColor = 'text-white';
+    }
+
+    // Set the text color class dynamically based on the current path. So the text shows on the background
+    document.addEventListener('DOMContentLoaded', () => {
+        // Get all the elements with the class name 'navButton'
+        const homeLinks = document.getElementsByClassName('navButton');
+        // Use a for loop to iterate over the HTMLCollection
+        for (let i = 0; i < homeLinks.length; i++) {
+            homeLinks[i].classList.add(txtColor);
+        }
+    });
+
+    function mobileTextToggle() {
+        if (window.innerWidth < 768) {
+            document.getElementById('eventLink').textContent = 'Host';
+        }else{
+            document.getElementById('eventLink').textContent = 'Host an Event';
+        }
+    }
+
+    // event handlers for mobile responsiveness
+    window.addEventListener('resize', () => {
+    mobileTextToggle();
+    // able to add more function here on the same event listener
+    });
+
+    window.addEventListener('load', () => {
+        mobileTextToggle();
+    });
+
+</script>
+
+<nav class="absolute top-0 left-0 right-0 rounded-b-2xl flex flex-row z-50 w-full justify-end px-10 py-2">
+    <h2 id="navTitle" class="self-center mr-auto text-3xl font-bold" style="color:#35B3A8;">Turtle Shelter Project</h2>
+    <a href="/" id="homeLink" class="navButton hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md cursor-pointer text-lg">
         Home
     </a>
     <% if (!authenticated) { %>
         <a href="/volunteerRequest" id="volunteerLink"
-            class="hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md">
-            Become a Volunteer
+            class="navButton hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md text-lg">
+            Volunteer
         </a>
         <a href="/hostAnEvent" id="eventLink"
-            class="hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md">
+            class="navButton hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md text-lg">
             Host an Event
         </a>
         <% } %>
@@ -16,7 +53,7 @@
             <% if (authenticated) { %>
                 <div class="relative group z-50">
                     <div id="adminLink"
-                        class="hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md cursor-pointer">
+                        class="navButton hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md cursor-pointer text-lg">
                         Admin
                     </div>
                     <div class="absolute hidden group-hover:block bg-white shadow-lg rounded-md pt-2 z-50 border">
@@ -25,7 +62,7 @@
                             Stats
                         </a>
                         <a href="/events" id="eventsLink"
-                            class="block hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md">
+                            class="block hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md ">
                             Events
                         </a>
                         <a href="/volunteers" id="volunteersLink"
@@ -40,17 +77,17 @@
                 </div>
                 <% } %>
                     <a href="/contact" id="contactLink"
-                        class="hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md">
+                        class="navButton hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md cursor-pointer text-lg">
                         Contact
                     </a>
                     <% if (authenticated) { %>
                         <a href="/logout" id="logoutLink"
-                            class="hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md">
+                            class="navButton hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md cursor-pointer text-lg">
                             Logout
                         </a>
                         <% } else { %>
                             <a href="/login" id="loginLink"
-                                class="hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md">
+                                class="navButton hover:bg-gray-200 transition-all duration-150 py-1 px-2 rounded-md cursor-pointer text-lg">
                                 Login
                             </a>
                             <% } %>
