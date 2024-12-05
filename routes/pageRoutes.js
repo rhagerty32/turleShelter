@@ -656,11 +656,7 @@ router.get('/events/:eventid', (req, res) => {
         .leftJoin('location as l', 'e.zip', 'l.zip')
         .leftJoin('eventrequest as er', 'e.eventid', 'er.eventid')
         .leftJoin('servicetypes as st', 'er.servicetypeid', 'st.servicetypeid')
-        .leftJoin('eventoutcome as eo','eo.eventid','e.eventid')
-        .leftJoin('eventitems as ei', ' ei.eventid', 'eo.eventid')
-        .leftJoin('items as i','i.itemid', 'ei.itemid')
         .leftJoin('distributionevent as de','de.eventid', 'e.eventid')
-        .leftJoin('recipients as r', 'r.eventid', 'de.eventid')
         .select(
             'e.eventid',
             'e.starttime',
@@ -687,14 +683,7 @@ router.get('/events/:eventid', (req, res) => {
             'er.numtablesround',
             'er.numtablesrectangle',
             'st.description',
-            'eo.headcount', // add all of the other stuff to get
-            'eo.servicehours',
-            'ei.itemid',
-            'ei.quantity',
-            'i.description',
             'de.temperature',
-            'r.name',
-            'r.itemid'
 
         )
         .where('e.eventid', eventid)
@@ -715,14 +704,43 @@ router.get('/events/:eventid', (req, res) => {
                                         .select('firstname', 'lastname', 'email', 'phone')
                                         .where({ eventid })
                                         .then((requesters) => {
-                                            res.render('layout', {
-                                                title: 'Single Event',
-                                                page: 'singleEvent',
-                                                event: event,
-                                                servicetypes: servicetypes,
-                                                items: items,
-                                                dates: dates,
-                                                requesters: requesters,
+                                          knex('recipients')
+                                            .select('name', 'itemid')
+                                            .where({ eventid })
+                                            .then((recipients) => {
+                                              knex('eventitems')
+                                                .select('itemid', 'quantity')
+                                                .where({ eventid })
+                                                .then((eventitems) => {
+                                                  knex('items')
+                                                    .select('itemid', 'description')
+                                                    .then((items) => {
+                                                        res.render('layout', {
+                                                            title: 'Single Event',
+                                                            page: 'singleEvent',
+                                                            event: event,
+                                                            servicetypes: servicetypes,
+                                                            items: items,
+                                                            dates: dates,
+                                                            requesters: requesters,
+                                                            recipients:recipients,
+                                                            eventitems:eventitems,
+                                                            items:items
+                                                        });
+                                                })
+                                                .catch((error) => {
+                                                    console.error('Error querying recipients:', error);
+                                                    res.status(500).send('Internal Server Error');
+                                                });
+                                              })
+                                              .catch((error) => {
+                                                  console.error('Error querying recipients:', error);
+                                                  res.status(500).send('Internal Server Error');
+                                              });
+                                            })
+                                            .catch((error) => {
+                                                console.error('Error querying recipients:', error);
+                                                res.status(500).send('Internal Server Error');
                                             });
                                         })
                                         .catch((error) => {
@@ -767,6 +785,7 @@ router.post("/editVolunteer", (req, res) => {
         phonenumber,
         skillid,
         city,
+        zip,
         state,
         availability,
         discoverymethod,
@@ -787,8 +806,6 @@ router.post("/editVolunteer", (req, res) => {
                     lastname: lastname || '',
                     phonenumber: phonenumber || '',
                     skillid: skillid || 0,
-                    city: city || '',
-                    state: state || '',
                     availability: availability || '',
                     discoverymethod: discoverymethod || '',
                     notes: notes || '',
