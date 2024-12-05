@@ -8,29 +8,12 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const form = document.querySelector('form');
-        const thankYouSection = document.getElementById('thank-you-section');
-        const volunteerForm = document.getElementById('volunteer-form');
-
-        form.addEventListener('submit', function (event) {
-            volunteerForm.classList.add('hidden');
-            thankYouSection.classList.remove('hidden');
-        });
-    });
-</script>
-
-<!-- 
-skillId
-leader
-teacher
--->
 
 <body class="bg-gray-50 font-sans">
     <!-- Main Content -->
     <div class="container mx-auto py-12 px-6 space-y-6">
         <!-- Thank You Section -->
+        <% if (submitted) { %>
         <section id="thank-you-section" class="bg-white p-8 rounded-lg shadow-md mt-5 hidden">
             <h2 class="text-2xl font-bold text-gray-800">Thank You for Volunteering!</h2>
             <p class="mt-4 text-gray-700">
@@ -42,7 +25,8 @@ teacher
                 extreme cold, helping to save lives and alleviate suffering among the homeless community.
             </p>
         </section>
-
+        <% } %>
+        <% if (!submitted) { %>
         <!-- Volunteer Form -->
         <section id="volunteer-form" class="bg-white p-8 rounded-lg shadow-md">
             <h2 class="text-2xl font-bold text-gray-800">Become a Volunteer</h2>
@@ -195,7 +179,7 @@ teacher
                     </div>
                     <div>
                         <label for="range" class="block text-gray-700 font-medium">Range (mi)</label>
-                        <input type="text" id="range" name="range" required
+                        <input type="number" id="range" name="range" required
                             class="mt-2 w-full outline-teal-500 px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
                     </div>
                     <div>
@@ -223,6 +207,7 @@ teacher
                 </button>
             </form>
         </section>
+        <% } %>
     </div>
 </body>
 
