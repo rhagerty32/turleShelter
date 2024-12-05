@@ -1,6 +1,11 @@
 const express = require("express");
+const bodyParser = require("body-parser");
 const knex = require("../config/db"); // Database connection
 const router = express.Router();
+
+// Middleware to parse JSON and URL-encoded data
+router.use(bodyParser.json());
+router.use(bodyParser.urlencoded({ extended: true }));
 
 function checkAuthenticated(req, res, next) {
     if (req.isAuthenticated && req.isAuthenticated()) {
@@ -262,6 +267,23 @@ router.post("/addServiceEvent", (req, res) => {
             //query in the users one by one
             console.log("query users event id: " + eventid.eventid)
             if (typeof firstname === 'string') {
+                const currentfirstname = firstname || '';
+                const currentlastname = lastname || '';
+                const currentemail = email || '';
+                const currentphonenumber = phonenumber || '';
+                knex("requester")
+                    .insert({
+                        eventid: eventid.eventid || 0,
+                        firstname: currentfirstname,
+                        lastname: currentlastname,
+                        phone: currentphonenumber,
+                        email: currentemail
+                    })
+                    .returning("eventid")
+                    .catch((err) => {
+                        console.error("Error:", err);
+                        res.status(500).send("Error adding requester info");
+                    });
             }
             else{
 
@@ -493,12 +515,26 @@ router.post("/addDistributionEvent", (req, res) => {
                 });
         });
 });
+router.post("/deleteDate", (req, res) => {
+    var { dateid, eventid } = req.body;
+    console.log("date id :::" + dateid + " event id ::: " + eventid)
+    //if can't find date don't worry about it
+    dateid = new Date(dateid)
+    knex('dates')
+    .select('dateid')
+    .where({date:dateid})
+    .then((dateidd) =>{
+        knex("eventdates")
+        .where({ eventid })
+        .andWhere({ dateid : dateidd.dateidd })
+        .del()
+    })
+    
+});
 
-router.put("/updateServiceEvent/:eventid", (req, res) => {
-    console.log("Updating Service Event");
+router.post("/editEvent", (req, res) => {
+    console.log("Editing Event");
     console.log(JSON.stringify(req.body, null, 2));
-
-    const eventid = req.params.eventid; // Get eventid from URL params
     const {
         organization,
         status,
@@ -526,7 +562,14 @@ router.put("/updateServiceEvent/:eventid", (req, res) => {
         firstname = [],
         lastname = [],
         email = [],
-        phonenumber = []
+        phonenumber = [],
+        eventid,
+        headcount,
+        servicehours,
+        itemid = [],
+        quantity = [],
+
+
     } = req.body;
 
     // Step 1: Update the "location" table with zip, city, and state
@@ -567,6 +610,50 @@ router.put("/updateServiceEvent/:eventid", (req, res) => {
                     numtablesround: numtablesround || 0,
                     numtablesrectangle: numtablesrectangle || 0,
                 });
+        })
+        .then(() => {
+            // Step 3.5: Update the "eventoutcome" table
+            return knex("eventoutcome")
+                .where("eventid", eventid)
+                .update({
+                    headcount: headcount || 0,
+                    servicehours: servicehours || 0,
+                })
+                .then(() => {
+                    // Step 3.5.2: Update the "eventitems" table
+                    if (Array.isArray(itemid) && itemid.length > 0) {
+                        itemid.forEach((currentitemid, index) => {
+                            const currentquantity = quantity[i] ||0;
+                            knex("eventitems")
+                                .where("eventid", eventid)
+                                .andWhere("itemid", currentitemid)
+                                .update({
+                                    itemid: currentitemid||0,
+                                    quantity: currentquantity ||0,
+                                })
+                                .catch((err) => {
+                                    console.error("Error:", err);
+                                    res.status(500).send("Error updating eventitems info");
+                                });
+                        });
+                    } else if (typeof itemid === 'string') {
+                        // If item is a string, update that item
+                        const currentitemid = itemid || 0;
+                        const currentquantity = quantity || 0;
+
+                        knex("requester")
+                            .where("eventid", eventid)
+                            .andWhere("firstname", currentfirstname)
+                            .update({
+                                itemid: currentitemid||0,
+                                quantity:currentquantity ||0,
+                            })
+                            .catch((err) => {
+                                console.error("Error:", err);
+                                res.status(500).send("Error updating eventitems info");
+                            });
+                    }
+                })
         })
         .then(() => {
             // Step 4: Update users in the "requester" table
