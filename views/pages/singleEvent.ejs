@@ -56,31 +56,22 @@
     }
 </script>
 
-<!-- 
-    if disrubution event:
-        temp
-    else:
-        head count
-        service hours
-        item and quantity
--->
-
 <body class="bg-gray-50 font-sans">
-
     <div class="container mx-auto py-12 px-6">
         <div class="flex flex-row justify-between items-center">
+            <!-- HEADER -->
             <a href="/events" class="px-4 py-2 mt-10 bg-gray-100 text-gray-800 rounded-md hover:bg-gray-200">Back to
                 Events</a>
             <h1 class="text-3xl font-bold text-gray-800 mb-2 mt-10">
                 <%= event && event.organization ? event.organization + "'s Event" : "Distribution Event" %>
             </h1>
-            <div class="flex flex-row gap-4">
 
+            <!-- BUTTONS -->
+            <div class="flex flex-row gap-4">
                 <button id="editButton" onclick="openModal(event)"
                     class="px-4 py-2 bg-teal-500 text-white rounded-md hover:bg-teal-600 mt-10">
                     Edit Event
                 </button>
-
                 <button id="cancelButton" onclick="closeModal()"
                     class="px-4 py-2 bg-gray-400 text-white rounded-md hover:bg-gray-500 mt-10 hidden">
                     Cancel
@@ -131,121 +122,141 @@
                         <%= event.details %>
                     </p>
                 </div>
-                <div>
-                    <label class="block text-gray-700">Service Type</label>
-                    <p class="mt-2 text-gray-600">
-                        <%= event.description %>
-                    </p>
-                </div>
 
-                <div class="bg-white shadow-md rounded-xl p-4 border">
-                    <div class="flex flex-col gap-0">
-                        <h3 class="text-xl font-bold text-gray-800 mb-4">Jen's Story</h3>
-                        <div class="flex flex-row gap-8">
-                            <div>
-                                <label class="block text-gray-700">Jen Story</label>
-                                <p class="mt-2 text-gray-600">
-                                    <%= event.jenstory===true ? "Requested" : "Not Requested" %>
-                                </p>
-                            </div>
-                            <div>
-                                <label class="block text-gray-700">Story Length</label>
-                                <p class="mt-2 text-gray-600">
-                                    <%= event.jenstorylength %>
-                                </p>
-                            </div>
-                        </div>
+                <% if (event.organization) { %>
+                    <div>
+                        <label class="block text-gray-700">Service Type</label>
+                        <p class="mt-2 text-gray-600">
+                            <%= event.description %>
+                        </p>
                     </div>
-                </div>
+                    <% } %>
 
-                <div class="bg-white shadow-md rounded-xl p-4 border">
-                    <div class="flex flex-col gap-0">
-                        <h3 class="text-xl font-bold text-gray-800 mb-4">Predicted Attendance</h3>
-                        <div class="flex flex-row gap-8">
-                            <div>
-                                <label class="block text-gray-700">Adults</label>
-                                <p class="mt-2 text-gray-600">
-                                    <%= event.adultparticipants %>
-                                </p>
+                        <% if (event.organization) { %>
+                            <div class="bg-white shadow-md rounded-xl p-4 border">
+                                <div class="flex flex-col gap-0">
+                                    <h3 class="text-xl font-bold text-gray-800 mb-4">Jen's Story</h3>
+                                    <div class="flex flex-row gap-8">
+                                        <div>
+                                            <label class="block text-gray-700">Jen Story</label>
+                                            <p class="mt-2 text-gray-600">
+                                                <%= event.jenstory===true ? "Requested" : "Not Requested" %>
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <label class="block text-gray-700">Story Length</label>
+                                            <p class="mt-2 text-gray-600">
+                                                <%= event.jenstorylength %>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div>
-                                <label class="block text-gray-700">Children Under 10</label>
-                                <p class="mt-2 text-gray-600">
-                                    <%= event.childrenunder10 %>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                            <% } %>
 
-                <div class="bg-white shadow-md rounded-xl p-4 border flex flex-col gap-4">
-                    <div class="flex flex-col gap-0">
-                        <h3 class="text-xl font-bold text-gray-800 mb-4">Equipment</h3>
-                        <div class="flex flex-row gap-8 justify-between">
-                            <div>
-                                <label class="block text-gray-700">Basic Sewers</label>
-                                <p class="mt-2 text-gray-600">
-                                    <%= event.basicsewers %>
-                                </p>
-                            </div>
-                            <div>
-                                <label class="block text-gray-700">Advanced Sewers</label>
-                                <p class="mt-2 text-gray-600">
-                                    <%= event.advancedsewers %>
-                                </p>
-                            </div>
-                            <div>
-                                <label class="block text-gray-700">Sewing Machines</label>
-                                <p class="mt-2 text-gray-600">
-                                    <%= event.sewingmachines %>
-                                </p>
-                            </div>
-                            <div>
-                                <label class="block text-gray-700">Sergers</label>
-                                <p class="mt-2 text-gray-600">
-                                    <%= event.sergers %>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-white shadow-md rounded-xl p-4 border flex flex-col gap-4">
-                    <div class="flex flex-col gap-0">
-                        <div class="flex flex-row gap-4 items-baseline">
-                            <h3 class="text-xl font-bold text-gray-800 mb-4">Venue</h3>
-                            <p class="text-md text-gray-600 mb-4">Address: <%= event.address %>, <%= event.city %>, <%=
-                                            event.state %>
-                                            <%= event.zip %>
-                            </p>
-                        </div>
-                        <div class="flex flex-row gap-8 justify-between">
-                            <div>
-                                <label class="block text-gray-700">Size Requirement</label>
-                                <p class="mt-2 text-gray-600">
-                                    <%= event.venuesize %> sq. ft.
-                                </p>
-                            </div>
-                            <div>
-                                <label class="block text-gray-700">Rooms</label>
-                                <p class="mt-2 text-gray-600">
-                                    <%= event.numrooms %>
-                                </p>
-                            </div>
-                            <div>
-                                <label class="block text-gray-700">Round Tables</label>
-                                <p class="mt-2 text-gray-600">
-                                    <%= event.numtablesround %>
-                                </p>
-                            </div>
-                            <div>
-                                <label class="block text-gray-700">Rectangle Tables</label>
-                                <p class="mt-2 text-gray-600">
-                                    <%= event.numtablesrectangle %>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                                <% if (event.organization) { %>
+                                    <div class="bg-white shadow-md rounded-xl p-4 border">
+                                        <div class="flex flex-col gap-0">
+                                            <h3 class="text-xl font-bold text-gray-800 mb-4">Predicted Attendance</h3>
+                                            <div class="flex flex-row gap-8">
+                                                <div>
+                                                    <label class="block text-gray-700">Adults</label>
+                                                    <p class="mt-2 text-gray-600">
+                                                        <%= event.adultparticipants %>
+                                                    </p>
+                                                </div>
+                                                <div>
+                                                    <label class="block text-gray-700">Children Under 10</label>
+                                                    <p class="mt-2 text-gray-600">
+                                                        <%= event.childrenunder10 %>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <% } %>
+
+                                        <!-- EQUIPMENT -->
+                                        <% if (event.organization) { %>
+                                            <div class="bg-white shadow-md rounded-xl p-4 border flex flex-col gap-4">
+                                                <div class="flex flex-col gap-0">
+                                                    <h3 class="text-xl font-bold text-gray-800 mb-4">Equipment</h3>
+                                                    <div class="flex flex-row gap-8 justify-between">
+                                                        <div>
+                                                            <label class="block text-gray-700">Basic Sewers</label>
+                                                            <p class="mt-2 text-gray-600">
+                                                                <%= event.basicsewers %>
+                                                            </p>
+                                                        </div>
+                                                        <div>
+                                                            <label class="block text-gray-700">Advanced Sewers</label>
+                                                            <p class="mt-2 text-gray-600">
+                                                                <%= event.advancedsewers %>
+                                                            </p>
+                                                        </div>
+                                                        <div>
+                                                            <label class="block text-gray-700">Sewing Machines</label>
+                                                            <p class="mt-2 text-gray-600">
+                                                                <%= event.sewingmachines %>
+                                                            </p>
+                                                        </div>
+                                                        <div>
+                                                            <label class="block text-gray-700">Sergers</label>
+                                                            <p class="mt-2 text-gray-600">
+                                                                <%= event.sergers %>
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <% } %>
+
+                                                <!-- VENUE -->
+                                                <% if (event.organization) { %>
+                                                    <div
+                                                        class="bg-white shadow-md rounded-xl p-4 border flex flex-col gap-4">
+                                                        <div class="flex flex-col gap-0">
+                                                            <div class="flex flex-row gap-4 items-baseline">
+                                                                <h3 class="text-xl font-bold text-gray-800 mb-4">Venue
+                                                                </h3>
+                                                                <p class="text-md text-gray-600 mb-4">Address: <%=
+                                                                        event.address %>,
+                                                                        <%= event.city %>, <%= event.state %>
+                                                                                <%= event.zip %>
+                                                                </p>
+                                                            </div>
+                                                            <div class="flex flex-row gap-8 justify-between">
+                                                                <div>
+                                                                    <label class="block text-gray-700">Size
+                                                                        Requirement</label>
+                                                                    <p class="mt-2 text-gray-600">
+                                                                        <%= event.venuesize %> sq. ft.
+                                                                    </p>
+                                                                </div>
+                                                                <div>
+                                                                    <label class="block text-gray-700">Rooms</label>
+                                                                    <p class="mt-2 text-gray-600">
+                                                                        <%= event.numrooms %>
+                                                                    </p>
+                                                                </div>
+                                                                <div>
+                                                                    <label class="block text-gray-700">Round
+                                                                        Tables</label>
+                                                                    <p class="mt-2 text-gray-600">
+                                                                        <%= event.numtablesround %>
+                                                                    </p>
+                                                                </div>
+                                                                <div>
+                                                                    <label class="block text-gray-700">Rectangle
+                                                                        Tables</label>
+                                                                    <p class="mt-2 text-gray-600">
+                                                                        <%= event.numtablesrectangle %>
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <% } %>
             </div>
         </div>
 
@@ -257,307 +268,358 @@
                 <div class="hidden"><input type="hidden" name="eventid" value="<%= event.eventid %>"></div>
 
                 <!-- ORGANIZATION -->
-                <div>
-                    <label for="organization" class="block text-gray-700">Organization</label>
-                    <input name="organization" type="text" id="organization" value="<%= event.organization || '' %>"
-                        class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
-                </div>
-
-
-                <!-- STATUS -->
-                <div>
-                    <label for="status" class="block text-gray-700">Status</label>
-                    <select name="status" id="status"
-                        class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500"
-                        onchange="toggleStatus()">
-                        <option value="Pending" <%=event.status==='Pending' ? 'selected' : '' %>>Pending</option>
-                        <option value="Scheduled" <%=event.status==='Scheduled' ? 'selected' : '' %>>Scheduled</option>
-                        <option value="Completed" <%=event.status==='Completed' ? 'selected' : '' %>>Completed</option>
-                    </select>
-                </div>
-
-
-                <!-- START DATE/TIME -->
-                <div class="grid grid-cols-3 gap-4">
+                <% if (event.organization) { %>
                     <div>
-                        <label for="date" class="block text-gray-700">Date</label>
-                        <input name="date" type="date" id="date"
-                            value="<%= new Date(event.date).toISOString().split('T')[0] %>"
+                        <label for="organization" class="block text-gray-700">Organization</label>
+                        <input name="organization" type="text" id="organization" value="<%= event.organization || '' %>"
                             class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                     </div>
-                    <div>
-                        <label for="starttime" class="block text-gray-700">Start Time</label>
-                        <input name="starttime" type="time" id="starttime" value="<%= event.starttime %>"
-                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
-                    </div>
-                    <div>
-                        <label for="plannedduration" class="block text-gray-700">Planned Duration (hrs)</label>
-                        <input name="plannedduration" type="number" id="plannedduration"
-                            value="<%= event.plannedduration %>"
-                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
-                    </div>
-                </div>
+                    <% } %>
 
 
-                <!-- ADDRESS -->
-                <div class="grid grid-cols-4 gap-4">
-                    <div>
-                        <label for="address" class="block text-gray-700">Address</label>
-                        <input name="address" type="text" id="address" value="<%= event.address %>"
-                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
-                    </div>
-                    <div>
-                        <label for="city" class="block text-gray-700">City</label>
-                        <input name="city" type="text" id="city" value="<%= event.city %>"
-                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
-                    </div>
-                    <div>
-                        <label for="state" class="block text-gray-700">State</label>
-                        <select name="state" id="state" name="state"
-                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
-                            <option value="" disabled selected>Select State</option>
-                            <option value="AL">Alabama</option>
-                            <option value="AK">Alaska</option>
-                            <option value="AZ">Arizona</option>
-                            <option value="AR">Arkansas</option>
-                            <option value="CA">California</option>
-                            <option value="CO">Colorado</option>
-                            <option value="CT">Connecticut</option>
-                            <option value="DE">Delaware</option>
-                            <option value="FL">Florida</option>
-                            <option value="GA">Georgia</option>
-                            <option value="HI">Hawaii</option>
-                            <option value="ID">Idaho</option>
-                            <option value="IL">Illinois</option>
-                            <option value="IN">Indiana</option>
-                            <option value="IA">Iowa</option>
-                            <option value="KS">Kansas</option>
-                            <option value="KY">Kentucky</option>
-                            <option value="LA">Louisiana</option>
-                            <option value="ME">Maine</option>
-                            <option value="MD">Maryland</option>
-                            <option value="MA">Massachusetts</option>
-                            <option value="MI">Michigan</option>
-                            <option value="MN">Minnesota</option>
-                            <option value="MS">Mississippi</option>
-                            <option value="MO">Missouri</option>
-                            <option value="MT">Montana</option>
-                            <option value="NE">Nebraska</option>
-                            <option value="NV">Nevada</option>
-                            <option value="NH">New Hampshire</option>
-                            <option value="NJ">New Jersey</option>
-                            <option value="NM">New Mexico</option>
-                            <option value="NY">New York</option>
-                            <option value="NC">North Carolina</option>
-                            <option value="ND">North Dakota</option>
-                            <option value="OH">Ohio</option>
-                            <option value="OK">Oklahoma</option>
-                            <option value="OR">Oregon</option>
-                            <option value="PA">Pennsylvania</option>
-                            <option value="RI">Rhode Island</option>
-                            <option value="SC">South Carolina</option>
-                            <option value="SD">South Dakota</option>
-                            <option value="TN">Tennessee</option>
-                            <option value="TX">Texas</option>
-                            <option value="UT">Utah</option>
-                            <option value="VT">Vermont</option>
-                            <option value="VA">Virginia</option>
-                            <option value="WA">Washington</option>
-                            <option value="WV">West Virginia</option>
-                            <option value="WI">Wisconsin</option>
-                            <option value="WY">Wyoming</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="zip" class="block text-gray-700">Zip Code</label>
-                        <input name="zip" type="text" id="zip" value="<%= event.zip %>"
-                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
-                    </div>
-                </div>
-
-
-                <!-- SERVICE TYPE -->
-                <div>
-                    <label for="servicetypeid" class="block text-gray-700">Service Type</label>
-                    <select name="servicetypeid" id="servicetypeid"
-                        class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
-                        <% servicetypes.forEach(function(servicetype) { %>
-                            <option value="<%= servicetype.servicetypeid %>"
-                                <%=servicetype.description===event.description ? 'selected' : '' %>
-                                ><%= servicetype.description %>
-                            </option>
-                            <% }); %>
-                    </select>
-                    <% servicetypes.forEach(function(servicetype) { %>
-                        <option value="<%= servicetype.servicetypeid %>" <%=servicetype.description===event.description
-                            ? 'selected' : '' %>
-                            ><%= servicetype.description %>
-                        </option>
-                        <% }); %>
-                            </select>
-                </div>
-
-
-                <!-- JEN RELATED STUFF -->
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label for="jenstory" class="block text-gray-700">Jen Story</label>
-                        <div class="mt-2">
-                            <label class="inline-flex items-center">
-                                <input type="radio" name="jenstory" value="true" class="form-radio"
-                                    <%=event.jenstory===true ? 'checked' : '' %>>
-                                <span class="ml-2">Requested</span>
-                            </label>
-                            <label class="inline-flex items-center ml-6">
-                                <input type="radio" name="jenstory" value="false" class="form-radio"
-                                    <%=event.jenstory===false ? 'checked' : '' %>>
-                                <span class="ml-2">Not Requested</span>
-                            </label>
-                        </div>
-                    </div>
-                    <div>
-                        <label for="jenstorylength" class="block text-gray-700">Jen Story Length (mins)</label>
-                        <input name="jenstorylength" type="text" id="jenstorylength" min="0"
-                            value="<%= event.jenstorylength %>"
-                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
-                    </div>
-                </div>
-
-
-                <!-- EQUIPMENT -->
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label for="sergers" class="block text-gray-700">Sergers</label>
-                        <input name="sergers" type="number" id="sergers" min="0" value="<%= event.sergers %>"
-                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
-                    </div>
-                    <div>
-                        <label for="sewingmachines" class="block text-gray-700">Sewing Machines</label>
-                        <input name="sewingmachines" type="number" min="0" id="sewingmachines"
-                            value="<%= event.sewingmachines %>"
-                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
-                    </div>
-                </div>
-
-
-                <!-- ATTENDEES -->
-                <div class="grid grid-cols-4 gap-4">
-                    <div>
-                        <label for="childrenunder10" class="block text-gray-700">Children < 10</label>
-                                <input name="childrenunder10" type="number" min="0" id="childrenunder10"
-                                    value="<%= event.childrenunder10 %>"
-                                    class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
-                    </div>
-                    <div>
-                        <label for="adultparticipants" class="block text-gray-700">Adults</label>
-                        <input name="adultparticipants" type="number" min="1" id="adultparticipants"
-                            value="<%= event.adultparticipants %>"
-                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
-                    </div>
-                    <div>
-                        <label for="advancedsewers" class="block text-gray-700">Adv. Sewers</label>
-                        <input name="advancedsewers" type="number" min="0" id="advancedsewers"
-                            value="<%= event.advancedsewers %>"
-                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
-                    </div>
-                    <div>
-                        <label for="basicsewers" class="block text-gray-700">Basic Sewers</label>
-                        <input name="basicsewers" type="number" id="basicsewers" min="0"
-                            value="<%= event.basicsewers %>"
-                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
-                    </div>
-                </div>
-
-
-                <!-- VENUE INFO -->
-                <div class="grid grid-cols-4 gap-4">
-                    <div>
-                        <label for="venuesize" class="block text-gray-700">Venue Size</label>
-                        <input name="venuesize" type="text" id="venuesize" min="0" value="<%= event.venuesize %>"
-                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
-                    </div>
-                    <div>
-                        <label for="numrooms" class="block text-gray-700">Rooms</label>
-                        <input name="numrooms" type="number" id="numrooms" min="0" value="<%= event.numrooms %>"
-                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
-                    </div>
-                    <div>
-                        <label for="numtablesround" class="block text-gray-700">Round Tables</label>
-                        <input name="numtablesround" type="number" min="0" id="numtablesround"
-                            value="<%= event.numtablesround %>"
-                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
-                    </div>
-                    <div>
-                        <label for="numtablesrectangle" class="block text-gray-700">Rect. Tables</label>
-                        <input name="numtablesrectangle" type="number" min="0" id="numtablesrectangle"
-                            value="<%= event.numtablesrectangle %>"
-                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
-                    </div>
-                </div>
-
-
-                <!-- DETAILS -->
-                <div>
-                    <label for="details" class="block text-gray-700">Details</label>
-                    <textarea name="details" id="details"
-                        class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500"><%= event.details %></textarea>
-                </div>
-
-
-                <div class="grid grid-cols-3 gap-4 completedEvent hidden">
-                    <!-- TEMP -->
-                    <div class="completedEvent hidden">
-                        <label for="temp" class="block text-gray-700">Temperature</label>
-                        <input name="temp" type="text" id="temp" value="<%= event.temp %>"
-                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
-                    </div>
-
-
-                    <!-- HEAD COUNT -->
-                    <div class="completedEvent hidden">
-                        <label for="headcount" class="block text-gray-700">Head Count</label>
-                        <input name="headcount" type="number" id="headcount" value="<%= event.headcount %>"
-                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
-                    </div>
-
-
-                    <!-- SERVICE HOURS -->
-                    <div class="completedEvent hidden">
-                        <label for="servicehours" class="block text-gray-700">Service Hours</label>
-                        <input name="servicehours" type="number" id="servicehours" value="<%= event.servicehours %>"
-                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
-                    </div>
-                </div>
-
-
-                <!-- ITEM AND QUANTITY -->
-                <div id="itemsSection" class="flex flex-col completedEvent hidden">
-                    <div id="itemDiv" class="grid grid-cols-2 gap-4">
+                        <!-- STATUS -->
                         <div>
-                            <label for="item" class="block text-gray-700">Item</label>
-                            <select name="item" id="item"
-                                class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
-                                <% items.forEach(function(item) { %>
-                                    <option value="<%= item.itemid %>">
-                                        <%= item.description %>
+                            <label for="status" class="block text-gray-700">Status</label>
+                            <select name="status" id="status"
+                                class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500"
+                                onchange="toggleStatus()">
+                                <option value="Pending" <%=event.status==='Pending' ? 'selected' : '' %>>Pending
+                                </option>
+                                <option value="Scheduled" <%=event.status==='Scheduled' ? 'selected' : '' %>>Scheduled
+                                </option>
+                                <option value="Completed" <%=event.status==='Completed' ? 'selected' : '' %>>Completed
+                                </option>
+                            </select>
+                        </div>
+
+
+                        <!-- START DATE/TIME -->
+                        <div class="grid grid-cols-3 gap-4">
+                            <div>
+                                <label for="date" class="block text-gray-700">Date</label>
+                                <input name="date" type="date" id="date"
+                                    value="<%= new Date(event.date).toISOString().split('T')[0] %>"
+                                    class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                            </div>
+                            <div>
+                                <label for="starttime" class="block text-gray-700">Start Time</label>
+                                <input name="starttime" type="time" id="starttime" value="<%= event.starttime %>"
+                                    class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                            </div>
+                            <div>
+                                <label for="plannedduration" class="block text-gray-700">Planned Duration (hrs)</label>
+                                <input name="plannedduration" type="number" id="plannedduration"
+                                    value="<%= event.plannedduration %>"
+                                    class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                            </div>
+                        </div>
+
+
+                        <!-- ADDRESS -->
+                        <div class="grid grid-cols-4 gap-4">
+                            <div>
+                                <label for="address" class="block text-gray-700">Address</label>
+                                <input name="address" type="text" id="address" value="<%= event.address %>"
+                                    class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                            </div>
+                            <div>
+                                <label for="city" class="block text-gray-700">City</label>
+                                <input name="city" type="text" id="city" value="<%= event.city %>"
+                                    class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                            </div>
+                            <div>
+                                <label for="state" class="block text-gray-700">State</label>
+                                <select name="state" id="state" name="state"
+                                    class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                                    <option value="" disabled selected>Select State</option>
+                                    <option value="AL">Alabama</option>
+                                    <option value="AK">Alaska</option>
+                                    <option value="AZ">Arizona</option>
+                                    <option value="AR">Arkansas</option>
+                                    <option value="CA">California</option>
+                                    <option value="CO">Colorado</option>
+                                    <option value="CT">Connecticut</option>
+                                    <option value="DE">Delaware</option>
+                                    <option value="FL">Florida</option>
+                                    <option value="GA">Georgia</option>
+                                    <option value="HI">Hawaii</option>
+                                    <option value="ID">Idaho</option>
+                                    <option value="IL">Illinois</option>
+                                    <option value="IN">Indiana</option>
+                                    <option value="IA">Iowa</option>
+                                    <option value="KS">Kansas</option>
+                                    <option value="KY">Kentucky</option>
+                                    <option value="LA">Louisiana</option>
+                                    <option value="ME">Maine</option>
+                                    <option value="MD">Maryland</option>
+                                    <option value="MA">Massachusetts</option>
+                                    <option value="MI">Michigan</option>
+                                    <option value="MN">Minnesota</option>
+                                    <option value="MS">Mississippi</option>
+                                    <option value="MO">Missouri</option>
+                                    <option value="MT">Montana</option>
+                                    <option value="NE">Nebraska</option>
+                                    <option value="NV">Nevada</option>
+                                    <option value="NH">New Hampshire</option>
+                                    <option value="NJ">New Jersey</option>
+                                    <option value="NM">New Mexico</option>
+                                    <option value="NY">New York</option>
+                                    <option value="NC">North Carolina</option>
+                                    <option value="ND">North Dakota</option>
+                                    <option value="OH">Ohio</option>
+                                    <option value="OK">Oklahoma</option>
+                                    <option value="OR">Oregon</option>
+                                    <option value="PA">Pennsylvania</option>
+                                    <option value="RI">Rhode Island</option>
+                                    <option value="SC">South Carolina</option>
+                                    <option value="SD">South Dakota</option>
+                                    <option value="TN">Tennessee</option>
+                                    <option value="TX">Texas</option>
+                                    <option value="UT">Utah</option>
+                                    <option value="VT">Vermont</option>
+                                    <option value="VA">Virginia</option>
+                                    <option value="WA">Washington</option>
+                                    <option value="WV">West Virginia</option>
+                                    <option value="WI">Wisconsin</option>
+                                    <option value="WY">Wyoming</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="zip" class="block text-gray-700">Zip Code</label>
+                                <input name="zip" type="text" id="zip" value="<%= event.zip %>"
+                                    class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                            </div>
+                        </div>
+
+
+                        <!-- SERVICE TYPE -->
+                        <% if (event.organization) { %>
+                            <div>
+                                <label for="servicetypeid" class="block text-gray-700">Service Type</label>
+                                <select name="servicetypeid" id="servicetypeid"
+                                    class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                                    <% servicetypes.forEach(function(servicetype) { %>
+                                        <option value="<%= servicetype.servicetypeid %>"
+                                            <%=servicetype.description===event.description ? 'selected' : '' %>
+                                            ><%= servicetype.description %>
+                                        </option>
+                                        <% }); %>
+                                </select>
+                                <% servicetypes.forEach(function(servicetype) { %>
+                                    <option value="<%= servicetype.servicetypeid %>"
+                                        <%=servicetype.description===event.description ? 'selected' : '' %>
+                                        ><%= servicetype.description %>
                                     </option>
                                     <% }); %>
-                            </select>
-                        </div>
-                        <div>
-                            <label for="quantity" class="block text-gray-700">Quantity</label>
-                            <input name="quantity" type="number" id="quantity" value="<%= event.quantity %>"
-                                class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
-                        </div>
-                    </div>
-                    <!-- ADD ITEM BUTTON -->
-                    <div class="col-span-2">
-                        <button type="button" onclick="addItem()"
-                            class="mt-4 px-4 py-2 bg-teal-500 text-white rounded-md hover:bg-teal-600">
-                            Add Item
-                        </button>
-                    </div>
-                </div>
+                                        </select>
+                            </div>
+                            <% } %>
+
+
+                                <!-- JEN RELATED STUFF -->
+                                <% if (event.organization) { %>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label for="jenstory" class="block text-gray-700">Jen Story</label>
+                                            <div class="mt-2">
+                                                <label class="inline-flex items-center">
+                                                    <input type="radio" name="jenstory" value="true" class="form-radio"
+                                                        <%=event.jenstory===true ? 'checked' : '' %>>
+                                                    <span class="ml-2">Requested</span>
+                                                </label>
+                                                <label class="inline-flex items-center ml-6">
+                                                    <input type="radio" name="jenstory" value="false" class="form-radio"
+                                                        <%=event.jenstory===false ? 'checked' : '' %>>
+                                                    <span class="ml-2">Not Requested</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label for="jenstorylength" class="block text-gray-700">Jen Story Length
+                                                (mins)</label>
+                                            <input name="jenstorylength" type="text" id="jenstorylength" min="0"
+                                                value="<%= event.jenstorylength %>"
+                                                class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                                        </div>
+                                    </div>
+                                    <% } %>
+
+
+                                        <!-- EQUIPMENT -->
+                                        <% if (event.organization) { %>
+                                            <div class="grid grid-cols-2 gap-4">
+                                                <div>
+                                                    <label for="sergers" class="block text-gray-700">Sergers</label>
+                                                    <input name="sergers" type="number" id="sergers" min="0"
+                                                        value="<%= event.sergers %>"
+                                                        class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                                                </div>
+                                                <div>
+                                                    <label for="sewingmachines" class="block text-gray-700">Sewing
+                                                        Machines</label>
+                                                    <input name="sewingmachines" type="number" min="0"
+                                                        id="sewingmachines" value="<%= event.sewingmachines %>"
+                                                        class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                                                </div>
+                                            </div>
+                                            <% } %>
+
+
+                                                <!-- ATTENDEES -->
+                                                <% if (event.organization) { %>
+                                                    <div class="grid grid-cols-4 gap-4">
+                                                        <div>
+                                                            <label for="childrenunder10"
+                                                                class="block text-gray-700">Children < 10</label>
+                                                                    <input name="childrenunder10" type="number" min="0"
+                                                                        id="childrenunder10"
+                                                                        value="<%= event.childrenunder10 %>"
+                                                                        class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                                                        </div>
+                                                        <div>
+                                                            <label for="adultparticipants"
+                                                                class="block text-gray-700">Adults</label>
+                                                            <input name="adultparticipants" type="number" min="1"
+                                                                id="adultparticipants"
+                                                                value="<%= event.adultparticipants %>"
+                                                                class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                                                        </div>
+                                                        <div>
+                                                            <label for="advancedsewers" class="block text-gray-700">Adv.
+                                                                Sewers</label>
+                                                            <input name="advancedsewers" type="number" min="0"
+                                                                id="advancedsewers" value="<%= event.advancedsewers %>"
+                                                                class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                                                        </div>
+                                                        <div>
+                                                            <label for="basicsewers" class="block text-gray-700">Basic
+                                                                Sewers</label>
+                                                            <input name="basicsewers" type="number" id="basicsewers"
+                                                                min="0" value="<%= event.basicsewers %>"
+                                                                class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                                                        </div>
+                                                    </div>
+                                                    <% } %>
+
+
+                                                        <!-- VENUE INFO -->
+                                                        <% if (event.organization) { %>
+                                                            <div class="grid grid-cols-4 gap-4">
+                                                                <div>
+                                                                    <label for="venuesize"
+                                                                        class="block text-gray-700">Venue Size</label>
+                                                                    <input name="venuesize" type="text" id="venuesize"
+                                                                        min="0" value="<%= event.venuesize %>"
+                                                                        class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                                                                </div>
+                                                                <div>
+                                                                    <label for="numrooms"
+                                                                        class="block text-gray-700">Rooms</label>
+                                                                    <input name="numrooms" type="number" id="numrooms"
+                                                                        min="0" value="<%= event.numrooms %>"
+                                                                        class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                                                                </div>
+                                                                <div>
+                                                                    <label for="numtablesround"
+                                                                        class="block text-gray-700">Round
+                                                                        Tables</label>
+                                                                    <input name="numtablesround" type="number" min="0"
+                                                                        id="numtablesround"
+                                                                        value="<%= event.numtablesround %>"
+                                                                        class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                                                                </div>
+                                                                <div>
+                                                                    <label for="numtablesrectangle"
+                                                                        class="block text-gray-700">Rect.
+                                                                        Tables</label>
+                                                                    <input name="numtablesrectangle" type="number"
+                                                                        min="0" id="numtablesrectangle"
+                                                                        value="<%= event.numtablesrectangle %>"
+                                                                        class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                                                                </div>
+                                                            </div>
+                                                            <% } %>
+
+
+                                                                <!-- DETAILS -->
+                                                                <div>
+                                                                    <label for="details"
+                                                                        class="block text-gray-700">Details</label>
+                                                                    <textarea name="details" id="details"
+                                                                        class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500"><%= event.details %></textarea>
+                                                                </div>
+
+
+                                                                <div
+                                                                    class="grid grid-cols-3 gap-4 completedEvent hidden">
+                                                                    <!-- TEMP -->
+                                                                    <div class="completedEvent hidden">
+                                                                        <label for="temp"
+                                                                            class="block text-gray-700">Temperature</label>
+                                                                        <input name="temp" type="text" id="temp"
+                                                                            value="<%= event.temp %>"
+                                                                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                                                                    </div>
+
+
+                                                                    <!-- HEAD COUNT -->
+                                                                    <div class="completedEvent hidden">
+                                                                        <label for="headcount"
+                                                                            class="block text-gray-700">Head
+                                                                            Count</label>
+                                                                        <input name="headcount" type="number"
+                                                                            id="headcount"
+                                                                            value="<%= event.headcount %>"
+                                                                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                                                                    </div>
+
+
+                                                                    <!-- SERVICE HOURS -->
+                                                                    <div class="completedEvent hidden">
+                                                                        <label for="servicehours"
+                                                                            class="block text-gray-700">Service
+                                                                            Hours</label>
+                                                                        <input name="servicehours" type="number"
+                                                                            id="servicehours"
+                                                                            value="<%= event.servicehours %>"
+                                                                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                                                                    </div>
+                                                                </div>
+
+
+                                                                <!-- ITEM AND QUANTITY -->
+                                                                <div id="itemsSection"
+                                                                    class="flex flex-col completedEvent hidden">
+                                                                    <div id="itemDiv" class="grid grid-cols-2 gap-4">
+                                                                        <div>
+                                                                            <label for="item"
+                                                                                class="block text-gray-700">Item</label>
+                                                                            <select name="item" id="item"
+                                                                                class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                                                                                <% items.forEach(function(item) { %>
+                                                                                    <option value="<%= item.itemid %>">
+                                                                                        <%= item.description %>
+                                                                                    </option>
+                                                                                    <% }); %>
+                                                                            </select>
+                                                                        </div>
+                                                                        <div>
+                                                                            <label for="quantity"
+                                                                                class="block text-gray-700">Quantity</label>
+                                                                            <input name="quantity" type="number"
+                                                                                id="quantity"
+                                                                                value="<%= event.quantity %>"
+                                                                                class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                                                                        </div>
+                                                                    </div>
+                                                                    <!-- ADD ITEM BUTTON -->
+                                                                    <div class="col-span-2">
+                                                                        <button type="button" onclick="addItem()"
+                                                                            class="mt-4 px-4 py-2 bg-teal-500 text-white rounded-md hover:bg-teal-600">
+                                                                            Add Item
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
             </div>
 
 
