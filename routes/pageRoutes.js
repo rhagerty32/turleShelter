@@ -150,55 +150,57 @@ router.get("/hostAnEvent", (req, res) => {
       })
 
 router.post("/addServiceEvent", (req, res) => {
-    console.log("Adding Service Event")
-    const {
-        organization,
-        status,
-        date,
-        starttime,
-        plannedduration,
-        address,
-        city,
-        state,
-        zip,
-        servicetypeid,
-        jenstory,
-        jenstorylength,
-        sergers,
-        sewingmachines,
-        childrenunder10,
-        adultparticipants,
-        advancedsewers,
-        basicsewers,
-        venuesize,
-        numrooms,
-        numtablesround,
-        numtablesrectangle,
-        details,
-    } = req.body;
-    console.log(new Date(date))
-    // Step 5: Insert or update the location table with zip, city, and state
-    knex("location")
-    .insert({ zip, city, state })
-    .onConflict("zip") // If zip exists, update city/state
-    .merge() // Merge updates for existing zip
-    .then(() => {
-      // Step 1: Insert data into the "events" table and get the generated eventid
-      knex("events")
-        .insert({
-          starttime: starttime || '00:00:00',
-          address: address || '',
-          zip: zip || '00000',
-          status: status || 'Pending',
-          plannedduration: plannedduration || 0.0,
-          details: details || '',
-        })
-        .returning("eventid") // Return the generated eventid
-        .then(([ eventid ]) => {
-            // Step 2: Use the eventid to insert related data into the "eventrequest" table
-            knex("eventrequest")
-                .insert({
-                  eventid: eventid.eventid || 0, // Use the generated eventid
+  console.log("Adding Service Event");
+  console.log(JSON.stringify(req.body, null, 2));
+  const {
+      organization,
+      status,
+      date = [],
+      starttime,
+      plannedduration,
+      address,
+      city,
+      state,
+      zip,
+      servicetypeid,
+      jenstory,
+      jenstorylength,
+      sergers,
+      sewingmachines,
+      childrenunder10,
+      adultparticipants,
+      advancedsewers,
+      basicsewers,
+      venuesize,
+      numrooms,
+      numtablesround,
+      numtablesrectangle,
+      details,
+  } = req.body;
+
+  // Step 5: Insert or update the location table with zip, city, and state
+  knex("location")
+      .insert({ zip, city, state })
+      .onConflict("zip") // If zip exists, update city/state
+      .merge() // Merge updates for existing zip
+      .then(() => {
+          // Step 1: Insert data into the "events" table and get the generated eventid
+          return knex("events")
+              .insert({
+                  starttime: starttime || '00:00:00',
+                  address: address || '',
+                  zip: zip || '00000',
+                  status: status || 'Pending',
+                  plannedduration: plannedduration || 0.0,
+                  details: details || '',
+              })
+              .returning("eventid"); // Return the generated eventid
+      })
+      .then(([eventid]) => {
+          // Step 2: Use the eventid to insert related data into the "eventrequest" table
+          return knex("eventrequest")
+              .insert({
+                  eventid: eventid.eventid || 0,
                   servicetypeid: servicetypeid || 1,
                   jenstorylength: jenstorylength || 0,
                   jenstory: jenstory || 0,
@@ -213,48 +215,55 @@ router.post("/addServiceEvent", (req, res) => {
                   numrooms: numrooms || 0,
                   numtablesround: numtablesround || 0,
                   numtablesrectangle: numtablesrectangle || 0,
-                  
-                })
-                .then(() => {
-                    // Step 3: Check if the provided date already exists in the "dates" table
+              })
+              .then(() => {
+                  // Step 3: Check if the provided date already exists in the "dates" table
+                  for (let i = 0; i < date.length; i++) {
+                    const currentDate = date[i] || '2020-01-01';
                     knex("dates")
-                      .insert({ date: date || '2020-01-01' })
-                      .returning("dateid")
-                      .then(([newDateId]) => {
-                          const dateId = newDateId.dateid; // Extract dateid here
-
-                          knex("eventdates")
-                              .insert({ eventid:eventid.eventid || 0, dateid: dateId || 0})
-                              .onConflict(["eventid", "dateid"]) // Handle duplicate key
-                              .ignore()
-                              .then(() => {
-                                  res.redirect("/events");
-                              })
-                              .catch((err) => {
-                                  console.error("EventDates error:", err);
-                                  res.status(500).send("Error updating eventdates");
-                              });
-                      })
-                      .catch((err) => {
-                          console.error("Dates error:", err);
-                          res.status(500).send("Error inserting date");
-                      });
+                        .select("dateid")
+                        .where({ date: currentDate })
+                        .first() // Only get the first matching record
+                        .then(existingDate => {
+                            if (existingDate) {
+                                // Date already exists, use the existing dateid
+                                const dateId = existingDate.dateid;
+                                return knex("eventdates")
+                                    .insert({ eventid: eventid.eventid || 0, dateid: dateId })
+                                    .onConflict(["eventid", "dateid"]) // Handle duplicate key
+                                    .ignore();
+                            } else {
+                                // Date does not exist, insert it
+                                return knex("dates")
+                                    .insert({ date: currentDate })
+                                    .returning("dateid")
+                                    .then(([newDateId]) => {
+                                        const dateId = newDateId.dateid;
+                                        return knex("eventdates")
+                                            .insert({ eventid: eventid.eventid || 0, dateid: dateId })
+                                            .onConflict(["eventid", "dateid"])
+                                            .ignore();
+                                    });
+                            }
+                        })
+                .then(() => {
+                    if (i === date.length - 1) {
+                        res.redirect("/events"); // Redirect after the last insert
+                    }
                 })
-                .catch((err) => {
-                    console.error("EventRequest error:", err);
-                    res.status(500).send("Error updating eventRequest");
+                .catch(err => {
+                    console.error("Error inserting date:", err);
+                    res.status(500).send("Error processing dates and eventdates");
                 });
-        })
-        .catch((err) => {
-            console.error("Events error:", err);
-            res.status(500).send("Error updating events");
-        });
-    }) // Redirect after successful insertions
-    .catch((err) => {
-        console.error("Location error:", err);
-        res.status(500).send("Error updating location");
-    });
+            }
+              });
+      })
+      .catch((err) => {
+          console.error("Error:", err);
+          res.status(500).send("Error processing service event");
+      });
 });
+    
 
 
 router.post("/addDistributionEvent", (req, res) => {
