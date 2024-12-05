@@ -1,4 +1,4 @@
-<script> 
+<script>
     let burgerView = false;
     // to toggle the link text based on the background
     let txtColor = 'text-black';
@@ -13,7 +13,7 @@
     document.addEventListener('DOMContentLoaded', () => {
         // Get all elements with the class name 'navButton'
         const homeLinks = document.getElementsByClassName('navButton');
-        
+
         // Check if elements with the class 'navButton' exist
         if (homeLinks.length > 0) {
             for (let i = 0; i < homeLinks.length; i++) {
@@ -28,29 +28,29 @@
         }
     });
 
-    function makeLinksBurger () {
+    function makeLinksBurger() {
         const linkDiv = document.getElementById('linksDiv');
         if (window.innerWidth < 768) {
             linkDiv.classList.add('hidden');
             document.getElementById('burgerMenuDiv').classList.remove('hidden');
             burgerView = true;
-        }else{
+        } else {
             linkDiv.classList.remove('hidden');
             document.getElementById('burgerMenuDiv').classList.add('hidden');
             burgerView = false;
         }
-    }  
+    }
 
     // Function to handle clicks outside the menu to close it
     function closeMenuOnClickOutside(event) {
-        if (burgerView){
+        if (burgerView) {
             const linkDiv = document.getElementById('linksDiv');
             const burgerMenuDiv = document.getElementById('burgerMenuDiv');
-            
+
             // Check if the click target is outside the menu and burger icon
             if (!burgerMenuDiv.contains(event.target) && !linkDiv.contains(event.target)) {
                 linkDiv.classList.add('hidden'); // Show the links div if clicked outside
-                document.getElementById('navTitle').classList.remove('hidden');
+                document.getElementById('burgerDrop').classList.add('hidden');
             }
         }
     }
@@ -68,6 +68,17 @@
             linkDiv.classList.remove('hidden');
             title.classList.add('hidden');
         }
+    }
+
+    function handleBurgerClick() {
+        const dropdown = document.getElementById('burgerDrop');
+        console.log('burg')
+        if (dropdown.classList.contains('hidden')) {
+            dropdown.classList.remove('hidden');
+        } else {
+            dropdown.classList.add('hidden');
+        }
+
     }
 
     // Function to show the dropdown when the admin button is hovered over
@@ -93,62 +104,118 @@
     window.addEventListener('load', () => {
         makeLinksBurger();
     });
+
+    function handleAdminHoverBurg() {
+
+    }
+    function handleAdminLeaveBurg() {
+
+    }
 </script>
 
 
-<nav id="navBar" class="absolute top-0 left-0 right-0 rounded-b-2xl flex flex-wrap z-50 justify-between items-center px-4 py-2 bg-none">
+<nav id="navBar"
+    class="absolute top-0 left-0 right-0 rounded-b-2xl flex flex-wrap z-50 justify-between items-center px-4 py-2 bg-none">
     <h2 id="navTitle" class="font-bold flex-shrink-0 max-w-full md:text-3xl">
         Turtle Shelter Project
     </h2>
-    <div id="linksDiv" class="flex flex-wrap z-50 justify-between items-center px-4 py-2 bg-none">
-        <a href="/" id="homeLink" class="navButton hover:bg-gray-400 transition-all duration-150 py-1 px-2 rounded-md cursor-pointer text-lg">
+    <div id="linksDiv" class="flex flex-wrap z-20 justify-between items-center px-4 py-2 bg-none">
+        <a href="/" id="homeLink"
+            class="navButton hover:bg-gray-400 transition-all duration-150 py-1 px-2 rounded-md cursor-pointer text-lg">
             Home
         </a>
-            <% if (authenticated) { %>
-                <div class="relative z-50">
-                    <div onmouseover="handleAdminHover()" onmouseleave="handleAdminLeave()" id="adminLink"
-                        class="navButton hover:bg-gray-400 transition-all duration-150 py-1 px-2 rounded-md cursor-pointer text-lg">
-                        Admin
-                    </div>
-                    <div id="dropdownDiv" onmouseover="handleAdminHover()" onmouseleave="handleAdminLeave()" class="absolute hidden bg-white shadow-lg rounded-md pt-2 z-50 border">
-                        <a href="/stats" id="statsLink"
-                            class="block hover:bg-gray-400 transition-all duration-150 py-1 px-2 rounded-md z-50">
-                            Stats
-                        </a>
-                        <a href="/events" id="eventsLink"
-                            class="block hover:bg-gray-400 transition-all duration-150 py-1 px-2 rounded-md ">
-                            Events
-                        </a>
-                        <a href="/volunteers" id="volunteersLink"
-                            class="block hover:bg-gray-400 transition-all duration-150 py-1 px-2 rounded-md">
-                            Volunteers
-                        </a>
-                        <a href="/users" id="usersLink"
-                            class="block hover:bg-gray-400 transition-all duration-150 py-1 px-2 rounded-md">
-                            Users
-                        </a>
-                    </div>
+        <a href="/volunteerRequest" id="volLink"
+            class="navButton hover:bg-gray-400 transition-all duration-150 py-1 px-2 rounded-md cursor-pointer text-lg">
+            Volunteer
+        </a>
+        <a href="/hostAnEvent" id="hostLink"
+            class="navButton hover:bg-gray-400 transition-all duration-150 py-1 px-2 rounded-md cursor-pointer text-lg">
+            Host
+        </a>
+
+        <% if (authenticated) { %>
+            <div class="relative z-20">
+                <div onmouseover="handleAdminHover()" onmouseleave="handleAdminLeave()" id="adminLink"
+                    class="navButton hover:bg-gray-400 transition-all duration-150 py-1 px-2 rounded-md cursor-pointer text-lg">
+                    Admin
                 </div>
-                <% } %>
-                    <a href="/contact" id="contactLink"
-                        class="navButton hover:bg-gray-400 transition-all duration-150 py-1 px-2 rounded-md cursor-pointer text-lg">
-                        Contact
+                <div id="dropdownDiv" onmouseover="handleAdminHover()" onmouseleave="handleAdminLeave()"
+                    class="absolute hidden bg-white shadow-lg rounded-md z-20 border">
+                    <a href="/stats" id="statsLink"
+                        class="block hover:bg-gray-400 transition-all duration-150 py-1 px-2 rounded-md z-20">
+                        Stats
                     </a>
-                    <% if (authenticated) { %>
-                        <a href="/logout" id="logoutLink"
+                    <a href="/events" id="eventsLink"
+                        class="block hover:bg-gray-400 transition-all duration-150 py-1 px-2 rounded-md ">
+                        Events
+                    </a>
+                    <a href="/volunteers" id="volunteersLink"
+                        class="block hover:bg-gray-400 transition-all duration-150 py-1 px-2 rounded-md">
+                        Volunteers
+                    </a>
+                </div>
+            </div>
+            <% } %>
+                <% if (authenticated) { %>
+                    <a href="/logout" id="logoutLink"
+                        class="navButton hover:bg-gray-400 transition-all duration-150 py-1 px-2 rounded-md cursor-pointer text-lg">
+                        Logout
+                    </a>
+                    <% } else { %>
+                        <a href="/login" id="loginLink"
                             class="navButton hover:bg-gray-400 transition-all duration-150 py-1 px-2 rounded-md cursor-pointer text-lg">
-                            Logout
+                            Login
                         </a>
-                        <% } else { %>
-                            <a href="/login" id="loginLink"
-                                class="navButton hover:bg-gray-400 transition-all duration-150 py-1 px-2 rounded-md cursor-pointer text-lg">
-                                Login
-                            </a>
-                            <% } %>
+                        <% } %>
     </div>
-    <div id="burgerMenuDiv" class="ml-auto flex items-center justify-end hidden">
-        <svg xmlns="http://www.w3.org/2000/svg" onclick="toggleBurger()" id="burgerMenu" class="ionicon w-12 h-12 cursor-pointer transform transition-transform duration-150 hover:scale-110" viewBox="0 0 512 512"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="48" d="M88 152h336M88 256h336M88 360h336"/></svg>
+    <div id="burgerMenuDiv" class="ml-auto flex items-center justify-end hidden z-50">
+        <svg xmlns="http://www.w3.org/2000/svg" onclick="handleBurgerClick()" id="burgerMenu"
+            class="ionicon w-12 h-12 cursor-pointer transform transition-transform duration-150 hover:scale-110"
+            viewBox="0 0 512 512">
+            <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="48"
+                d="M88 152h336M88 256h336M88 360h336" />
+        </svg>
     </div>
+    <div id="burgerDrop"
+        class="absolute right-0 top-0 w-auto bg-white border hidden shadow-lg rounded-l-lg z-40 transition-all delay-150 flex flex-col space-y-2 py-4">
+        <br><br>
+        <a href="/volunteerRequest" id="volLink"
+            class="navButtonB py-2 px-4 rounded-md cursor-pointer text-lg text-black text-center">
+            Volunteer
+        </a>
+        <a href="/hostAnEvent" id="hostLink"
+            class="navButtonB py-1 px-2 rounded-md cursor-pointer text-lg text-black text-center">
+            Host
+        </a>
+        <% if (authenticated) { %>
+            <a href="/stats" id="statsLink"
+                class="navButtonB py-2 px-4 rounded-md cursor-pointer text-lg text-black text-center">
+                Stats
+            </a>
+            <a href="/events" id="eventsLink"
+                class="navButtonB py-2 px-4 rounded-md cursor-pointer text-lg text-black text-center">
+                Events
+            </a>
+            <a href="/volunteers" id="volunteersLink"
+                class="block hover:bg-gray-400 transition-all duration-150 py-1 px-2 rounded-md">
+                Volunteers
+            </a>
+            <% } if (authenticated) { %>
+                <a href="/logout" id="logoutLink"
+                    class="navButtonB py-2 px-4 rounded-md cursor-pointer text-lg text-black text-center">
+                    Logout
+                </a>
+                <% } else { %>
+                    <a href="/login" id="loginLink"
+                        class="navButtonB py-2 px-4 rounded-md cursor-pointer text-lg text-black text-center">
+                        Login
+                    </a>
+                    <% } %>
+    </div>
+
+
+
+
 </nav>
 
 <script>
@@ -162,21 +229,5 @@
         input.value = currentPath;
         form.appendChild(input);
         form.submit();
-    });
-
-    document.addEventListener('DOMContentLoaded', function () {
-        const currentPath = window.location.pathname;
-        const links = {
-            '/': 'homeLink',
-            '/volunteerRequest': 'volunteerLink',
-            '/hostAnEvent': 'eventLink',
-            '/contact': 'contactLink',
-            '/events': 'adminLink',
-            '/volunteers': 'adminLink',
-            '/stats': 'adminLink'
-        };
-        if (links[currentPath]) {
-            document.getElementById(links[currentPath]).classList.add('bg-gray-400');
-        }
     });
 </script>
