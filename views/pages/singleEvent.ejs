@@ -405,13 +405,6 @@
                                         </option>
                                         <% }); %>
                                 </select>
-                                <% servicetypes.forEach(function(servicetype) { %>
-                                    <option value="<%= servicetype.servicetypeid %>"
-                                        <%=servicetype.description===event.description ? 'selected' : '' %>
-                                        ><%= servicetype.description %>
-                                    </option>
-                                    <% }); %>
-                                        </select>
                             </div>
                             <% } %>
 
