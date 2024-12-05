@@ -74,12 +74,6 @@
         };
     };
 
-    function saveDistributionEvent() {
-        const form = document.getElementById('addEventForm');
-        form.action = '/addDistributionEvent';
-        form.submit();
-    };
-
     function addItem() {
         const template = document.getElementById('dateTemplate').content.cloneNode(true);
         document.querySelector('#dateSection .grid').appendChild(template);
