@@ -494,14 +494,15 @@ router.post("/addDistributionEvent", (req, res) => {
         });
 });
 
-router.post("/editEvent", (req, res) => {
-    // Destructure incoming data from the form
-    console.log("editing event")
-    console.log(req.body); // Log the whole body to verify eventid is included
+router.put("/updateServiceEvent/:eventid", (req, res) => {
+    console.log("Updating Service Event");
+    console.log(JSON.stringify(req.body, null, 2));
+
+    const eventid = req.params.eventid; // Get eventid from URL params
     const {
         organization,
         status,
-        date,
+        date = [],
         starttime,
         plannedduration,
         address,
@@ -522,89 +523,175 @@ router.post("/editEvent", (req, res) => {
         numtablesround,
         numtablesrectangle,
         details,
-        eventid
+        firstname = [],
+        lastname = [],
+        email = [],
+        phonenumber = []
     } = req.body;
-    console.log(new Date(date))
 
-    // Step 5: Insert or update the location table with zip, city, and state
+    // Step 1: Update the "location" table with zip, city, and state
     knex("location")
-        .insert({ zip: zip || '', city: city || '', state: state || '' })
+        .insert({ zip, city, state })
         .onConflict("zip") // If zip exists, update city/state
         .merge() // Merge updates for existing zip
         .then(() => {
-            // Step 1: Update the "events" table with the provided eventid
-            knex("events")
-                .where({ eventid })
+            // Step 2: Update data in the "events" table
+            return knex("events")
+                .where("eventid", eventid)
                 .update({
                     starttime: starttime || '00:00:00',
                     address: address || '',
-                    zip: zip || '',
-                    status: status || '',
-                    plannedduration: plannedduration || 0,
+                    zip: zip || '00000',
+                    status: status || 'Pending',
+                    plannedduration: plannedduration || 0.0,
                     details: details || '',
-                })
-                .then(() => {
-                    // Step 2: Update data in the "eventrequest" table
-                    knex("eventrequest")
-                        .where({ eventid })
-                        .update({
-                            servicetypeid: servicetypeid || 0,
-                            jenstorylength: jenstorylength || 0,
-                            jenstory: jenstory || 0,
-                            sergers: sergers || 0,
-                            sewingmachines: sewingmachines || 0,
-                            childrenunder10: childrenunder10 || 0,
-                            advancedsewers: advancedsewers || 0,
-                            basicsewers: basicsewers || 0,
-                            adultparticipants: adultparticipants || 0,
-                            organization: organization || '',
-                            venuesize: venuesize || 0,
-                            numrooms: numrooms || 0,
-                            numtablesround: numtablesround || 0,
-                            numtablesrectangle: numtablesrectangle || 0,
-                        })
-                        .then(() => {
-                            // Step 3: Check if the provided date already exists in the "dates" table
-                            knex("dates")
-                                .insert({ date: date || '2020-01-01' })
-                                .onConflict("date") // Handle conflicts based on the "date" field
-                                .merge() // If the date already exists, merge the update
-                                .returning("dateid")
-                                .then(([newDateId]) => {
-                                    const dateId = newDateId.dateid; // Extract dateid here
-
-                                    // Update the eventdates table with the new dateid
-                                    knex("eventdates")
-                                        .where({ eventid })  // Ensure we are updating the correct eventid
-                                        .update({ dateid: dateId || 0 })
-                                        .then(() => {
-                                            res.redirect(`/events/${eventid}`); // Correct URL with eventid
-                                        })
-                                        .catch((err) => {
-                                            console.error("EventDates error:", err);
-                                            res.status(500).send("Error updating eventdates");
-                                        });
-                                })
-                                .catch((err) => {
-                                    console.error("Dates error:", err);
-                                    res.status(500).send("Error updating date");
-                                });
-                        })
-                        .catch((err) => {
-                            console.error("EventRequest error:", err);
-                            res.status(500).send("Error updating eventRequest");
-                        });
-                })
-                .catch((err) => {
-                    console.error("Events error:", err);
-                    res.status(500).send("Error updating events");
                 });
         })
+        .then(() => {
+            // Step 3: Update the "eventrequest" table
+            return knex("eventrequest")
+                .where("eventid", eventid)
+                .update({
+                    servicetypeid: servicetypeid || 1,
+                    jenstorylength: jenstorylength || 0,
+                    jenstory: jenstory || 0,
+                    sergers: sergers || 0,
+                    sewingmachines: sewingmachines || 0,
+                    childrenunder10: childrenunder10 || 0,
+                    advancedsewers: advancedsewers || 0,
+                    basicsewers: basicsewers || 0,
+                    adultparticipants: adultparticipants || 0,
+                    organization: organization || '',
+                    venuesize: venuesize || 0,
+                    numrooms: numrooms || 0,
+                    numtablesround: numtablesround || 0,
+                    numtablesrectangle: numtablesrectangle || 0,
+                });
+        })
+        .then(() => {
+            // Step 4: Update users in the "requester" table
+            if (Array.isArray(firstname) && firstname.length > 0) {
+                firstname.forEach((currentfirstname, index) => {
+                    const currentlastname = lastname[index] || '';
+                    const currentemail = email[index] || '';
+                    const currentphonenumber = phonenumber[index] || '';
+                    knex("requester")
+                        .where("eventid", eventid)
+                        .andWhere("firstname", currentfirstname)
+                        .update({
+                            firstname: currentfirstname,
+                            lastname: currentlastname,
+                            phone: currentphonenumber,
+                            email: currentemail
+                        })
+                        .catch((err) => {
+                            console.error("Error:", err);
+                            res.status(500).send("Error updating requester info");
+                        });
+                });
+            } else if (typeof firstname === 'string') {
+                // If firstname is a string, update that user
+                const currentfirstname = firstname || '';
+                const currentlastname = lastname || '';
+                const currentemail = email || '';
+                const currentphonenumber = phonenumber || '';
+                knex("requester")
+                    .where("eventid", eventid)
+                    .andWhere("firstname", currentfirstname)
+                    .update({
+                        firstname: currentfirstname,
+                        lastname: currentlastname,
+                        phone: currentphonenumber,
+                        email: currentemail
+                    })
+                    .catch((err) => {
+                        console.error("Error:", err);
+                        res.status(500).send("Error updating requester info");
+                    });
+            }
+
+            // Step 5: Update dates in the "eventdates" table
+            if (Array.isArray(date) && date.length > 0) {
+                date.forEach((currentDate, index) => {
+                    const dateToUpdate = new Date(currentDate) || '2020-01-01';
+                    knex("dates")
+                        .select("dateid")
+                        .where({ date: dateToUpdate })
+                        .first()
+                        .then(existingDate => {
+                            if (existingDate) {
+                                // Date exists, update eventdates table
+                                return knex("eventdates")
+                                    .insert({ eventid: eventid, dateid: existingDate.dateid })
+                                    .onConflict(["eventid", "dateid"]) // Handle duplicate key
+                                    .merge(); // Update the entry if it already exists
+                            } else {
+                                // Date doesn't exist, insert it and link with eventdates
+                                return knex("dates")
+                                    .insert({ date: dateToUpdate })
+                                    .returning("dateid")
+                                    .then(([newDateId]) => {
+                                        const dateId = newDateId.dateid;
+                                        return knex("eventdates")
+                                            .insert({ eventid: eventid, dateid: dateId })
+                                            .onConflict(["eventid", "dateid"])
+                                            .ignore();
+                                    });
+                            }
+                        })
+                        .then(() => {
+                            if (index === date.length - 1) {
+                                res.redirect("/events"); // Redirect after last update
+                            }
+                        })
+                        .catch(err => {
+                            console.error("Error updating date:", err);
+                            res.status(500).send("Error processing dates and eventdates");
+                        });
+                });
+            } else if (typeof date === 'string') {
+                // If date is a string, process it as a single date
+                const currentDate = new Date(date) || '2020-01-01';
+                knex("dates")
+                    .select("dateid")
+                    .where({ date: currentDate })
+                    .first()
+                    .then(existingDate => {
+                        if (existingDate) {
+                            // Date exists, update eventdates table
+                            return knex("eventdates")
+                                .insert({ eventid: eventid, dateid: existingDate.dateid })
+                                .onConflict(["eventid", "dateid"])
+                                .merge(); // Update the entry if it already exists
+                        } else {
+                            // Date doesn't exist, insert it and link with eventdates
+                            return knex("dates")
+                                .insert({ date: currentDate })
+                                .returning("dateid")
+                                .then(([newDateId]) => {
+                                    const dateId = newDateId.dateid;
+                                    return knex("eventdates")
+                                        .insert({ eventid: eventid, dateid: dateId })
+                                        .onConflict(["eventid", "dateid"])
+                                        .ignore();
+                                });
+                        }
+                    })
+                    .then(() => {
+                        res.redirect("/events"); // Redirect after update
+                    })
+                    .catch(err => {
+                        console.error("Error updating date:", err);
+                        res.status(500).send("Error processing dates and eventdates");
+                    });
+            }
+        })
         .catch((err) => {
-            console.error("Location error:", err);
-            res.status(500).send("Error updating location");
+            console.error("Error:", err);
+            res.status(500).send("Error processing service event update");
         });
 });
+
 
 router.get("/events", checkAuthenticated, (req, res) => {
     console.log("getting events")
