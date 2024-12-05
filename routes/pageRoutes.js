@@ -58,8 +58,17 @@ router.post("/newVolunteer", (req, res) => {
               notes: notes || '',
               jobrole:'Volunteer' })
             .then(() => {
-                // do nothing??
+              knex("skilllevel")
+                .select()
+                .then((skilllevel) => {
+                  res.render("layout", {
 
+                    title: "Volunteer Request",
+                    page: "volunteerRequest",
+                    skilllevel:skilllevel,
+                    submitted:true,
+                });
+              })
             })
             .catch((error) => {
                 console.error("Error adding volunteer:", error);
