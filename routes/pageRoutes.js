@@ -19,11 +19,43 @@ router.get("/", (req, res) => {
 });
 
 router.post("/newVolunteer", (req, res) => {
-    const { firstname, lastname, skillid, city, state, zip, phone, email } =
+  console.log("Posting volunteer")
+    const { firstname, 
+      lastname, 
+      skillid, 
+      city, 
+      state, 
+      zip, 
+      phone, 
+      email, 
+      password, 
+      teacher, 
+      leader, 
+      availability, 
+      range, 
+      discoverymethod, 
+      notes,
+      jobrole } =
         req.body;
 
     knex("volunteer")
-        .insert({ firstname, lastname, skillid, city, state, zip, phone, email })
+        .insert({ 
+          firstname: firstname || '', 
+          lastname: lastname || '', 
+          skillid: skillid || 0, 
+          city: city || '', 
+          state: state || '', 
+          zip: zip || '', 
+          phone: phone || '',
+          email:email || '', 
+          password: password || '',
+          teacher: teacher || '', 
+          leader: leader || '', 
+          availability: availability || '', 
+          range: range || '', 
+          discoverymethod: discoverymethod || '', 
+          notes: notes || '',
+          joberole:joberole || 'Volunteer' })
         .then(() => {
             res.redirect("/users");
         })
@@ -149,7 +181,7 @@ router.post("/addServiceEvent", (req, res) => {
           starttime: starttime || '00:00:00',
           address: address || '',
           zip: zip || '00000',
-          status: status || "",
+          status: status || 'Pending',
           plannedduration: plannedduration || 0.0,
           details: details || '',
         })
