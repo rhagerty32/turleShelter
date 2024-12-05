@@ -455,8 +455,10 @@
                                                     <span class="ml-2">Requested</span>
                                                 </label>
                                                 <label class="inline-flex items-center ml-6">
-                                                    <input type="radio" name="jenstory" value="false" class="form-radio"
-                                                        <%=event.jenstory===false ? 'checked' : '' %>>
+                                                    <input type="radio" name="jenstory" value="false"
+                                                        onclick="document.getElementById('jenstorylength').value = 0;"
+                                                        class="form-radio" <%=event.jenstory===false ? 'checked' : ''
+                                                        %>>
                                                     <span class="ml-2">Not Requested</span>
                                                 </label>
                                             </div>
@@ -464,13 +466,13 @@
                                         <div>
                                             <label for="jenstorylength" class="block text-gray-700">Jen Story Length
                                                 (mins)</label>
-                                            <input name="jenstorylength" type="text" id="jenstorylength" min="0"
+                                            <input name="jenstorylength" type="number" id="jenstorylength" min="0"
                                                 value="<%= event.jenstorylength %>"
+                                                oninput="if(document.querySelector('input[name=jenstory]:checked').value === 'false') this.value = 0;"
                                                 class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                                         </div>
                                     </div>
                                     <% } %>
-
 
                                         <!-- EQUIPMENT -->
                                         <% if (event.organization) { %>
