@@ -83,10 +83,12 @@ teacher
                         <label for="skilllevel" class="block text-gray-700 font-medium">Skill Level</label>
                         <select id="skilllevel" name="skillid" required
                             class="mt-2 w-full px-2 py-2 outline-teal-500 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
-                            <option value="" disabled selected>Select your skill level</option>
-                            <option value="1">Beginner</option>
-                            <option value="2">Intermediate</option>
-                            <option value="3">Expert</option>
+                            <% skilllevel.forEach(skill=> { %>
+                                <option value="<%= skill.skillid %>" <%=skill.skillid===skill.skillid ? 'selected' : ''
+                                    %> >
+                                    <%= skill.description %>
+                                </option>
+                                <% }) %>
                         </select>
                     </div>
                     <div>
