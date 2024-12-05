@@ -67,7 +67,7 @@
 </script>
 
 <body class="bg-gray-50 font-sans">
-    <div class="container mx-auto py-12 px-6">
+    <div class="container justify-center items-center mx-auto py-12 px-6">
         <div class="flex flex-row justify-between items-center">
             <!-- HEADER -->
             <a href="/events" class="px-4 py-2 mt-10 bg-gray-100 text-gray-800 rounded-md hover:bg-gray-200">Back to
@@ -281,8 +281,42 @@
                                                             </div>
                                                             <% } %>
             </div>
+            <% if (event.organization) { %>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                    <div class="bg-white shadow-md rounded-xl p-4 border flex flex-col gap-4">
+                        <h3 class="text-xl font-bold text-gray-800">
+                            Contact Information</h3>
+                        <div class="flex flex-col gap-4">
+                            <% requesters.forEach(function(requester) { %>
+                                <div class="flex flex-col gap-0">
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                        <div>
+                                            <label class="block text-gray-700">Name</label>
+                                            <p class="mt-2 text-gray-600">
+                                                <%= requester.firstname %>
+                                                    <%= requester.lastname %>
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <label class="block text-gray-700">Phone</label>
+                                            <p class="mt-2 text-gray-600">
+                                                <%= requester.phone %>
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <label class="block text-gray-700">Email</label>
+                                            <p class="mt-2 text-gray-600">
+                                                <%= requester.email %>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <% }); %>
+                        </div>
+                    </div>
+                </div>
+                <% } %>
         </div>
-
 
         <!-- ^ EDITOR -->
         <form action="/editEvent" method="POST" id="editSection" class="bg-white p-6 rounded-lg shadow-md mt-6 hidden">
@@ -500,7 +534,8 @@
                                                             <div class="grid grid-cols-4 gap-4">
                                                                 <div>
                                                                     <label for="venuesize"
-                                                                        class="block text-gray-700">Venue Size</label>
+                                                                        class="block text-gray-700">Venue
+                                                                        Size</label>
                                                                     <input name="venuesize" type="text" id="venuesize"
                                                                         min="0" value="<%= event.venuesize %>"
                                                                         class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
@@ -612,7 +647,6 @@
                     class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500"><%= event.details %></textarea>
             </div>
 
-
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2">
                 <!-- START DATE/TIME -->
                 <div id="dateSection">
@@ -647,30 +681,33 @@
 
                 <% if (event.organization) { %>
                     <div id="contactSection">
-                        <div class="grid grid-cols-4 gap-4">
-                            <div>
-                                <label for="modalFirstName" class="block text-gray-700">First Name</label>
-                                <input type="text" id="modalFirstName" name="firstname" value="<%= event.firstname %>"
-                                    class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500"
-                                    required>
-                            </div>
-                            <div>
-                                <label for="modalLastName" class="block text-gray-700">Last Name</label>
-                                <input type="text" id="modalLastName" name="lastname" value="<%= event.lastname %>"
-                                    class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500"
-                                    required>
-                            </div>
-                            <div>
-                                <label for="modalEmail" class="block text-gray-700">Email</label>
-                                <input type="email" id="modalEmail" name="email" value="<%= event.email %>"
-                                    class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500"
-                                    required>
-                            </div>
-                            <div>
-                                <label for="modalPhoneNumber" class="block text-gray-700">Phone Number</label>
-                                <input type="text" id="modalPhoneNumber" name="phonenumber" value="<%= event.phone %>"
-                                    class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
-                            </div>
+                        <div class="grid grid-cols-1 gap-4">
+                            <% requesters.forEach(function(requester) { %>
+                                <div class="grid grid-cols-4 gap-4">
+                                    <div>
+                                        <label for="firstname" class="block text-gray-700">First Name</label>
+                                        <input name="firstname" type="text" id="firstname"
+                                            value="<%= requester.firstname %>"
+                                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                                    </div>
+                                    <div>
+                                        <label for="lastname" class="block text-gray-700">Last Name</label>
+                                        <input name="lastname" type="text" id="lastname"
+                                            value="<%= requester.lastname %>"
+                                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                                    </div>
+                                    <div>
+                                        <label for="phone" class="block text-gray-700">Phone</label>
+                                        <input name="phone" type="text" id="phone" value="<%= requester.phone %>"
+                                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                                    </div>
+                                    <div>
+                                        <label for="email" class="block text-gray-700">Email</label>
+                                        <input name="email" type="email" id="email" value="<%= requester.email %>"
+                                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                                    </div>
+                                </div>
+                                <% }); %>
                         </div>
                         <!-- ADD REQUESTER BUTTON -->
                         <div class="col-span-2">
@@ -696,28 +733,27 @@
 
             <!-- TEMPLATE FOR NEW CONTACT -->
             <template id="contactTemplate">
-                <div>
-                    <label for="modalFirstName" class="block text-gray-700">First Name</label>
-                    <input type="text" id="modalFirstName" name="firstname"
-                        class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500"
-                        required>
-                </div>
-                <div>
-                    <label for="modalLastName" class="block text-gray-700">Last Name</label>
-                    <input type="text" id="modalLastName" name="lastname"
-                        class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500"
-                        required>
-                </div>
-                <div>
-                    <label for="modalEmail" class="block text-gray-700">Email</label>
-                    <input type="email" id="modalEmail" name="email"
-                        class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500"
-                        required>
-                </div>
-                <div>
-                    <label for="modalPhoneNumber" class="block text-gray-700">Phone Number</label>
-                    <input type="text" id="modalPhoneNumber" name="phonenumber"
-                        class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                <div class="grid grid-cols-4 gap-4">
+                    <div>
+                        <label for="firstname" class="block text-gray-700">First Name</label>
+                        <input name="firstname" type="text" id="firstname" value=""
+                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                    </div>
+                    <div>
+                        <label for="lastname" class="block text-gray-700">Last Name</label>
+                        <input name="lastname" type="text" id="lastname" value=""
+                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                    </div>
+                    <div>
+                        <label for="phone" class="block text-gray-700">Phone</label>
+                        <input name="phone" type="text" id="phone" value=""
+                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                    </div>
+                    <div>
+                        <label for="email" class="block text-gray-700">Email</label>
+                        <input name="email" type="email" id="email" value=""
+                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                    </div>
                 </div>
             </template>
         </form>
