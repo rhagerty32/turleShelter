@@ -532,7 +532,7 @@ router.post("/deleteDate", (req, res) => {
     
 });
 
-router.post("/editEvent", (req, res) => {
+router.post("/editEvent", checkAuthenticated, (req, res) => {
     console.log("Editing Event");
     console.log(JSON.stringify(req.body, null, 2));
     const {
@@ -821,7 +821,7 @@ router.get("/events", checkAuthenticated, (req, res) => {
         });
 })
 
-router.get('/events/:eventid', (req, res) => {
+router.get('/events/:eventid',checkAuthenticated, (req, res) => {
     const eventid = req.params.eventid;
 
     knex('events as e')
