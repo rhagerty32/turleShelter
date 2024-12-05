@@ -26,7 +26,7 @@ router.post("/newVolunteer", (req, res) => {
       city, 
       state, 
       zip, 
-      phone, 
+      phonenumber, 
       email, 
       password, 
       teacher, 
@@ -34,35 +34,42 @@ router.post("/newVolunteer", (req, res) => {
       availability, 
       range, 
       discoverymethod, 
-      notes,
-      jobrole } =
+      notes, } =
         req.body;
+    knex("location")
+      .insert({ zip, city, state })
+      .onConflict("zip") // If zip exists, update city/state
+      .merge() // Merge updates for existing zip
+      .then(() => {
+        knex("volunteer")
+            .insert({ 
+              firstname: firstname || '', 
+              lastname: lastname || '', 
+              skillid: skillid || 0, 
+              zip: zip || '', 
+              phonenumber: phonenumber || '',
+              email:email || '', 
+              password: password || '',
+              teacher: teacher || '', 
+              leader: leader || '', 
+              availability: availability || '', 
+              range: range || '', 
+              discoverymethod: discoverymethod || '', 
+              notes: notes || '',
+              jobrole:'Volunteer' })
+            .then(() => {
+                // do nothing??
 
-    knex("volunteer")
-        .insert({ 
-          firstname: firstname || '', 
-          lastname: lastname || '', 
-          skillid: skillid || 0, 
-          city: city || '', 
-          state: state || '', 
-          zip: zip || '', 
-          phone: phone || '',
-          email:email || '', 
-          password: password || '',
-          teacher: teacher || '', 
-          leader: leader || '', 
-          availability: availability || '', 
-          range: range || '', 
-          discoverymethod: discoverymethod || '', 
-          notes: notes || '',
-          joberole:joberole || 'Volunteer' })
-        .then(() => {
-            res.redirect("/users");
+            })
+            .catch((error) => {
+                console.error("Error adding volunteer:", error);
+                res.status(500).send("Internal Server Error");
+            });
         })
         .catch((error) => {
-            console.error("Error adding user:", error);
-            res.status(500).send("Internal Server Error");
-        });
+          console.error("Error adding user:", error);
+          res.status(500).send("Internal Server Error");
+    });
 });
 
 router.get("/login", (req, res) => {
@@ -143,6 +150,7 @@ router.get("/hostAnEvent", (req, res) => {
       })
 
 router.post("/addServiceEvent", (req, res) => {
+    console.log("Adding Service Event")
     const {
         organization,
         status,
@@ -546,32 +554,40 @@ router.get("/volunteers", checkAuthenticated, (req, res) => {
 });
 
 router.post("/editVolunteer", (req, res) => {
-    const {
-        firstname,
-        lastname,
-        email,
-        phone,
-        skillid,
-        city,
-        state,
-        availability,
-        discoverymethod,
-        notes,
-    } = req.body;
-
-    knex("volunteer")
+  const {
+    firstname,
+    lastname,
+    email,
+    phonenumber,
+    skillid,
+    city,
+    state,
+    availability,
+    discoverymethod,
+    notes,
+    password,
+    jobrole,
+  } = req.body;
+  knex("location")
+    .insert({ zip, city, state })
+    .onConflict("zip") // If zip exists, update city/state
+    .merge() // Merge updates for existing zip
+    .then(() => {
+      knex("volunteer")
         .where({ email })
         .update({
           email: email || '',
           firstname: firstname || '',
           lastname: lastname || '',
-          phone: phone || '',
+          phonenumber: phonenumber || '',
           skillid: skillid || 0,
           city: city || '',
           state: state || '',
           availability: availability || '',
           discoverymethod: discoverymethod || '',
           notes: notes || '',
+          password: password || '',
+          jobrole: jobrole || 'Volunteer',
           
         })
         .then(() => {
@@ -581,6 +597,11 @@ router.post("/editVolunteer", (req, res) => {
             console.error("Error updating volunteer:", error);
             res.status(500).send("Internal Server Error");
         });
+        })
+    .catch((error) => {
+        console.error("Error updating volunteer:", error);
+        res.status(500).send("Internal Server Error");
+    });
 });
 router.post("/deleteEvent", (req, res) => {
   const { eventid } = req.body;
