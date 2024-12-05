@@ -12,10 +12,21 @@ function checkAuthenticated(req, res, next) {
 
 // Define routes for each page
 router.get("/", (req, res) => {
-    res.render("layout", {
-        title: "Home",
-        page: "home",
-    });
+    knex("eventoutcome")
+        .count("eventid as eventCount")
+        .sum("headcount as totalHeadcount")
+        .sum("servicehours as totalServiceHours")
+        .then((stats) => {
+            res.render("layout", {
+                title: "Home",
+                page: "home",
+                stats: stats[0],
+            });
+        })
+        .catch((error) => {
+            console.error("Error querying eventoutcome:", error);
+            res.status(500).send("Internal Server Error");
+        });
 });
 
 router.post("/newVolunteer", (req, res) => {
