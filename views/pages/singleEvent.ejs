@@ -285,37 +285,63 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                     <div class="bg-white shadow-md rounded-xl p-4 border flex flex-col gap-4">
                         <h3 class="text-xl font-bold text-gray-800">
-                            Contact Information</h3>
+                            Post-Event Details</h3>
                         <div class="flex flex-col gap-4">
-                            <% requesters.forEach(function(requester) { %>
-                                <div class="flex flex-col gap-0">
-                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                        <div>
-                                            <label class="block text-gray-700">Name</label>
-                                            <p class="mt-2 text-gray-600">
-                                                <%= requester.firstname %>
-                                                    <%= requester.lastname %>
-                                            </p>
-                                        </div>
-                                        <div>
-                                            <label class="block text-gray-700">Phone</label>
-                                            <p class="mt-2 text-gray-600">
-                                                <%= requester.phone %>
-                                            </p>
-                                        </div>
-                                        <div>
-                                            <label class="block text-gray-700">Email</label>
-                                            <p class="mt-2 text-gray-600">
-                                                <%= requester.email %>
-                                            </p>
-                                        </div>
+                            <div class="flex flex-col gap-0">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label class="block text-gray-700">Temperature</label>
+                                        <p class="mt-2 text-gray-600">
+                                            <%= temperature ? temperature : 32 %>°F
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <label class="block text-gray-700">Total Recipients</label>
+                                        <p class="mt-2 text-gray-600">
+                                            <%= totalRecipients ? totalRecipients : 10 %>
+                                        </p>
                                     </div>
                                 </div>
-                                <% }); %>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <% } %>
+                    <% if (event.organization) { %>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                            <div class="bg-white shadow-md rounded-xl p-4 border flex flex-col gap-4">
+                                <h3 class="text-xl font-bold text-gray-800">
+                                    Contact Information</h3>
+                                <div class="flex flex-col gap-4">
+                                    <% requesters.forEach(function(requester) { %>
+                                        <div class="flex flex-col gap-0">
+                                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                                <div>
+                                                    <label class="block text-gray-700">Name</label>
+                                                    <p class="mt-2 text-gray-600">
+                                                        <%= requester.firstname %>
+                                                            <%= requester.lastname %>
+                                                    </p>
+                                                </div>
+                                                <div>
+                                                    <label class="block text-gray-700">Phone</label>
+                                                    <p class="mt-2 text-gray-600">
+                                                        <%= requester.phone %>
+                                                    </p>
+                                                </div>
+                                                <div>
+                                                    <label class="block text-gray-700">Email</label>
+                                                    <p class="mt-2 text-gray-600">
+                                                        <%= requester.email %>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <% }); %>
+                                </div>
+                            </div>
+                        </div>
+                        <% } %>
         </div>
 
         <!-- ^ EDITOR -->
@@ -455,8 +481,10 @@
                                                     <span class="ml-2">Requested</span>
                                                 </label>
                                                 <label class="inline-flex items-center ml-6">
-                                                    <input type="radio" name="jenstory" value="false" class="form-radio"
-                                                        <%=event.jenstory===false ? 'checked' : '' %>>
+                                                    <input type="radio" name="jenstory" value="false"
+                                                        onclick="document.getElementById('jenstorylength').value = 0;"
+                                                        class="form-radio" <%=event.jenstory===false ? 'checked' : ''
+                                                        %>>
                                                     <span class="ml-2">Not Requested</span>
                                                 </label>
                                             </div>
@@ -464,13 +492,13 @@
                                         <div>
                                             <label for="jenstorylength" class="block text-gray-700">Jen Story Length
                                                 (mins)</label>
-                                            <input name="jenstorylength" type="text" id="jenstorylength" min="0"
+                                            <input name="jenstorylength" type="number" id="jenstorylength" min="0"
                                                 value="<%= event.jenstorylength %>"
+                                                oninput="if(document.querySelector('input[name=jenstory]:checked').value === 'false') this.value = 0;"
                                                 class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                                         </div>
                                     </div>
                                     <% } %>
-
 
                                         <!-- EQUIPMENT -->
                                         <% if (event.organization) { %>
