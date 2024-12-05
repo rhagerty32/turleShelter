@@ -22,6 +22,12 @@
     });
 </script>
 
+<!-- 
+skillId
+leader
+teacher
+-->
+
 <body class="bg-gray-50 font-sans">
     <!-- Main Content -->
     <div class="container mx-auto py-12 px-6 space-y-6">
@@ -41,7 +47,7 @@
         <!-- Volunteer Form -->
         <section id="volunteer-form" class="bg-white p-8 rounded-lg shadow-md">
             <h2 class="text-2xl font-bold text-gray-800">Become a Volunteer</h2>
-            <p class="mt-2 text-gray-600">Fill out the form below to express your interest in volunteering.</p>
+            <p class="mt-2 text-gray-600">Fill out the form below so we can inform you of events around you!</p>
             <form action="/newVolunteer" method="POST" class="mt-6 space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
@@ -55,15 +61,61 @@
                             class="mt-2 w-full outline-teal-500 px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
                     </div>
                 </div>
-                <div>
-                    <label for="skilllevel" class="block text-gray-700 font-medium">Skill Level</label>
-                    <select id="skilllevel" name="skillid" required
-                        class="mt-2 w-full px-2 py-2 outline-teal-500 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
-                        <option value="" disabled selected>Select your skill level</option>
-                        <option value="1">Beginner</option>
-                        <option value="2">Intermediate</option>
-                        <option value="3">Expert</option>
-                    </select>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div>
+                        <label for="phone" class="block text-gray-700 font-medium">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" required
+                            class="mt-2 w-full outline-teal-500 px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                    </div>
+                    <div>
+                        <label for="email" class="block text-gray-700 font-medium">Email</label>
+                        <input type="email" id="email" name="email" required
+                            class="mt-2 w-full outline-teal-500 px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                    </div>
+                    <div>
+                        <label for="password" class="block text-gray-700 font-medium">Password</label>
+                        <input type="password" id="password" name="password" required
+                            class="mt-2 w-full outline-teal-500 px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div>
+                        <label for="skilllevel" class="block text-gray-700 font-medium">Skill Level</label>
+                        <select id="skilllevel" name="skillid" required
+                            class="mt-2 w-full px-2 py-2 outline-teal-500 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                            <option value="" disabled selected>Select your skill level</option>
+                            <option value="1">Beginner</option>
+                            <option value="2">Intermediate</option>
+                            <option value="3">Expert</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 font-medium">Able to Teach Sewing</label>
+                        <div class="mt-2">
+                            <label class="inline-flex items-center">
+                                <input type="radio" name="teacher" value="yes" required
+                                    class="form-radio text-teal-600">
+                                <span class="ml-2">Yes</span>
+                            </label>
+                            <label class="inline-flex items-center ml-6">
+                                <input type="radio" name="teacher" value="no" required class="form-radio text-teal-600">
+                                <span class="ml-2">No</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 font-medium">Able to Lead Events</label>
+                        <div class="mt-2">
+                            <label class="inline-flex items-center">
+                                <input type="radio" name="leader" value="yes" required class="form-radio text-teal-600">
+                                <span class="ml-2">Yes</span>
+                            </label>
+                            <label class="inline-flex items-center ml-6">
+                                <input type="radio" name="leader" value="no" required class="form-radio text-teal-600">
+                                <span class="ml-2">No</span>
+                            </label>
+                        </div>
+                    </div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div>
@@ -136,19 +188,33 @@
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div>
-                        <label for="phone" class="block text-gray-700 font-medium">Phone Number</label>
-                        <input type="tel" id="phone" name="phone" required
+                        <label for="availability" class="block text-gray-700 font-medium">Availability</label>
+                        <input type="text" id="availability" name="availability" required
                             class="mt-2 w-full outline-teal-500 px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
                     </div>
                     <div>
-                        <label for="email" class="block text-gray-700 font-medium">Email</label>
-                        <input type="email" id="email" name="email" required
+                        <label for="range" class="block text-gray-700 font-medium">Range (mi)</label>
+                        <input type="text" id="range" name="range" required
                             class="mt-2 w-full outline-teal-500 px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
                     </div>
                     <div>
-                        <label for="password" class="block text-gray-700 font-medium">Password</label>
-                        <input type="password" id="password" name="password" required
-                            class="mt-2 w-full outline-teal-500 px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                        <label for="discoverymethod" class="block text-gray-700 font-medium">Discovery Method</label>
+                        <select id="discoverymethod" name="discoverymethod" required
+                            class="mt-2 w-full px-2 py-2 outline-teal-500 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                            <option value="" disabled selected>Select a method</option>
+                            <option value="Family">Family</option>
+                            <option value="Friend">Friend</option>
+                            <option value="Past Event">Past Event</option>
+                            <option value="Social Media">Social Media</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-1 gap-6">
+                    <div>
+                        <label for="notes" class="block text-gray-700 font-medium">Notes</label>
+                        <textarea id="notes" name="notes"
+                            class="mt-2 w-full outline-teal-500 px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500"></textarea>
                     </div>
                 </div>
                 <button type="submit"

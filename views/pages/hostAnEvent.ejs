@@ -20,6 +20,28 @@
             thankYouSection.classList.remove('hidden');
         });
     });
+
+    // Hide modal
+    function handleCancel() {
+        document.getElementById('addModal').classList.add('hidden');
+    }
+
+    function toggleEventType() {
+        const eventType = document.getElementById('eventType');
+        const eventTypeLabel = document.getElementById('eventTypeLabel');
+        const elements = document.getElementsByClassName('distributionEvent');
+
+
+        for (let i in elements) {
+            if (eventType.checked) {
+                elements[i].classList.add('hidden');
+                document.getElementById('addEventForm').action = '/addDistributionEvent';
+            } else {
+                elements[i].classList.remove('hidden');
+                document.getElementById('addEventForm').action = '/addServiceEvent';
+            }
+        }
+    }
 </script>
 
 <body class="bg-gray-50 font-sans">
@@ -36,28 +58,35 @@
         </section>
 
         <!-- Volunteer Event Form -->
-        <section id="event-form" class="bg-white p-8 rounded-lg shadow-md">
-            <h2 class="text-2xl font-bold text-gray-800">Request to Host a Volunteer Event</h2>
-            <p class="mt-2 text-gray-600">Fill out the form below to provide details about your event.</p>
-            <form action="#" method="POST" class="mt-6 space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label for="address" class="block text-gray-700 font-medium">Address</label>
-                        <input type="text" id="address" name="address" required
-                            class="mt-2 w-full outline-teal-500 px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
-                    </div>
-                    <div>
-                        <label for="zip" class="block text-gray-700 font-medium">Zip Code</label>
-                        <input type="text" id="zip" name="zip" required
-                            class="mt-2 w-full outline-teal-500 px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
-                    </div>
+        <form id="addEventForm" action="/addServiceEvent" method="POST"
+            class="bg-white p-8 rounded-lg shadow-md w-fit max-w-6xl border">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Event Information</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                <!-- ORGANIZATION -->
+                <div>
+                    <label for="organization" class="block text-gray-700">Organization</label>
+                    <input name="organization" required type="text" id="organization" value=""
+                        class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                <!-- ADDRESS -->
+                <div class="grid grid-cols-4 gap-4">
                     <div>
-                        <label for="state" class="block text-gray-700 font-medium">State</label>
-                        <select id="state" name="state"
+                        <label for="address" class="block text-gray-700">Address</label>
+                        <input name="address" required type="text" id="address" value=""
+                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                    </div>
+                    <div>
+                        <label for="city" class="block text-gray-700">City</label>
+                        <input name="city" required type="text" id="city" value=""
+                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                    </div>
+                    <div>
+                        <label for="state" class="block text-gray-700">State</label>
+                        <select name="state" required id="state" name="state"
                             class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
-                            <option value="" disabled selected>Select State</option>
+                            <option value="" disabled selected>State</option>
                             <option value="AL">Alabama</option>
                             <option value="AK">Alaska</option>
                             <option value="AZ">Arizona</option>
@@ -111,34 +140,172 @@
                         </select>
                     </div>
                     <div>
-                        <label for="date" class="block text-gray-700 font-medium">Event Date</label>
-                        <input type="date" id="date" name="date" required
-                            class="mt-2 w-full outline-teal-500 px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                        <label for="zip" class="block text-gray-700">Zip Code</label>
+                        <input name="zip" required type="text" id="zip" value=""
+                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                     </div>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+                <!-- SERVICE TYPE -->
+                <div>
+                    <label for="servicetypeid" class="block text-gray-700">Service Type</label>
+                    <select name="servicetypeid" required id="servicetypeid"
+                        class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                        <% servicetypes.forEach(function(servicetype) { %>
+                            <option value="<%= servicetype.servicetypeid %>">
+                                <%= servicetype.description %>
+                            </option>
+                            <% }); %>
+                    </select>
+                </div>
+
+                <!-- JEN RELATED STUFF -->
+                <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label for="time" class="block text-gray-700 font-medium">Event Time</label>
-                        <input type="time" id="time" name="time" required
-                            class="mt-2 w-full outline-teal-500 px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                        <label for="jenstory" class="block text-gray-700">Jen Story</label>
+                        <div class="mt-2">
+                            <label class="inline-flex items-center">
+                                <input type="radio" name="jenstory" value="true" class="form-radio">
+                                <span class="ml-2">Requested</span>
+                            </label>
+                            <label class="inline-flex items-center ml-6">
+                                <input type="radio" name="jenstory" value="false" class="form-radio">
+                                <span class="ml-2">Not Requested</span>
+                            </label>
+                        </div>
                     </div>
                     <div>
-                        <label for="duration" class="block text-gray-700 font-medium">Duration (hours)</label>
-                        <input type="number" id="duration" name="duration" required
-                            class="mt-2 w-full outline-teal-500 px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
-                    </div>
-                    <div>
-                        <label for="group-size" class="block text-gray-700 font-medium">Group Size</label>
-                        <input type="number" id="group-size" name="group_size" required
-                            class="mt-2 w-full outline-teal-500 px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                        <label for="jenstorylength" class="block text-gray-700">Jen Story Length (mins)</label>
+                        <input name="jenstorylength" required type="text" id="jenstorylength" min="0" value=""
+                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                     </div>
                 </div>
-                <button type="submit"
-                    class="w-full bg-teal-600 transition-all duration-300 text-white font-bold py-3 px-6 rounded-lg shadow hover:bg-teal-700">
-                    Submit
-                </button>
-            </form>
-        </section>
+
+                <!-- EQUIPMENT -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="sergers" class="block text-gray-700">Sergers</label>
+                        <input name="sergers" type="number" id="sergers" min="0" value=""
+                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                    </div>
+                    <div>
+                        <label for="sewingmachines" class="block text-gray-700">Sewing Machines</label>
+                        <input name="sewingmachines" type="number" id="sewingmachines" min="0" value=""
+                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                    </div>
+                </div>
+
+                <!-- ATTENDEES -->
+                <div class="grid grid-cols-4 gap-4">
+                    <div>
+                        <label for="childrenunder10" class="block text-gray-700">Children < 10</label>
+                                <input name="childrenunder10" type="number" id="childrenunder10" min="0" value=""
+                                    class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                    </div>
+                    <div>
+                        <label for="adultparticipants" class="block text-gray-700">Adults</label>
+                        <input name="adultparticipants" type="number" id="adultparticipants" min="1" value=""
+                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                    </div>
+                    <div>
+                        <label for="advancedsewers" class="block text-gray-700">Adv. Sewers</label>
+                        <input name="advancedsewers" type="number" id="advancedsewers" min="0" value=""
+                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                    </div>
+                    <div>
+                        <label for="basicsewers" class="block text-gray-700">Basic Sewers</label>
+                        <input name="basicsewers" type="number" id="basicsewers" min="0" value=""
+                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                    </div>
+                </div>
+
+                <!-- VENUE INFO -->
+                <div class="grid grid-cols-4 gap-4">
+                    <div>
+                        <label for="venuesize" class="block text-gray-700">Venue sq. ft.</label>
+                        <input name="venuesize" type="text" id="venuesize" min="0" value=""
+                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                    </div>
+                    <div>
+                        <label for="numrooms" class="block text-gray-700">Rooms</label>
+                        <input name="numrooms" required type="number" id="numrooms" min="1" value=""
+                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                    </div>
+                    <div>
+                        <label for="numtablesround" class="block text-gray-700">Round Tables</label>
+                        <input name="numtablesround" type="number" id="numtablesround" min="0" value=""
+                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                    </div>
+                    <div>
+                        <label for="numtablesrectangle" class="block text-gray-700">Rect. Tables</label>
+                        <input name="numtablesrectangle" type="number" id="numtablesrectangle" min="0" value=""
+                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                    </div>
+                </div>
+
+                <!-- DETAILS -->
+                <div>
+                    <label for="details" class="block text-gray-700">Details</label>
+                    <textarea name="details" id="details"
+                        class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500"></textarea>
+                </div>
+
+                <!-- START DATE/TIME -->
+                <div id="dateSection">
+                    <div class="grid grid-cols-3 gap-4">
+                        <div>
+                            <label for="date" class="block text-gray-700">Date</label>
+                            <input name="date" required type="date" id="date" value=""
+                                class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                        </div>
+                        <div>
+                            <label for="starttime" class="block text-gray-700">Start Time</label>
+                            <input name="starttime" required type="time" id="starttime" value=""
+                                class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                        </div>
+                        <div>
+                            <label for="plannedduration" class="block text-gray-700">Planned Duration (hrs)</label>
+                            <input name="plannedduration" required type="number" id="plannedduration" value="" min="0"
+                                class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                        </div>
+                    </div>
+                    <!-- ADD ITEM BUTTON -->
+                    <div class="col-span-2">
+                        <button type="button" onclick="addItem()"
+                            class="mt-4 px-4 py-2 bg-teal-500 text-white rounded-md hover:bg-teal-600">
+                            Add Date Option
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+            <div class="mt-6 flex justify-between gap-4">
+                <button type="button" onclick="handleCancel()"
+                    class="px-6 py-2 bg-gray-600 text-white rounded-lg shadow-md hover:bg-gray-700">Cancel</button>
+                <button id="saveBtn" type="submit" onclick="saveDistributionEvent()"
+                    class="px-6 py-2 bg-teal-500 text-white rounded-lg shadow-md hover:bg-teal-600">Save</button>
+            </div>
+
+
+
+            <!-- TEMPLATE FOR NEW DATE -->
+            <template id="dateTemplate">
+                <div>
+                    <label for="date" class="block text-gray-700">Date</label>
+                    <input name="date" required type="date" id="date" value=""
+                        class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                </div>
+                <div></div>
+                <div></div>
+            </template>
+
+            <script>
+                function addItem() {
+                    const template = document.getElementById('dateTemplate').content.cloneNode(true);
+                    document.querySelector('#dateSection .grid').appendChild(template);
+                }
+            </script>
+        </form>
     </div>
 </body>
 
