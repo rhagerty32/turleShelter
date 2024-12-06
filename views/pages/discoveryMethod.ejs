@@ -16,21 +16,33 @@
 
         form.addEventListener('submit', function (event) {
             contactForm.classList.add('hidden');
+            contactForm.classList.remove('block');
             thankYouSection.classList.remove('hidden');
+            thankYouSection.classList.add('block');
         });
     });
 </script>
 
 <body class="bg-gray-50 font-sans">
     <!-- Main Content -->
-    <div class="container mx-auto py-12 px-6 space-y-6">
+    <div class="container mx-auto py-12 px-6">
         <!-- Thank You Section -->
-        <section id="thank-you-section" class="bg-white p-8 rounded-lg shadow-md mt-5 hidden">
-            <h2 class="text-2xl font-bold text-gray-800">Thank You for Letting us Know!</h2>
-            <p class="mt-4 text-gray-700">
-                We appreciate you helping us out.
-            </p>
-        </section>
+         <div id="thank-you-section" class="hidden flex flex-col items-center">
+             <section class="bg-white p-6 rounded-lg shadow-md mt-5">
+                 <div>
+                     <h2 class="text-2xl font-bold text-gray-800">Thank You for Letting us Know!</h2>
+                     <p class="mt-4 text-gray-700">
+                         We appreciate you helping us out.
+                     </p>
+                 </div>
+             </section>
+             <br><br>
+             <div class="align-center">
+                 <a href="/volunteerRequest" class="w-full bg-teal-600 transition-all duration-300 text-white font-bold py-3 px-6 rounded-lg shadow hover:bg-teal-700">
+                     Volunteer Here
+                 </a>
+             </div>
+         </div>
 
         <!-- Contact Form -->
         <section id="contact-form" class="bg-white p-8 rounded-lg shadow-md">
