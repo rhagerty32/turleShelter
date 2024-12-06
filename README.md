@@ -1,6 +1,6 @@
 # Turtle Shelter Website 🐢
 
-Welcome to the Turtle Shelter Website Project! This Node.js and EJS-powered website is designed for a school project to demonstrate web development skills. The site supports **Turtle Shelter**, a nonprofit organization dedicated to crafting turtle-inspired vests for homeless individuals.
+Welcome to the Turtle Shelter Website Project! This Node.js and EJS-powered website is designed for a school project to demonstrate web development skills. The site supports **Turtle Shelter**, a nonprofit organization dedicated to crafting vests for homeless individuals.
 
 ---
 
@@ -8,15 +8,15 @@ Welcome to the Turtle Shelter Website Project! This Node.js and EJS-powered webs
 
 ### **Home Page**
 - **URL**: `/`
-- **Description**: Mission and impact of the Turtle Shelter Project
+- **Description**: Mission and impact of the Turtle Shelter Project. FAQ and Donate buttons link to the current turtleshelterproject.org site 
 
-### **Adopt-a-Vest Page**
-- **URL**: `/adopt`
-- **Description**: Learn about our unique, turtle-themed vests and how to support our initiative.
+### **Voluneer**
+- **URL**: `/volunteer`
+- **Description**: The two volunteer buttons on the home page link to a form which you can fill out with volunteer information. the volunteer information will be displayed in the volunteers tab which is in the dropdown under the admin tab which is available after login
 
-### **Donation Portal**
-- **URL**: `/donate`
-- **Description**: A simple and secure way to donate to the cause.
+### **Host and Event / Host**
+- **URL**: `/hostAnEvent`
+- **Description**: Both these buttons will link to an event form. When submitted this will information will be displayed in the events tab which is in the dropdown under the admin tab which is available after login
 
 ### **Volunteer Signup**
 - **URL**: `/volunteer`
