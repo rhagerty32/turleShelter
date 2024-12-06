@@ -6,9 +6,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stats</title>
 </head>
+<script>
+window.addEventListener('resize', function() {
+    var statsContainer = document.getElementById('statsContainer');
+    if (window.innerWidth < 1000) {
+        statsContainer.classList.remove('flex');
+    } else {
+        statsContainer.classList.add('flex');
+    }
+});
+
+// Initial check
+window.dispatchEvent(new Event('resize'));
+</script>
 
 <body class="flex flex-col justify-center items-center w-screen h-full mt-20">
-    <div class="flex flex-row gap-4 justify-center items-start mt-20">
+    <div id="statsContainer" class="flex flex-row gap-4 justify-center items-start mt-20">
 
         <!-- LEFT STATS -->
         <div class="flex flex-col gap-4 h-full justify-start items-center ml-4">
@@ -55,7 +68,7 @@
                 </div>
             </div>
         </div>
-
+        <br><br>
         <!-- TABLEAU CHART -->
         <div class="bg-white p-2 rounded-xl shadow-md w-screen mr-4">
             <div class='tableauPlaceholder' id='viz1733436902454' style='position: relative'>
