@@ -849,6 +849,7 @@ router.get('/events/:eventid',checkAuthenticated, (req, res) => {
         .leftJoin('eventrequest as er', 'e.eventid', 'er.eventid')
         .leftJoin('servicetypes as st', 'er.servicetypeid', 'st.servicetypeid')
         .leftJoin('distributionevent as de','de.eventid', 'e.eventid')
+        .leftJoin('eventoutcomes eo','eo.eventid','e.eventid')
         .select(
             'e.eventid',
             'e.starttime',
@@ -876,6 +877,8 @@ router.get('/events/:eventid',checkAuthenticated, (req, res) => {
             'er.numtablesrectangle',
             'st.description',
             'de.temperature',
+            'eo.headcount',
+            'eo.servicehours'
 
         )
         .where('e.eventid', eventid)
