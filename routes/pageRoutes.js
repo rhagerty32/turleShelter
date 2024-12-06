@@ -22,11 +22,25 @@ router.get("/", (req, res) => {
         .sum("headcount as totalHeadcount")
         .sum("servicehours as totalServiceHours")
         .then((stats) => {
-            res.render("layout", {
-                title: "Home",
-                page: "home",
-                stats: stats[0],
-            });
+            knex("recipients")
+                .count("* as count")
+                .where("itemid", ">", 13)
+                .then((itemCount) => {
+                    knex("events")
+                        .select("status")
+                        .count("eventid as count")
+                        .groupBy("status")
+                        .then((statusCounts) => {
+                            res.render("layout", {
+                                title: "Home",
+                                page: "home",
+                                stats: stats[0],
+                                itemCount: itemCount[0].count,
+                                statusCounts: statusCounts,
+                            });
+                        })
+                })
+
         })
         .catch((error) => {
             console.error("Error querying eventoutcome:", error);
