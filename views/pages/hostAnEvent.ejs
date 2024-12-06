@@ -150,7 +150,7 @@
                     </div>
                     <div>
                         <label for="zip" class="block text-gray-700">Zip Code</label>
-                        <input name="zip" required type="text" id="zip" value=""
+                        <input name="zip" required type="number" id="zip" value=""
                             class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                     </div>
                 </div>
@@ -263,20 +263,22 @@
 
                 <!-- START DATE/TIME -->
                 <div id="dateSection">
+
                     <div class="grid grid-cols-3 gap-4">
                         <div>
                             <label for="date" class="block text-gray-700">Date</label>
-                            <input name="date" required type="date" id="date" value=""
+                            <input name="date" required type="date" id="date"
                                 class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                         </div>
                         <div>
                             <label for="starttime" class="block text-gray-700">Start Time</label>
-                            <input name="starttime" required type="time" id="starttime" value=""
+                            <input name="starttime" required type="time" id="starttime"
                                 class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                         </div>
                         <div>
-                            <label for="plannedduration" class="block text-gray-700">Planned Duration (hrs)</label>
-                            <input name="plannedduration" required type="number" id="plannedduration" value="" min="0"
+                            <label for="plannedduration" class="block text-gray-700">Planned
+                                Duration (hrs)</label>
+                            <input name="plannedduration" required type="number" id="plannedduration"
                                 class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                         </div>
                     </div>
@@ -289,31 +291,28 @@
                         </button>
                     </div>
                 </div>
-
+                <!-- CONTACT INFO -->
                 <div id="contactSection">
                     <div class="grid grid-cols-4 gap-4">
                         <div>
-                            <label for="modalFirstName" class="block text-gray-700">First Name</label>
-                            <input type="text" id="modalFirstName" name="firstname"
-                                class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500"
-                                required>
+                            <label for="firstname" class="block text-gray-700">First Name</label>
+                            <input name="firstname" type="text" id="firstname"
+                                class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                         </div>
                         <div>
-                            <label for="modalLastName" class="block text-gray-700">Last Name</label>
-                            <input type="text" id="modalLastName" name="lastname"
-                                class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500"
-                                required>
+                            <label for="lastname" class="block text-gray-700">Last Name</label>
+                            <input name="lastname" type="text" id="lastname"
+                                class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                         </div>
                         <div>
-                            <label for="modalEmail" class="block text-gray-700">Email</label>
-                            <input type="email" id="modalEmail" name="email"
-                                class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500"
-                                required>
+                            <label for="phone" class="block text-gray-700">Phone</label>
+                            <input name="phone" type="text" id="phone"
+                                class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                         </div>
                         <div>
-                            <label for="modalPhoneNumber" class="block text-gray-700">Phone Number</label>
-                            <input type="text" id="modalPhoneNumber" name="phonenumber"
-                                class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                            <label for="email" class="block text-gray-700">Email</label>
+                            <input name="email" type="email" id="email"
+                                class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                         </div>
                     </div>
                     <!-- ADD REQUESTER BUTTON -->
@@ -324,7 +323,6 @@
                         </button>
                     </div>
                 </div>
-
             </div>
             <div class="mt-6 flex gap-4 w-full justify-end">
                 <button id="saveBtn" type="submit" onclick="saveDistributionEvent()"
@@ -334,12 +332,18 @@
             <!-- TEMPLATE FOR NEW DATE -->
             <template id="dateTemplate">
                 <div>
-                    <label for="date" class="block text-gray-700">Date</label>
-                    <input name="date" required type="date" id="date" value=""
-                        class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                    <div>
+                        <label for="date" class="block text-gray-700">Date</label>
+                        <div class="flex flex-col gap-1 items-end">
+                            <input name="date" required type="date" id="date" value=""
+                                class="mt-2 w-full min-w-44 px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                            <button type="button" onclick="this.parentElement.parentElement.parentElement.remove()"
+                                class="mt-2 px-4 py-2 cursor-pointer bg-red-500 text-white text-xs rounded-md hover:bg-red-600">
+                                Delete
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <div></div>
-                <div></div>
             </template>
 
             <!-- TEMPLATE FOR NEW CONTACT -->

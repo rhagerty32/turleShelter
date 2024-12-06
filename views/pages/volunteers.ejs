@@ -12,6 +12,7 @@
 <script>
     // Show modal for editing user details
     function openModal(volunteer) {
+        console.log(volunteer)
         document.getElementById('modalFirstName').value = volunteer.firstname;
         document.getElementById('modalLastName').value = volunteer.lastname;
         document.getElementById('modalEmail').value = volunteer.email;
@@ -145,7 +146,7 @@
                             <label for="modalState" class="block text-gray-700">State</label>
                             <select id="modalState" name="state"
                                 class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
-                                <option value="" disabled selected>Select State</option>
+                                <option value="" disabled>Select State</option>
                                 <option value="AL">Alabama</option>
                                 <option value="AK">Alaska</option>
                                 <option value="AZ">Arizona</option>

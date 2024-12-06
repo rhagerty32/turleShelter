@@ -10,16 +10,29 @@
 <body class="flex flex-col justify-center items-center w-screen h-full mt-20">
     <div class="flex flex-row gap-4 justify-center items-start mt-20">
         <div class="flex flex-col gap-4 h-full justify-start items-center ml-4">
-            <div class="bg-white p-4 rounded-xl shadow-md">
-                <h1 class="text-2xl font-bold">Total Events</h1>
-                <p class="text-4xl font-bold">
-                    <%= stats.eventCount %>
+            <div class="bg-white p-4 rounded-xl shadow-md w-48">
+                <h1 class="text-md text-gray-400 font-bold">Events</h1>
+                <div class="flex flex-col gap-1">
+                    <% statusCounts.forEach(function(count) { %>
+                        <h1 class="text-xs text-gray-400 font-bold">
+                            <%= count.status %>
+                        </h1>
+                        <p class="text-4xl">
+                            <%= count.count %>
+                        </p>
+                        <% }); %>
+                </div>
+            </div>
+            <div class="bg-white p-4 rounded-xl shadow-md w-48">
+                <h1 class="text-md text-gray-400 font-bold">Hours Donated</h1>
+                <p class="text-4xl">
+                    <%= stats.totalServiceHours %>
                 </p>
             </div>
-            <div class="bg-white p-4 rounded-xl shadow-md">
-                <h1 class="text-2xl font-bold">Total Hours</h1>
-                <p class="text-4xl font-bold">
-                    <%= stats.totalServiceHours %>
+            <div class="bg-white p-4 rounded-xl shadow-md w-48">
+                <h1 class="text-md text-gray-400 font-bold">Vest Distributed</h1>
+                <p class="text-4xl">
+                    <%= itemCount %>
                 </p>
             </div>
         </div>
