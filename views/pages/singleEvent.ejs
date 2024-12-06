@@ -133,8 +133,9 @@
         <div id="viewSection" class="bg-white p-6 rounded-xl shadow-md mt-6 border">
             <h2 class="text-2xl font-bold text-gray-800 mb-4">Event Information</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- TODO If it's pending and there's more than one date then say that she needs to delete other dates -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                    <!-- START TIME -->
                     <div class="flex flex-col gap-2">
 
                         <label class="block text-gray-700">Start Time</label>
@@ -146,8 +147,15 @@
                                     hour: '2-digit' , minute: '2-digit' }) %>
                         </p>
                     </div>
+
+                    <!-- DATES -->
                     <div class="flex flex-col gap-2">
-                        <label class="block text-gray-700">Date Options</label>
+                        <div class="flex flex-row gap-3">
+                            <label class="block text-gray-700">Date Options</label>
+                            <% if (dates.length> 1) { %>
+                                <p class="text-yellow-600">(Please select 1 date)</p>
+                                <% } %>
+                        </div>
                         <% dates.forEach(function(date) { %>
                             <p class="mt-2 text-gray-600">
                                 <%= new Date(date.date).toLocaleDateString('en-US', { weekday: 'long' , year: 'numeric'
@@ -156,6 +164,8 @@
                             <% }); %>
                     </div>
                 </div>
+
+                <!-- STATUS -->
                 <div>
                     <label class="block text-gray-700">Status</label>
                     <p
@@ -163,6 +173,8 @@
                         <%= event.status %>
                     </p>
                 </div>
+
+                <!-- DETAILS -->
                 <div>
                     <label class="block text-gray-700">Details</label>
                     <p class="mt-2 text-gray-600">
@@ -170,6 +182,7 @@
                     </p>
                 </div>
 
+                <!-- SERVICE TYPEW -->
                 <% if (event.organization) { %>
                     <div>
                         <label class="block text-gray-700">Service Type</label>
@@ -179,6 +192,7 @@
                     </div>
                     <% } %>
 
+                        <!-- JEN STORY -->
                         <% if (event.organization) { %>
                             <div class="bg-white shadow-md rounded-xl p-4 border">
                                 <div class="flex flex-col gap-0">
@@ -201,6 +215,7 @@
                             </div>
                             <% } %>
 
+                                <!-- ATTENDANCE -->
                                 <% if (event.organization) { %>
                                     <div class="bg-white shadow-md rounded-xl p-4 border">
                                         <div class="flex flex-col gap-0">
@@ -424,11 +439,11 @@
                                     <% }); %>
                             </div>
                             <% } %>
-
         </div>
 
         <!-- EDITOR -->
-        <form action="/editEvent" method="POST" id="editSection" class="bg-white p-6 rounded-lg shadow-md mt-6 hidden">
+        <form action="/editEvent" method="POST" id="editSection"
+            class="bg-white p-6 rounded-xl shadow-md mt-6 hidden border mx-12">
             <h2 class="text-2xl font-bold text-gray-800 mb-4">Event Information</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="hidden"><input type="hidden" name="eventid" value="<%= event.eventid %>"></div>
@@ -530,7 +545,7 @@
                             </div>
                             <div>
                                 <label for="zip" class="block text-gray-700">Zip Code</label>
-                                <input name="zip" type="text" id="zip" value="<%= event.zip %>"
+                                <input name="zip" type="number" id="zip" value="<%= event.zip %>" max="99999"
                                     class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                             </div>
                         </div>
@@ -642,8 +657,8 @@
                                                             <div class="grid grid-cols-4 gap-4">
                                                                 <div>
                                                                     <label for="venuesize"
-                                                                        class="block text-gray-700">Venue
-                                                                        Size</label>
+                                                                        class="block text-gray-700 text-sm">Venue
+                                                                        Size (sq. ft.)</label>
                                                                     <input name="venuesize" type="text" id="venuesize"
                                                                         min="0" value="<%= event.venuesize %>"
                                                                         class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
@@ -757,12 +772,14 @@
                     class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500"><%= event.details %></textarea>
             </div>
 
+            <!-- DATES / CONTACT INFO -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2">
                 <!-- START DATE/TIME -->
                 <div id="dateSection">
 
                     <!-- START TIMES -->
                     <% if (dates.length===1) { %>
+                        <!-- DATES PT1 -->
                         <div class="grid grid-cols-3 gap-4">
                             <div>
                                 <label for="date" class="block text-gray-700">Date</label>
@@ -784,6 +801,7 @@
                             </div>
                         </div>
                         <% } else { %>
+                            <!-- DATES PT2 -->
                             <div class="grid grid-cols-3 gap-4">
                                 <div>
                                     <label for="date" class="block text-gray-700">Date</label>
@@ -824,13 +842,15 @@
                                         <% } %>
                             </div>
 
-                            <!-- ADD DATE BUTTON -->
-                            <div class="col-span-2">
-                                <button type="button" onclick="addDate()"
-                                    class="mt-4 px-4 py-2 bg-gray-400 text-white rounded-md hover:bg-teal-600">
-                                    Add Date Option
-                                </button>
-                            </div>
+                            <% if (event.status==="Pending" ) { %>
+                                <!-- ADD DATE BUTTON -->
+                                <div class="col-span-2">
+                                    <button type="button" onclick="addDate()"
+                                        class="mt-0 mb-2 px-4 py-2 bg-gray-400 text-white rounded-md hover:bg-teal-600">
+                                        Add Date Option
+                                    </button>
+                                </div>
+                                <% } %>
                 </div>
 
                 <!-- CONTACT INFO -->
@@ -853,7 +873,8 @@
                                     </div>
                                     <div>
                                         <label for="phone" class="block text-gray-700">Phone</label>
-                                        <input name="phone" type="text" id="phone" value="<%= requester.phone %>"
+                                        <input name="phone" type="tel" id="phone" value="<%= requester.phone %>"
+                                            max="9999999999"
                                             class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                                     </div>
                                     <div>
@@ -907,7 +928,7 @@
                     </div>
                     <div>
                         <label for="phone" class="block text-gray-700">Phone</label>
-                        <input name="phone" type="text" id="phone" value=""
+                        <input name="phone" type="tel" id="phone" value="" max="9999999999"
                             class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                     </div>
                     <div>

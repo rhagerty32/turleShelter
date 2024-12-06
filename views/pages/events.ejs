@@ -71,6 +71,20 @@
         const template = document.getElementById('contactTemplate').content.cloneNode(true);
         document.querySelector('#contactSection .grid').appendChild(template);
     };
+
+    function filterVolunteers() {
+        const searchInput = document.getElementById('searchBar').value.toLowerCase();
+        const eventCards = document.querySelectorAll('#event-card');
+
+        eventCards.forEach(card => {
+            const eventName = card.querySelector('#event-name').textContent.toLowerCase();
+            if (eventName.includes(searchInput)) {
+                card.classList.remove('hidden');
+            } else {
+                card.classList.add('hidden');
+            }
+        });
+    }
 </script>
 
 <body class="bg-gray-50 font-sans">
@@ -78,9 +92,17 @@
         <!-- HEADER -->
         <div class="flex flex-row justify-between items-center my-6">
             <h2 class="text-2xl font-bold text-gray-800">All Events</h2>
-            <button onclick="openModal({})" class="px-4 py-2 bg-teal-500 text-white rounded-md hover:bg-teal-600">
-                Add Event
-            </button>
+            <div class="flex flex-row gap-4">
+                <!-- SEARCH BAR -->
+                <div class="flex flex-row justify-between items-center">
+                    <input type="text" id="searchBar" oninput="filterVolunteers()"
+                        class="w-96 px-4 py-2 border rounded-lg outline-teal-600 shadow-sm focus:ring-teal-500 focus:border-teal-500"
+                        placeholder="Search for an event...">
+                </div>
+                <button onclick="openModal({})" class="px-4 py-2 bg-teal-500 text-white rounded-md hover:bg-teal-600">
+                    Add Event
+                </button>
+            </div>
         </div>
 
         <!-- EVENTS -->
@@ -90,10 +112,11 @@
                     <% events.forEach(event=> { %>
                         <% if (!uniqueEvents.some(e=> e.eventid === event.eventid)) { %>
                             <% uniqueEvents.push(event); %>
-                                <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg cursor-pointer border flex flex-row"
+                                <div id="event-card"
+                                    class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg cursor-pointer border flex flex-row"
                                     onclick="window.location.href = '/events/' + '<%= event.eventid %>';">
                                     <div class="flex flex-col">
-                                        <h3 class="text-xl font-semibold text-gray-700">
+                                        <h3 id="event-name" class="text-xl font-semibold text-gray-700">
                                             <%= new Date(event.date).toLocaleDateString('en-US', { year: 'numeric' ,
                                                 month: 'short' , day: 'numeric' }) %>
                                                 <%= event.organization ? " - " + event.organization + " - "
@@ -239,7 +262,7 @@
                         </div>
                         <div>
                             <label for="zip" class="block text-gray-700">Zip Code</label>
-                            <input name="zip" required type="text" id="zip" value=""
+                            <input name="zip" required type="number" id="zip" value="" max="99999"
                                 class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                         </div>
                     </div>
@@ -372,7 +395,7 @@
                         </div>
                     </div>
 
-                    <div id="contactSection">
+                    <div id="contactSection" class="distributionEvent">
                         <div class="grid grid-cols-4 gap-4">
                             <div>
                                 <label for="modalFirstName" class="block text-gray-700">First Name</label>
@@ -394,7 +417,7 @@
                             </div>
                             <div>
                                 <label for="modalPhoneNumber" class="block text-gray-700">Phone Number</label>
-                                <input type="text" id="modalPhoneNumber" name="phonenumber"
+                                <input type="tel" id="modalPhoneNumber" name="phonenumber" max="9999999999"
                                     class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
                             </div>
                         </div>
@@ -417,12 +440,18 @@
                 <!-- TEMPLATE FOR NEW DATE -->
                 <template id="dateTemplate">
                     <div>
-                        <label for="date" class="block text-gray-700">Date</label>
-                        <input name="date" required type="date" id="date" value=""
-                            class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                        <div>
+                            <label for="date" class="block text-gray-700">Date</label>
+                            <div class="flex flex-col gap-1 items-end">
+                                <input name="date" required type="date" id="date" value=""
+                                    class="mt-2 w-full min-w-44 px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                                <button type="button" onclick="this.parentElement.parentElement.parentElement.remove()"
+                                    class="mt-2 px-4 py-2 cursor-pointer bg-red-500 text-white text-xs rounded-md hover:bg-red-600">
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                    <div></div>
-                    <div></div>
                 </template>
 
                 <!-- TEMPLATE FOR NEW CONTACT -->
@@ -447,7 +476,7 @@
                     </div>
                     <div>
                         <label for="modalPhoneNumber" class="block text-gray-700">Phone Number</label>
-                        <input type="text" id="modalPhoneNumber" name="phonenumber"
+                        <input type="tel" id="modalPhoneNumber" name="phonenumber" max="9999999999"
                             class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
                     </div>
                 </template>
