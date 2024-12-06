@@ -1056,12 +1056,10 @@ router.get('/events/:eventid', checkAuthenticated, (req, res) => {
                                                 .where({ eventid })
                                                 .then((recipients) => {
                                                     knex('eventitems')
-                                                        .select('itemid', 'quantity')
-                                                        .where({ eventid })
-                                                        .then((eventitems) => {
-                                                            knex('items')
-                                                                .select('itemid', 'description')
-                                                                .then((items) => {
+                                                        .join('items as i', "i.itemid", 'eventitems.itemid')
+                                                        .select('description', 'quantity')
+                                                        .where({eventid})
+                                                        .then((eventitems) => { 
                                                                     res.render('layout', {
                                                                         title: 'Single Event',
                                                                         page: 'singleEvent',
@@ -1072,13 +1070,8 @@ router.get('/events/:eventid', checkAuthenticated, (req, res) => {
                                                                         requesters: requesters,
                                                                         recipients: recipients,
                                                                         eventitems: eventitems,
-                                                                        items: items
                                                                     });
                                                                 })
-                                                                .catch((error) => {
-                                                                    console.error('Error querying recipients:', error);
-                                                                    res.status(500).send('Internal Server Error');
-                                                                });
                                                         })
                                                         .catch((error) => {
                                                             console.error('Error querying recipients:', error);
@@ -1097,9 +1090,7 @@ router.get('/events/:eventid', checkAuthenticated, (req, res) => {
                                 })
                         })
                 })
-        })
-});
-
+        });
 
 router.get("/volunteers", checkAuthenticated, (req, res) => {
     knex("volunteer")
