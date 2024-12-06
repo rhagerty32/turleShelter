@@ -35,8 +35,9 @@ router.get("/", (req, res) => {
 });
 
 router.post("/newVolunteer", (req, res) => {
-    console.log("Posting volunteer")
-    const { firstname,
+    console.log("Posting volunteer");
+    const {
+        firstname,
         lastname,
         skillid,
         city,
@@ -50,55 +51,75 @@ router.post("/newVolunteer", (req, res) => {
         availability,
         range,
         discoverymethod,
-        notes, } =
-        req.body;
-    knex("location")
-        .insert({ zip, city, state })
-        .onConflict("zip") // If zip exists, update city/state
-        .merge() // Merge updates for existing zip
-        .then(() => {
-            knex("volunteer")
-                .insert({
-                    firstname: firstname || '',
-                    lastname: lastname || '',
-                    skillid: skillid || 0,
-                    zip: zip || '',
-                    phonenumber: phonenumber || '',
-                    email: email || '',
-                    password: password || '',
-                    teacher: teacher || '',
-                    leader: leader || '',
-                    availability: availability || '',
-                    range: range || '',
-                    discoverymethod: discoverymethod || '',
-                    notes: notes || '',
-                    jobrole: 'Volunteer'
-                })
-                .then(() => {
-                    knex("skilllevel")
-                        .select()
-                        .then((skilllevel) => {
-                            console.log("Volunteer added")
-                            console.log(skilllevel)
-                            console.log({ submitted: true })
-                            res.render("layout", {
-                                title: "Volunteer Request",
-                                page: "volunteerRequest",
-                                skilllevel: skilllevel,
-                                submitted: true,
+        notes,
+    } = req.body;
+
+    // Check if the email already exists
+    knex("volunteer")
+        .where({ email })
+        .first() // Get the first matching record
+        .then((existingVolunteer) => {
+            if (existingVolunteer) {
+                // If email already exists, return an error message
+                res.status(400).send("Email already used. Please use a different email.");
+            } else {
+                // Insert location data (with conflict handling)
+                knex("location")
+                    .insert({ zip, city, state })
+                    .onConflict("zip") // If zip exists, update city/state
+                    .merge() // Merge updates for existing zip
+                    .then(() => {
+                        // Insert volunteer data
+                        knex("volunteer")
+                            .insert({
+                                firstname: firstname || '',
+                                lastname: lastname || '',
+                                skillid: skillid || 0,
+                                zip: zip || '',
+                                phonenumber: phonenumber || '',
+                                email: email || '',
+                                password: password || '',
+                                teacher: teacher || '',
+                                leader: leader || '',
+                                availability: availability || '',
+                                range: range || '',
+                                discoverymethod: discoverymethod || '',
+                                notes: notes || '',
+                                jobrole: 'Volunteer',
+                            })
+                            .then(() => {
+                                // Retrieve and render skill levels
+                                knex("skilllevel")
+                                    .select()
+                                    .then((skilllevel) => {
+                                        console.log("Volunteer added");
+                                        console.log(skilllevel);
+                                        console.log({ submitted: true });
+                                        res.render("layout", {
+                                            title: "Volunteer Request",
+                                            page: "volunteerRequest",
+                                            skilllevel: skilllevel,
+                                            submitted: true,
+                                        });
+                                    });
+                            })
+                            .catch((error) => {
+                                console.error("Error adding volunteer:", error);
+                                res.status(500).send("Internal Server Error");
                             });
-                        })
-                })
-                .catch((error) => {
-                    console.error("Error adding volunteer:", error);
-                    res.status(500).send("Internal Server Error");
-                });
+                    })
+                    .catch((error) => {
+                        console.error("Error adding user:", error);
+                        res.status(500).send("Internal Server Error");
+                    });
+            }
         })
         .catch((error) => {
-            console.error("Error adding user:", error);
-            res.status(500).send("Internal Server Error");
+            console.error("Error checking for existing email:", error);
+            return res.json({ success: false, message: "Email already used. Please use a different email." });
         });
 });
+
 
 router.get("/login", (req, res) => {
     res.render("pages/login", {
@@ -180,12 +201,17 @@ router.get("/hostAnEvent", (req, res) => {
     knex("servicetypes")
         .select()
         .then((servicetypes) => {
-            res.render("layout", {
+            knex("dates")
+                .select()
+                .then((dates) => {
+                    res.render("layout", {
 
-                title: "Host an Event",
-                page: "hostAnEvent",
-                servicetypes: servicetypes
-            });
+                        title: "Host an Event",
+                        page: "hostAnEvent",
+                        servicetypes: servicetypes,
+                        dates:dates
+                    });
+        })
         })
 })
 
@@ -432,6 +458,7 @@ router.post("/addDistributionEvent", (req, res) => {
                   console.log("Step 3 event id: " + eventid.eventid)
                   if (typeof date === 'string') {
                     const currentDate = new Date(date) || '2020-01-01';
+                    currentDate.setDate(currentDate.getDate()+1);
                         knex("dates")
                             .select("dateid")
                             .where({ date: currentDate })
@@ -521,20 +548,30 @@ router.post("/deleteDate", (req, res) => {
     //if can't find date don't worry about it
     dateid = new Date(dateid)
     knex('dates')
-    .select('dateid')
-    .where({date:dateid})
-    .then((dateidd) =>{
-        knex("eventdates")
-        .where({ eventid })
-        .andWhere({ dateid : dateidd.dateidd })
-        .del()
-    })
+        .select('dateid')
+        .where({date:dateid})
+        .then(([dateidd]) =>{
+            console.log('\x1b[31m%s\x1b[0m', 'Deleting date with date id',  dateidd.dateid , "at eventid ", eventid);
+            knex("eventdates")
+                .where({ eventid })
+                .andWhere({ dateid : dateidd.dateid })
+                .del()
+                .then(deletedRows => {
+                    if (deletedRows > 0) {
+                        console.log("EventDate deleted successfully");
+                        // After successful deletion, proceed to redirect or handle response
+                        res.status(200).send("Date deleted successfully.");
+                    } else {
+                        console.log("No matching eventdates found to delete.");
+                        res.status(404).send("No matching eventdates found.");
+                    }
+                });
+        })
     
 });
 
 router.post("/editEvent", checkAuthenticated, (req, res) => {
     console.log("Editing Event");
-    console.log(JSON.stringify(req.body, null, 2));
     const {
         organization,
         status,
@@ -571,6 +608,7 @@ router.post("/editEvent", checkAuthenticated, (req, res) => {
 
 
     } = req.body;
+    console.log('\x1b[31m%s\x1b[0m', 'Dates array',  date);
 
     // Step 1: Update the "location" table with zip, city, and state
     knex("location")
@@ -701,6 +739,7 @@ router.post("/editEvent", checkAuthenticated, (req, res) => {
             if (Array.isArray(date) && date.length > 0) {
                 date.forEach((currentDate, index) => {
                     const dateToUpdate = new Date(currentDate) || '2020-01-01';
+                    dateToUpdate.setDate(dateToUpdate.getDate()+1)
                     knex("dates")
                         .select("dateid")
                         .where({ date: dateToUpdate })
@@ -712,6 +751,8 @@ router.post("/editEvent", checkAuthenticated, (req, res) => {
                                     .insert({ eventid: eventid, dateid: existingDate.dateid })
                                     .onConflict(["eventid", "dateid"]) // Handle duplicate key
                                     .merge(); // Update the entry if it already exists
+                                    
+                                
                             } else {
                                 // Date doesn't exist, insert it and link with eventdates
                                 return knex("dates")
@@ -728,7 +769,7 @@ router.post("/editEvent", checkAuthenticated, (req, res) => {
                         })
                         .then(() => {
                             if (index === date.length - 1) {
-                                res.redirect("/events"); // Redirect after last update
+                                res.redirect("/events/"+eventid); // Redirect after last update
                             }
                         })
                         .catch(err => {
@@ -781,7 +822,6 @@ router.post("/editEvent", checkAuthenticated, (req, res) => {
 
 
 router.get("/events", checkAuthenticated, (req, res) => {
-    console.log("getting events")
     knex("events as e")
         .leftJoin("eventdates as ed", "e.eventid", "ed.eventid")
         .leftJoin("dates as d", "ed.dateid", "d.dateid")
@@ -806,7 +846,6 @@ router.get("/events", checkAuthenticated, (req, res) => {
             knex("servicetypes")
                 .select()
                 .then((servicetypes) => {
-                    console.log(JSON.stringify(events, null, 2))
                     res.render("layout", {
                         title: "Events",
                         page: "events",
@@ -831,6 +870,7 @@ router.get('/events/:eventid',checkAuthenticated, (req, res) => {
         .leftJoin('eventrequest as er', 'e.eventid', 'er.eventid')
         .leftJoin('servicetypes as st', 'er.servicetypeid', 'st.servicetypeid')
         .leftJoin('distributionevent as de','de.eventid', 'e.eventid')
+        .leftJoin('eventoutcomes eo','eo.eventid','e.eventid')
         .select(
             'e.eventid',
             'e.starttime',
@@ -858,6 +898,8 @@ router.get('/events/:eventid',checkAuthenticated, (req, res) => {
             'er.numtablesrectangle',
             'st.description',
             'de.temperature',
+            'eo.headcount',
+            'eo.servicehours'
 
         )
         .where('e.eventid', eventid)
@@ -937,19 +979,33 @@ router.get("/volunteers", checkAuthenticated, (req, res) => {
                 .select()
                 .orderBy("skillid", "asc")
                 .then((skilllevel) => {
-                    res.render("layout", {
-                        title: "Volunteers",
-                        page: "volunteers",
-                        volunteers: volunteers,
-                        skilllevel: skilllevel,
-                    });
+                    knex("location")
+                        .select()
+                        .then((location) => {
+                            res.render("layout", {
+                                title: "Volunteers",
+                                page: "volunteers",
+                                volunteers: volunteers,
+                                skilllevel: skilllevel,
+                                location: location
+                            });
+                        })
+                        .catch((error) => {
+                            console.error("Error querying location database:", error);
+                            res.status(500).send("Internal Server Error");
+                        });
                 })
+                .catch((error) => {
+                    console.error("Error querying skill level database:", error);
+                    res.status(500).send("Internal Server Error");
+                });
         })
         .catch((error) => {
-            console.error("Error querying database:", error);
+            console.error("Error querying volunteer database:", error);
             res.status(500).send("Internal Server Error");
         });
 });
+
 
 router.post("/editVolunteer", (req, res) => {
     const {

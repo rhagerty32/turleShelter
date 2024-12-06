@@ -7,12 +7,28 @@
     <title>Turtle Shelter - Volunteer</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
+<style>
+    /* styling for the button class (right now only the return home button) */
+    .btn {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 1.35rem;
+    color: #fff;
+    background: #35B3A8;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    text-align: center;
+    transition: background 0.3s ease;
+}
+</style>
 
 <body class="bg-gray-50 font-sans">
     <!-- Main Content -->
     <div class="container mx-auto py-12 mt-10 px-6 space-y-6">
         <!-- Thank You Section -->
         <% if (submitted===true) { %>
+            <br><br>
             <section id="thank-you-section" class="bg-white p-8 rounded-lg shadow-md mt-5">
                 <h2 class="text-2xl font-bold text-gray-800">Thank You for Volunteering!</h2>
                 <p class="mt-4 text-gray-700">
@@ -23,6 +39,13 @@
                     With your support, we can distribute more high-tech foam vests that keep individuals warm even in
                     extreme cold, helping to save lives and alleviate suffering among the homeless community.
                 </p>
+                <br><br>
+                <div id="btnContainer" class="w-full flex justify-center">
+                    <a href="/" id="homeLink"
+                        class="btn hover:bg-gray-400 transition-all duration-150 py-1 px-2 rounded-md cursor-pointer text-lg">
+                        Return Home
+                    </a>
+                </div>
             </section>
             <% } %>
 
