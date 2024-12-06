@@ -7,29 +7,29 @@
     <title>Turtle Shelter - Volunteer</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <style>
     /* styling for the button class (right now only the return home button) */
     .btn {
-    display: inline-block;
-    padding: 10px 20px;
-    font-size: 1.35rem;
-    color: #fff;
-    background: #35B3A8;
-    border: none;
-    border-radius: 5px;
-    text-decoration: none;
-    text-align: center;
-    transition: background 0.3s ease;
-}
+        display: inline-block;
+        padding: 10px 20px;
+        font-size: 1.35rem;
+        color: #fff;
+        background: #35B3A8;
+        border: none;
+        border-radius: 5px;
+        text-decoration: none;
+        text-align: center;
+        transition: background 0.3s ease;
+    }
 </style>
 
 <body class="bg-gray-50 font-sans">
-    <!-- Main Content -->
     <div class="container mx-auto py-12 mt-10 px-6 space-y-6">
-        <!-- Thank You Section -->
+
+        <!-- THANK YOU SECTION -->
         <% if (submitted===true) { %>
-            <br><br>
-            <section id="thank-you-section" class="bg-white p-8 rounded-lg shadow-md mt-5">
+            <section id="thank-you-section" class="bg-white p-8 rounded-lg shadow-md mt-20">
                 <h2 class="text-2xl font-bold text-gray-800">Thank You for Volunteering!</h2>
                 <p class="mt-4 text-gray-700">
                     Your willingness to volunteer is greatly appreciated. Your help will make a significant impact in
@@ -49,13 +49,15 @@
             </section>
             <% } %>
 
+                <!-- FORM -->
                 <% if (!submitted) { %>
-                    <!-- Volunteer Form -->
                     <section id="volunteer-form" class="bg-white p-8 rounded-lg shadow-md">
                         <h2 class="text-2xl font-bold text-gray-800">Become a Volunteer</h2>
                         <p class="mt-2 text-gray-600">Fill out the form below so we can inform you of events around you!
                         </p>
                         <form action="/newVolunteer" method="POST" class="mt-6 space-y-6">
+
+                            <!-- NAME -->
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <label for="firstname" class="block text-gray-700 font-medium">First Name</label>
@@ -68,6 +70,8 @@
                                         class="mt-2 w-full outline-teal-500 px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
                                 </div>
                             </div>
+
+                            <!-- CONTACT INFO -->
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 <div>
                                     <label for="phonenumber" class="block text-gray-700 font-medium">Phone
@@ -86,6 +90,8 @@
                                         class="mt-2 w-full outline-teal-500 px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
                                 </div>
                             </div>
+
+                            <!-- SKILL LEVEL, TEACHING, LEADING -->
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 <div>
                                     <label for="skilllevel" class="block text-gray-700 font-medium">Skill Level</label>
@@ -130,6 +136,8 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- ADDRESS -->
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 <div>
                                     <label for="city" class="block text-gray-700 font-medium">City</label>
@@ -199,6 +207,8 @@
                                         class="mt-2 w-full outline-teal-500 px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
                                 </div>
                             </div>
+
+                            <!-- AVAILABILITY, RANGE, DISCOVERY METHOD -->
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 <div>
                                     <label for="availability"
@@ -225,6 +235,8 @@
                                     </select>
                                 </div>
                             </div>
+
+                            <!-- NOTES -->
                             <div class="grid grid-cols-1 md:grid-cols-1 gap-6">
                                 <div>
                                     <label for="notes" class="block text-gray-700 font-medium">Notes</label>
@@ -232,6 +244,8 @@
                                         class="mt-2 w-full outline-teal-500 px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500"></textarea>
                                 </div>
                             </div>
+
+                            <!-- SUBMIT BUTTON -->
                             <button type="submit"
                                 class="w-full bg-teal-600 transition-all duration-300 text-white font-bold py-3 px-6 rounded-lg shadow hover:bg-teal-700">Submit
                             </button>

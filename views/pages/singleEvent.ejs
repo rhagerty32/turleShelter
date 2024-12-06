@@ -18,7 +18,7 @@
         document.getElementById('cancelButton').classList.remove('hidden');
         document.getElementById('deleteButton').classList.remove('hidden');
         document.getElementById('saveButton').classList.remove('hidden');
-    }
+    };
 
     // Hide modal
     function closeModal() {
@@ -28,18 +28,18 @@
         document.getElementById('cancelButton').classList.add('hidden');
         document.getElementById('deleteButton').classList.add('hidden');
         document.getElementById('saveButton').classList.add('hidden');
-    }
+    };
 
     function saveChanges() {
         closeModal();
         document.getElementById('editSection').submit();
-    }
+    };
 
     function deleteEvent() {
         closeModal();
         document.getElementById('editSection').action = '/deleteEvent';
         document.getElementById('editSection').submit();
-    }
+    };
 
     function toggleStatus() {
         const status = document.getElementById('status').value;
@@ -47,28 +47,28 @@
         if (status === 'Completed') {
             for (let i in completedEvent) {
                 completedEvent[i].classList.remove('hidden');
-            }
+            };
         } else {
             for (let i in completedEvent) {
                 completedEvent[i].classList.add('hidden');
-            }
-        }
-    }
+            };
+        };
+    };
 
     function addItem() {
         const template = document.getElementById('itemTemplate').content.cloneNode(true);
         document.querySelector('#itemSection .grid').appendChild(template);
-    }
+    };
 
     function addDate() {
         const template = document.getElementById('dateTemplate').content.cloneNode(true);
         document.querySelector('#dateSection .grid').appendChild(template);
-    }
+    };
 
     function addContact() {
         const template = document.getElementById('contactTemplate').content.cloneNode(true);
         document.querySelector('#contactSection .grid').appendChild(template);
-    }
+    };
 
     function deleteDate(element, dateid) {
         element.parentElement.parentElement.parentElement.remove();
@@ -94,12 +94,13 @@
                 }
             })
             .catch(error => console.error('Error:', error));
-    }
+    };
 </script>
 
 <body class="bg-gray-50 font-sans">
     <div class="container justify-center items-center mx-auto py-12 px-6">
         <div class="flex flex-row justify-between items-center">
+
             <!-- HEADER -->
             <a href="/events" class="px-4 py-2 mt-10 bg-gray-100 text-gray-800 rounded-md hover:bg-gray-200">Back to
                 Events</a>
@@ -128,7 +129,7 @@
             </div>
         </div>
 
-        <!-- ^ VIEWER -->
+        <!-- VIEWER -->
         <div id="viewSection" class="bg-white p-6 rounded-xl shadow-md mt-6 border">
             <h2 class="text-2xl font-bold text-gray-800 mb-4">Event Information</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -373,7 +374,7 @@
                         <% } %>
         </div>
 
-        <!-- ^ EDITOR -->
+        <!-- EDITOR -->
         <form action="/editEvent" method="POST" id="editSection" class="bg-white p-6 rounded-lg shadow-md mt-6 hidden">
             <h2 class="text-2xl font-bold text-gray-800 mb-4">Event Information</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -387,7 +388,6 @@
                             class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                     </div>
                     <% } %>
-
 
                         <!-- STATUS -->
                         <div>
@@ -482,7 +482,6 @@
                             </div>
                         </div>
 
-
                         <!-- SERVICE TYPE -->
                         <% if (event.organization) { %>
                             <div>
@@ -498,7 +497,6 @@
                                 </select>
                             </div>
                             <% } %>
-
 
                                 <!-- JEN RELATED STUFF -->
                                 <% if (event.organization) { %>
@@ -550,7 +548,6 @@
                                             </div>
                                             <% } %>
 
-
                                                 <!-- ATTENDEES -->
                                                 <% if (event.organization) { %>
                                                     <div class="grid grid-cols-4 gap-4">
@@ -586,7 +583,6 @@
                                                         </div>
                                                     </div>
                                                     <% } %>
-
 
                                                         <!-- VENUE INFO -->
                                                         <% if (event.organization) { %>
@@ -640,7 +636,6 @@
                                                                         </div>
                                                                         <% } %>
 
-
                                                                             <!-- HEAD COUNT -->
                                                                             <div class="completedEvent hidden">
                                                                                 <label for="headcount"
@@ -652,7 +647,6 @@
                                                                                     required
                                                                                     class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                                                                             </div>
-
 
                                                                             <!-- SERVICE HOURS -->
                                                                             <div class="completedEvent hidden">
@@ -666,7 +660,6 @@
                                                                                     class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                                                                             </div>
                                                                 </div>
-
 
                                                                 <!-- ITEM AND QUANTITY -->
                                                                 <div id="itemSection"
@@ -714,6 +707,7 @@
                 <!-- START DATE/TIME -->
                 <div id="dateSection">
 
+                    <!-- START TIMES -->
                     <% if (dates.length===1) { %>
                         <div class="grid grid-cols-3 gap-4">
                             <div>
@@ -793,13 +787,13 @@
                                 <div class="grid grid-cols-4 gap-4">
                                     <div>
                                         <label for="firstname" class="block text-gray-700">First Name</label>
-                                        <input name="firstname" type="text" id="firstname"
+                                        <input name="firstname" type="text" id="firstname" disabled
                                             value="<%= requester.firstname %>"
                                             class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                                     </div>
                                     <div>
                                         <label for="lastname" class="block text-gray-700">Last Name</label>
-                                        <input name="lastname" type="text" id="lastname"
+                                        <input name="lastname" type="text" id="lastname" disabled
                                             value="<%= requester.lastname %>"
                                             class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                                     </div>
@@ -891,7 +885,6 @@
             </template>
         </form>
     </div>
-
 </body>
 
 </html>

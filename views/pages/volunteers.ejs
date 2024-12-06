@@ -12,14 +12,25 @@
 <script>
     // Show modal for editing user details
     function openModal(volunteer) {
-        console.log(volunteer)
+        const zip = volunteer.zip;
+        let city = '';
+        let state = '';
+
+        fetch(`/getCityState?zip=${zip}`)
+            .then(response => response.json())
+            .then(data => {
+                city = data.places[0].city;
+                state = data.places[0].state;
+
+                document.getElementById('modalCity').value = city;
+                document.getElementById('modalState').value = state;
+            });
+
         document.getElementById('modalFirstName').value = volunteer.firstname;
         document.getElementById('modalLastName').value = volunteer.lastname;
         document.getElementById('modalEmail').value = volunteer.email;
         document.getElementById('modalPhoneNumber').value = volunteer.phonenumber;
         document.getElementById('modalSkillId').value = volunteer.skillid;
-        document.getElementById('modalCity').value = volunteer.city;
-        document.getElementById('modalState').value = volunteer.state;
         document.getElementById('modalZip').value = volunteer.zip;
         document.getElementById('modalNotes').value = volunteer.notes;
         document.getElementById('modalAvailability').value = volunteer.availability;
@@ -41,10 +52,10 @@
 </script>
 
 <body class="bg-gray-50 font-sans">
-
     <div class="container mx-auto py-12 px-6 space-y-6">
         <h1 class="text-3xl font-bold text-gray-800 mb-8 mt-10">Volunteer Management</h1>
 
+        <!-- VOLUNTEER LIST -->
         <div class="space-y-4">
             <% if (volunteers && volunteers.length> 0) { %>
                 <% volunteers.forEach(volunteer=> { %>
@@ -103,13 +114,14 @@
         </div>
     </div>
 
-    <!-- Modal for editing user -->
+    <!-- EDIT USER MODAL -->
     <div id="editModal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
         <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-3xl">
             <h2 class="text-2xl font-bold text-gray-800 mb-4">Edit User Details</h2>
             <form id="editVolunteerForm" action="/editVolunteer" method="POST">
                 <div class="space-y-4">
 
+                    <!-- NAME -->
                     <div class="grid grid-cols-4 gap-4">
                         <div>
                             <label for="modalFirstName" class="block text-gray-700">First Name</label>
@@ -136,10 +148,12 @@
                         </div>
                     </div>
 
+                    <!-- LOCATION -->
                     <div class="grid grid-cols-3 gap-4">
                         <div>
                             <label for="modalCity" class="block text-gray-700">City</label>
-                            <input type="text" id="modalCity" name="city"
+                            <!-- TODO GET THE CITY -->
+                            <input type="text" id="modalCity" name="city" value=""
                                 class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
                         </div>
                         <div>
@@ -205,6 +219,8 @@
                                 class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
                         </div>
                     </div>
+
+                    <!-- SKILL LEVEL, ETC -->
                     <div class="grid grid-cols-3 gap-4">
                         <div class="flex flex-col">
                             <label for="modalSkillId" class="block text-gray-700">Skill Level</label>
@@ -229,12 +245,14 @@
                                 class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
                                 <option value="Family">Family</option>
                                 <option value="Friend">Friend</option>
-                                <option value="Other">Other</option>
+                                <option value="Past Event">Past Event</option>
                                 <option value="Social Media">Social Media</option>
-                                <option value="Website">Website</option>
+                                <option value="Other">Other</option>
                             </select>
                         </div>
                     </div>
+
+                    <!-- RANGE, TEACHER, LEADER, NOTES -->
                     <div class="grid grid-cols-3 gap-4">
                         <!-- Range (on the left) -->
                         <div class="flex flex-col">
@@ -283,6 +301,7 @@
                         </div>
                     </div>
 
+                    <!-- BUTTONS -->
                     <div class="mt-6 flex justify-between gap-4">
                         <button type="button" onclick="handleCancel()"
                             class="px-6 py-2 bg-gray-600 text-white rounded-lg shadow-md hover:bg-gray-700">Cancel</button>
@@ -298,7 +317,6 @@
             </form>
         </div>
     </div>
-
 </body>
 
 </html>

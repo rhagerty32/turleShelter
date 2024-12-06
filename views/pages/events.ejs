@@ -21,20 +21,6 @@
     }
 </style>
 
-
-<style>
-    .toggle-checkbox:checked {
-        right: 0;
-        border-color: #4fd1c5;
-    }
-
-
-    .toggle-checkbox {
-        transition: right 0.5s ease-in-out;
-    }
-</style>
-
-
 <script>
     // Show modal for editing event details
     function openModal() {
@@ -50,12 +36,12 @@
         // Remove all dynamically added date inputs
         while (dateSection.querySelectorAll('.grid > div').length > 3) {
             dateSection.querySelector('.grid').lastChild.remove();
-        }
+        };
 
         // Remove all dynamically added contact inputs
         while (contactSection.querySelectorAll('.grid > div').length > 4) {
             contactSection.querySelector('.grid').lastChild.remove();
-        }
+        };
     };
 
     function toggleEventType() {
@@ -65,11 +51,13 @@
 
         for (let i in elements) {
             if (eventType.checked) {
-                elements[i].classList.add('hidden');
+                console.log('Distribution Event');
                 document.getElementById('addEventForm').action = '/addDistributionEvent';
+                elements[i].classList.add('hidden');
             } else {
-                elements[i].classList.remove('hidden');
+                console.log('Service Event');
                 document.getElementById('addEventForm').action = '/addServiceEvent';
+                elements[i].classList.remove('hidden');
             };
         };
     };
@@ -77,23 +65,25 @@
     function addItem() {
         const template = document.getElementById('dateTemplate').content.cloneNode(true);
         document.querySelector('#dateSection .grid').appendChild(template);
-    }
+    };
 
     function addContact() {
         const template = document.getElementById('contactTemplate').content.cloneNode(true);
         document.querySelector('#contactSection .grid').appendChild(template);
-    }
+    };
 </script>
 
-
 <body class="bg-gray-50 font-sans">
-    <div class="container mx-auto py-12 px-6 space-y-6">
-        <div class="flex flex-row justify-between items-center mt-6">
+    <div class="container mx-auto py-12 px-6 ">
+        <!-- HEADER -->
+        <div class="flex flex-row justify-between items-center my-6">
             <h2 class="text-2xl font-bold text-gray-800">All Events</h2>
             <button onclick="openModal({})" class="px-4 py-2 bg-teal-500 text-white rounded-md hover:bg-teal-600">
                 Add Event
             </button>
         </div>
+
+        <!-- EVENTS -->
         <div class="space-y-4">
             <% if (events && events.length> 0) { %>
                 <% let uniqueEvents=[]; %>
@@ -124,10 +114,10 @@
                                         <% } %>
         </div>
 
-        <!-- ^ ADD EVENT -->
+        <!-- ADD EVENT -->
         <div id="addModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50 hidden">
             <form id="addEventForm" action="/addServiceEvent" method="POST"
-                class="bg-white p-8 rounded-lg shadow-md w-fit max-w-6xl max-h-[90%] overflow-scroll">
+                class="bg-white p-8 rounded-lg shadow-md w-fit max-w-6xl max-h-[90%] overflow-y-auto">
                 <div class="flex flex-row items-center justify-between">
                     <h2 class="text-2xl font-bold text-gray-800 mb-4">Event Information</h2>
                     <div class="flex flex-row gap-2">
@@ -148,7 +138,7 @@
                     <!-- ORGANIZATION -->
                     <div class="distributionEvent">
                         <label for="organization" class="block text-gray-700">Organization</label>
-                        <input name="organization" required type="text" id="organization" value=""
+                        <input name="organization" type="text" id="organization" value=""
                             class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                     </div>
 
@@ -156,7 +146,7 @@
                         <!-- STATUS -->
                         <div>
                             <label for="status" class="block text-gray-700">Status</label>
-                            <select id="status" required name="status"
+                            <select id="status" name="status"
                                 class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                                 <option value="Pending">Pending</option>
                                 <option value="Scheduled">Scheduled</option>
@@ -327,7 +317,7 @@
                         </div>
                         <div>
                             <label for="numrooms" class="block text-gray-700">Rooms</label>
-                            <input name="numrooms" required type="number" id="numrooms" min="0" value=""
+                            <input name="numrooms" type="number" id="numrooms" min="0" value=""
                                 class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                         </div>
                         <div>
@@ -463,6 +453,7 @@
                 </template>
             </form>
         </div>
+    </div>
 </body>
 
 </html>
