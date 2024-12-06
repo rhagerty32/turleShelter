@@ -454,11 +454,11 @@ router.post("/addServiceEvent", (req, res) => {
 });
 
 router.post("/addDistributionEvent", (req, res) => {
-    // Destructure incoming data from the form
-    console.log("adding distribution event")
+    console.log("Adding Distribution Event");
+    console.log(JSON.stringify(req.body, null, 2));
     const {
         status,
-        date,
+        date = [],
         starttime,
         plannedduration,
         address,
@@ -467,109 +467,113 @@ router.post("/addDistributionEvent", (req, res) => {
         zip,
         details,
     } = req.body;
-    // Step 1: Insert data into the "events" table and get the generated eventid
+
+    // Step 5: Insert or update the location table with zip, city, and state
+
     knex("location")
         .insert({ zip, city, state })
         .onConflict("zip") // If zip exists, update city/state
         .merge() // Merge updates for existing zip
         .then(() => {
-            knex("events")
+            
+            // Step 1: Insert data into the "events" table and get the generated eventid
+            return knex("events")
                 .insert({
-                    starttime: starttime || "00:00:00",
+                    starttime: starttime || '00:00:00',
                     address: address || '',
-                    zip: zip || '',
-                    status: status || '',
-                    plannedduration: plannedduration || 0,
+                    zip: zip || '00000',
+                    status: status || 'Pending',
+                    plannedduration: plannedduration || 0.0,
                     details: details || '',
                 })
-                .returning("eventid") // Return the generated eventid
-                .then((eventid) => {
-                    // Step 3: Check if the provided date already exists in the "dates" table
-                    console.log("Step 3 event id: " + eventid.eventid)
-                    if (typeof date === 'string') {
-                        const currentDate = new Date(date) || '2020-01-01';
-                        currentDate.setDate(currentDate.getDate() + 1);
-                        knex("dates")
-                            .select("dateid")
-                            .where({ date: currentDate })
-                            .first() // Only get the first matching record
-                            .then(existingDate => {
-                                if (existingDate) {
-                                    // Date already exists, use the existing dateid
-                                    const dateId = existingDate.dateid;
+                .returning("eventid"); // Return the generated eventid
+                
+        })
+        .then(([eventid]) => {
+            // Step 3: Check if the provided date already exists in the "dates" table
+            console.log('\x1b[31m%s\x1b[0m',"Step 3 event id: " + eventid)
+            if (typeof date === 'string') {
+                const currentDate = new Date(date) || '2020-01-01';
+                currentDate.setDate(currentDate.getDate() + 1)
+                knex("dates")
+                    .select("dateid")
+                    .where({ date: currentDate })
+                    .first() // Only get the first matching record
+                    .then(existingDate => {
+                        if (existingDate) {
+                            // Date already exists, use the existing dateid
+                            const dateId = existingDate.dateid;
+                            return knex("eventdates")
+                                .insert({ eventid: eventid.eventid || 0, dateid: dateId })
+                                .onConflict(["eventid", "dateid"]) // Handle duplicate key
+                                .ignore();
+                        } else {
+                            // Date does not exist, insert it
+                            return knex("dates")
+                                .insert({ date: currentDate })
+                                .returning("dateid")
+                                .then(([newDateId]) => {
+                                    const dateId = newDateId.dateid;
                                     return knex("eventdates")
                                         .insert({ eventid: eventid.eventid || 0, dateid: dateId })
-                                        .onConflict(["eventid", "dateid"]) // Handle duplicate key
+                                        .onConflict(["eventid", "dateid"])
                                         .ignore();
-                                } else {
-                                    // Date does not exist, insert it
-                                    return knex("dates")
-                                        .insert({ date: currentDate })
-                                        .returning("dateid")
-                                        .then(([newDateId]) => {
-                                            const dateId = newDateId.dateid;
-                                            return knex("eventdates")
-                                                .insert({ eventid: eventid.eventid || 0, dateid: dateId })
-                                                .onConflict(["eventid", "dateid"])
-                                                .ignore();
-                                        });
-                                }
-                            })
-                            .then(() => {
-
-                                res.redirect("/events"); // Redirect after the last insert
-
-                            })
-                            .catch(err => {
-                                console.error("Error inserting date:", err);
-                                res.status(500).send("Error processing dates and eventdates");
-                            });
-                    }
-                    else {
-                        for (let i = 0; i < date.length; i++) {
-                            const currentDate = new Date(date[i]) || '2020-01-01';
-                            knex("dates")
-                                .select("dateid")
-                                .where({ date: currentDate })
-                                .first() // Only get the first matching record
-                                .then(existingDate => {
-                                    if (existingDate) {
-                                        // Date already exists, use the existing dateid
-                                        const dateId = existingDate.dateid;
-                                        return knex("eventdates")
-                                            .insert({ eventid: eventid.eventid || 0, dateid: dateId })
-                                            .onConflict(["eventid", "dateid"]) // Handle duplicate key
-                                            .ignore();
-                                    } else {
-                                        // Date does not exist, insert it
-                                        return knex("dates")
-                                            .insert({ date: currentDate })
-                                            .returning("dateid")
-                                            .then(([newDateId]) => {
-                                                const dateId = newDateId.dateid;
-                                                return knex("eventdates")
-                                                    .insert({ eventid: eventid.eventid || 0, dateid: dateId })
-                                                    .onConflict(["eventid", "dateid"])
-                                                    .ignore();
-                                            });
-                                    }
-                                })
-                                .then(() => {
-                                    if (i === date.length - 1) {
-                                        res.redirect("/events"); // Redirect after the last insert
-                                    }
-                                })
-                                .catch(err => {
-                                    console.error("Error inserting date:", err);
-                                    res.status(500).send("Error processing dates and eventdates");
                                 });
                         }
-                    }
-                })
-                .catch((err) => {
-                    console.error("EventRequest error:", err);
-                    res.status(500).send("Error updating eventRequest");
-                });
+                    })
+                    .then(() => {
+                        res.redirect("/events"); // Redirect after the last insert
+                    })
+                    .catch(err => {
+                        console.error("Error inserting date:", err);
+                        res.status(500).send("Error processing dates and eventdates");
+                    });
+            }
+            else {
+                for (let i = 0; i < date.length; i++) {
+                    const currentDate = new Date(date[i]) || '2020-01-01';
+                    currentDate.setDate(currentDate.getDate() + 1)
+                    knex("dates")
+                        .select("dateid")
+                        .where({ date: currentDate })
+                        .first() // Only get the first matching record
+                        .then(existingDate => {
+                            if (existingDate) {
+                                // Date already exists, use the existing dateid
+                                const dateId = existingDate.dateid;
+                                return knex("eventdates")
+                                    .insert({ eventid: eventid.eventid || 0, dateid: dateId })
+                                    .onConflict(["eventid", "dateid"]) // Handle duplicate key
+                                    .ignore();
+                            } else {
+                                // Date does not exist, insert it
+                                return knex("dates")
+                                    .insert({ date: currentDate })
+                                    .returning("dateid")
+                                    .then(([newDateId]) => {
+                                        const dateId = newDateId.dateid;
+                                        return knex("eventdates")
+                                            .insert({ eventid: eventid.eventid || 0, dateid: dateId })
+                                            .onConflict(["eventid", "dateid"])
+                                            .ignore();
+                                    });
+                            }
+                        })
+                        .then(() => {
+                            if (i === date.length - 1) {
+                                res.redirect("/events"); // Redirect after the last insert
+                            }
+                        })
+                        .catch(err => {
+                            console.error("Error inserting date:", err);
+                            res.status(500).send("Error processing dates and eventdates");
+                        });
+                }
+            }
+        })
+        .catch((err) => {
+            console.error("Error:", err);
+            res.status(500).send("Error processing service event");
         });
 });
 router.post("/deleteDate", (req, res) => {
@@ -686,17 +690,15 @@ router.post("/editEvent", checkAuthenticated, (req, res) => {
         firstname = [],
         lastname = [],
         email = [],
-        phonenumber = [],
+        phone = [],
         eventid,
         headcount,
         servicehours,
-        itemid = [],
+        item = [],
         quantity = [],
-
-
     } = req.body;
-    console.log('\x1b[31m%s\x1b[0m', 'Dates array', date);
-    console.log('\x1b[31m%s\x1b[0m', 'People', firstname);
+    
+    console.log('\x1b[31m%s\x1b[0m', 'itemarray ', item, " quantity array ", quantity);
 
     // Step 1: Update the "location" table with zip, city, and state
     knex("location")
@@ -739,7 +741,6 @@ router.post("/editEvent", checkAuthenticated, (req, res) => {
         })
         .then(() => {
             // Step 3.5: Update the "eventoutcome" table
-            console.log('\x1b[31m%s\x1b[0m', 'updating event outcome table eventid:', eventid, " headcount ", headcount, " servicehours ", servicehours);
             return knex("eventoutcome")
                 .where("eventid", eventid)
                 .update({
@@ -748,9 +749,9 @@ router.post("/editEvent", checkAuthenticated, (req, res) => {
                 })
                 .then(() => {
                     // Step 3.5.2: Update the "eventitems" table
-                    if (Array.isArray(itemid) && itemid.length > 0) {
-                        itemid.forEach((currentitemid, index) => {
-                            const currentquantity = quantity[i] || 0;
+                    if (Array.isArray(item) && item.length > 0) {
+                        item.forEach((currentitemid, index) => {
+                            const currentquantity = quantity[index] || 0;
                             knex("eventitems")
                                 .where("eventid", eventid)
                                 .andWhere("itemid", currentitemid)
@@ -758,22 +759,56 @@ router.post("/editEvent", checkAuthenticated, (req, res) => {
                                     itemid: currentitemid || 0,
                                     quantity: currentquantity || 0,
                                 })
+                                .then((newitem)=>{
+                                    if(newitem){
+                                        console.log('\x1b[31m%s\x1b[0m', 'newitem existed and was updated:',);
+                                    }
+                                    else{
+                                        console.log('\x1b[31m%s\x1b[0m', 'item didnt exists and is getting added itemid:', currentitemid, " quantity: ", currentquantity);
+                                        knex("eventitems")
+                                            .insert({
+                                                eventid:eventid,
+                                                itemid:currentitemid,
+                                                quantity:currentquantity
+                                            })
+                                            .then(() =>{
+                                                return console.log('\x1b[31m%s\x1b[0m', 'items got added successfully currentitemid:', currentitemid);
+                                            })
+                                    }
+                                })
                                 .catch((err) => {
                                     console.error("Error:", err);
                                     res.status(500).send("Error updating eventitems info");
                                 });
                         });
-                    } else if (typeof itemid === 'string') {
+                    } else if (typeof item === 'string') {
                         // If item is a string, update that item
-                        const currentitemid = itemid || 0;
+                        const currentitemid = item || 0;
                         const currentquantity = quantity || 0;
 
-                        knex("requester")
+                        knex("eventitems")
                             .where("eventid", eventid)
-                            .andWhere("firstname", currentfirstname)
+                            .andWhere("itemid", currentitemid)
                             .update({
                                 itemid: currentitemid || 0,
                                 quantity: currentquantity || 0,
+                            })
+                            .then((newitem)=>{
+                                if(newitem){
+                                    console.log('\x1b[31m%s\x1b[0m', 'single newitem existed and was updated:',);
+                                }
+                                else{
+                                    console.log('\x1b[31m%s\x1b[0m', 'single item didnt exists and is getting added itemid:', currentitemid, " quantity: ", currentquantity);
+                                    knex("eventitems")
+                                        .insert({
+                                            eventid:eventid,
+                                            itemid:currentitemid,
+                                            quantity:currentquantity
+                                        })
+                                        .then(() =>{
+                                            return console.log('\x1b[31m%s\x1b[0m', 'singleitem got added successfully itemid:', currentitemid);
+                                        })
+                                }
                             })
                             .catch((err) => {
                                 console.error("Error:", err);
@@ -788,8 +823,9 @@ router.post("/editEvent", checkAuthenticated, (req, res) => {
                 firstname.forEach((currentfirstname, index) => {
                     const currentlastname = lastname[index] || '';
                     const currentemail = email[index] || '';
-                    const currentphonenumber = phonenumber[index] || '';
+                    const currentphonenumber = phone[index] || '';
                     console.log('\x1b[31m%s\x1b[0m', 'Person being passed:', currentfirstname, " ", currentlastname);
+                    console.log('\x1b[31m%s\x1b[0m', 'email and phone:', currentemail, " ", currentphonenumber);
                     console.log('\x1b[31m%s\x1b[0m', 'Eventid:', eventid);
                     knex("requester")
                         .where("eventid", eventid)
@@ -801,9 +837,10 @@ router.post("/editEvent", checkAuthenticated, (req, res) => {
                             email: currentemail
                         })
                         .then((newperson) =>{
-                            console.log('\x1b[31m%s\x1b[0m', 'newperson variable:', newperson);
+                            
                             if(newperson){
                                 //if newperson exists, then it was already updated
+                                console.log('\x1b[31m%s\x1b[0m', 'newperson existed and was updated:', newperson.firstname);
                             }
                             else{
                                 console.log('\x1b[31m%s\x1b[0m', 'person didnt exists and is getting added:', currentfirstname);
@@ -829,8 +866,10 @@ router.post("/editEvent", checkAuthenticated, (req, res) => {
                 // If firstname is a string, update that user
                 const currentfirstname = firstname || '';
                 const currentlastname = lastname || '';
-                const currentemail = email || '';
-                const currentphonenumber = phonenumber || '';
+                const currentemail = email[1] || '';
+                const currentphonenumber = phone[1] || '';
+                console.log('\x1b[31m%s\x1b[0m', 'Single Person being passed:', currentfirstname, " ", currentlastname);
+                console.log('\x1b[31m%s\x1b[0m', 'email and phone:', currentemail, " ", currentphonenumber);
                 knex("requester")
                     .where("eventid", eventid)
                     .andWhere("firstname", currentfirstname)
@@ -841,9 +880,10 @@ router.post("/editEvent", checkAuthenticated, (req, res) => {
                         email: currentemail
                     })
                     .then((newperson) =>{
-                        console.log('\x1b[31m%s\x1b[0m', 'newperson variable:', newperson);
+                        
                         if(newperson){
                             //if newperson exists, then it was already updated
+                            console.log('\x1b[31m%s\x1b[0m', 'single person updated:');
                         }
                         else{
                             knex("requester")
@@ -855,7 +895,7 @@ router.post("/editEvent", checkAuthenticated, (req, res) => {
                                     email: currentemail
                                 })
                                 .then(() =>{
-                                    return console.log('\x1b[31m%s\x1b[0m', 'person got added successfully:', currentfirstname);
+                                    return console.log('\x1b[31m%s\x1b[0m', 'single person got added successfully:', currentfirstname);
                                 })
                         }
                     })
@@ -864,12 +904,19 @@ router.post("/editEvent", checkAuthenticated, (req, res) => {
                         res.status(500).send("Error updating requester info");
                     });
             }
+            //delete all dates for eventid in eventdates
+            knex("eventdates")
+                .where({eventid})
+                .del()
+                .then(()=> {return console.log('\x1b[31m%s\x1b[0m', 'cleared all dateids for eventid ', eventid);
 
+                0});
             // Step 5: Update dates in the "eventdates" table
             if (Array.isArray(date) && date.length > 0) {
                 date.forEach((currentDate, index) => {
                     const dateToUpdate = new Date(currentDate) || '2020-01-01';
                     dateToUpdate.setDate(dateToUpdate.getDate() + 1)
+                    console.log('\x1b[31m%s\x1b[0m', 'datetoupdate:', dateToUpdate);
                     knex("dates")
                         .select("dateid")
                         .where({ date: dateToUpdate })
@@ -1144,9 +1191,12 @@ router.post("/editVolunteer", (req, res) => {
         notes,
         password,
         jobrole,
+        teacher,
+        range,
+        leader,
     } = req.body;
     knex("location")
-        .insert({ zip, city, state })
+        .insert({ zip:zip||0, city:city || '', state:state ||'' })
         .onConflict("zip") // If zip exists, update city/state
         .merge() // Merge updates for existing zip
         .then(() => {
@@ -1162,7 +1212,11 @@ router.post("/editVolunteer", (req, res) => {
                     discoverymethod: discoverymethod || '',
                     notes: notes || '',
                     password: password || '',
+                    teacher:teacher ||false,
+                    leader:leader ||false,
+                    range:range||0,
                     jobrole: jobrole || 'Volunteer',
+                    zip:zip || 0,
 
                 })
                 .then(() => {
