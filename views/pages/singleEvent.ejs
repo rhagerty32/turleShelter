@@ -417,7 +417,7 @@
                                     <% } %>
                         </div>
                         <!-- ITEMS -->
-                        <% if (event.organization && event.status==="Completed" ) { %>
+                        <% if (!event.organization && event.status==="Completed" ) { %>
                             <div class="bg-white shadow-md rounded-xl mt-6 p-4 border flex flex-col gap-4">
                                 <h3 class="text-xl font-bold text-gray-800">
                                     Items Made</h3>
