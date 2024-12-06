@@ -2,6 +2,8 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const knex = require("../config/db"); // Database connection
 const router = express.Router();
+const nodemailer = require('nodemailer');
+require('dotenv').config()
 
 // Middleware to parse JSON and URL-encoded data
 router.use(bodyParser.json());
@@ -275,7 +277,62 @@ router.post("/addServiceEvent", (req, res) => {
         email = [],
         phonenumber = []
     } = req.body;
+    // Create a transporter object using the default SMTP transport
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            type: 'OAuth2',
+            user: process.env.EMAIL,
+            clientId: process.env.CLIENT_ID,
+            clientSecret: process.env.CLIENT_SECRET,
+            refreshToken: process.env.REFRESH_TOKEN,
+            accessToken: process.env.ACCESS_TOKEN
+        }
+    });
 
+    // Define the email options
+    const mailOptions = {
+        from: 'rdhagerty@gmail.com',
+        to: 'ryan@spotparking.app',
+        subject: 'Service Event Details',
+        html: `
+            <div style="font-family: Arial, sans-serif; color: #333;">
+                <h2 style="color: #4CAF50;">Service Event Requested</h2>
+                <p><strong>Organization:</strong> ${organization}</p>
+                <p><strong>Status:</strong> ${status}</p>
+                <p><strong>Date:</strong> ${Array.isArray(date) ? date.join(', ') : date}</p>
+                <p><strong>Start Time:</strong> ${starttime}</p>
+                <p><strong>Planned Duration:</strong> ${plannedduration}</p>
+                <p><strong>Address:</strong> ${address}, ${city}, ${state}, ${zip}</p>
+                <p><strong>Service Type ID:</strong> ${servicetypeid}</p>
+                <p><strong>Jen Story:</strong> ${jenstory}</p>
+                <p><strong>Jen Story Length:</strong> ${jenstorylength}</p>
+                <p><strong>Sergers:</strong> ${sergers}</p>
+                <p><strong>Sewing Machines:</strong> ${sewingmachines}</p>
+                <p><strong>Children Under 10:</strong> ${childrenunder10}</p>
+                <p><strong>Adult Participants:</strong> ${adultparticipants}</p>
+                <p><strong>Advanced Sewers:</strong> ${advancedsewers}</p>
+                <p><strong>Basic Sewers:</strong> ${basicsewers}</p>
+                <p><strong>Venue Size:</strong> ${venuesize}</p>
+                <p><strong>Number of Rooms:</strong> ${numrooms}</p>
+                <p><strong>Number of Round Tables:</strong> ${numtablesround}</p>
+                <p><strong>Number of Rectangle Tables:</strong> ${numtablesrectangle}</p>
+                <p><strong>Details:</strong> ${details}</p>
+                <h3 style="color: #4CAF50;">Requesters</h3>
+                <p>${Array.isArray(firstname) ? firstname.map((fn, i) => `${fn} ${lastname[i]} (${email[i]}, ${phonenumber[i]})`).join('<br>') : `${firstname} ${lastname} (${email}, ${phonenumber})`}</p>
+            </div>
+        `
+    };
+
+    // Send the email
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            console.error('Error sending email:', error);
+            res.status(500).send('Error sending email');
+        } else {
+            console.log('Email sent');
+        }
+    });
     // Step 5: Insert or update the location table with zip, city, and state
     knex("location")
         .insert({ zip, city, state })
