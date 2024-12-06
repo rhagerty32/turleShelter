@@ -386,35 +386,6 @@
                                 </div>
                             </div>
                             <% } %>
-                                <% if (event.organization) { %>
-                                    <!-- HEAD COUNT SERVICE HOURS -->
-                                    <div class="grid grid-cols-1 md:grid-cols-1 gap-6">
-                                        <div class="bg-white shadow-md rounded-xl p-4 border flex flex-col gap-4">
-                                            <h3 class="text-xl font-bold text-gray-800">
-                                                Post-Event Information</h3>
-                                            <div class="flex flex-col gap-4">
-                                                <% requesters.forEach(function(requester) { %>
-                                                    <div class="flex flex-col gap-0">
-                                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                                            <div>
-                                                                <label class="block text-gray-700">Head Count</label>
-                                                                <p class="mt-2 text-gray-600">
-                                                                    <%= event.headcount %>
-                                                                </p>
-                                                            </div>
-                                                            <div>
-                                                                <label class="block text-gray-700">Service Hours</label>
-                                                                <p class="mt-2 text-gray-600">
-                                                                    <%= event.servicehours%>
-                                                                </p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <% }); %>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <% } %>
                         </div>
                         <!-- ITEMS -->
                         <% if (!event.organization && event.status==="Completed" ) { %>
@@ -832,7 +803,7 @@
                                                     class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
                                                 <button type="button"
                                                     onclick="deleteDate(this, '<%= new Date(date.date).toISOString() %>')"
-                                                    class="mt-2 px-4 py-2 cursor-pointer bg-red-500 text-white text-xs rounded-md hover:bg-red-600">
+                                                    class="my-2 px-4 py-2 cursor-pointer bg-red-500 text-white text-xs rounded-md hover:bg-red-600">
                                                     Delete
                                                 </button>
                                             </div>
@@ -846,7 +817,7 @@
                                 <!-- ADD DATE BUTTON -->
                                 <div class="col-span-2">
                                     <button type="button" onclick="addDate()"
-                                        class="mt-0 mb-2 px-4 py-2 bg-gray-400 text-white rounded-md hover:bg-teal-600">
+                                        class="mt-0 my-2 px-4 py-2 bg-gray-400 text-white rounded-md hover:bg-teal-600">
                                         Add Date Option
                                     </button>
                                 </div>
