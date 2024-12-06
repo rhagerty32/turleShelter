@@ -5,13 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Turtle Shelter</title>
-    <!-- 
-        Company Colors:
-        Main: #35B3A8 
-        Main Dark: #3D9991
-        Lighter Gray: #333
-        Darker Gray: #1F1F1F
-    -->
 
     <style>
         body {
@@ -98,22 +91,6 @@
             text-align: center;
         }
 
-        .headerImg {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: top;
-            pointer-events: none;
-        }
-
-        .containerHead {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: center;
-        }
-
         @media (max-width: 1000px) {
             header {
                 height: 300px;
@@ -136,16 +113,6 @@
                 padding: 0 10px;
             }
 
-            .containerHead {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .containerHead img {
-                width: 100%;
-                margin-top: 10px;
-            }
-
             .homeBtnDiv {
                 flex-direction: column;
             }
@@ -155,49 +122,53 @@
             }
         }
     </style>
-    <script>
-        // stack the host and volunteer div instead of side by side
-        function removeFlex() {
-            if (window.innerWidth < 1000) {
-                document.getElementById("volunteerHostDiv").classList.remove("flex", "flex-row");
-                document.getElementById("hostDiv").classList.add("mt-2")
-                document.getElementById("youHave..").classList.remove("mb-6");
-                document.getElementById("metricsSubDiv").classList.remove("flex");
-                document.getElementById("faqDiv").classList.add("flex-col");
-
-            } else {
-                document.getElementById("volunteerHostDiv").classList.add("flex", "flex-row");
-                document.getElementById("hostDiv").classList.remove("mt-2")
-                document.getElementById("youHave..").classList.add("mb-6");
-                document.getElementById("metricsSubDiv").classList.add("flex");
-                document.getElementById("faqDiv").classList.remove("flex-col");
-            }
-        }
-        window.addEventListener('resize', () => {
-            removeFlex();
-        });
-
-        window.addEventListener('load', () => {
-            removeFlex();
-        });
-    </script>
-    <script>
-        function toggleStats() {
-            const firstChild = event.currentTarget.children[0];
-            const secondChild = event.currentTarget.children[1];
-            if (firstChild.classList.contains('hidden')) {
-                firstChild.classList.remove('hidden');
-                secondChild.classList.add('hidden');
-            } else {
-                firstChild.classList.add('hidden');
-                secondChild.classList.remove('hidden');
-            }
-        }
-    </script>
 </head>
 
+<script>
+    // stack the host and volunteer div instead of side by side
+    function removeFlex() {
+        if (window.innerWidth < 1000) {
+            document.getElementById("volunteerHostDiv").classList.remove("flex", "flex-row");
+            document.getElementById("hostDiv").classList.add("mt-2")
+            document.getElementById("youHave..").classList.remove("mb-6");
+            document.getElementById("metricsSubDiv").classList.remove("flex");
+            document.getElementById("faqDiv").classList.add("flex-col");
+        } else {
+            document.getElementById("volunteerHostDiv").classList.add("flex", "flex-row");
+            document.getElementById("hostDiv").classList.remove("mt-2")
+            document.getElementById("youHave..").classList.add("mb-6");
+            document.getElementById("metricsSubDiv").classList.add("flex");
+            document.getElementById("faqDiv").classList.remove("flex-col");
+        };
+    };
+
+    // toggle stats on click
+    window.addEventListener('resize', () => {
+        removeFlex();
+    });
+
+    // toggle stats on click
+    window.addEventListener('load', () => {
+        removeFlex();
+    });
+
+    // toggle stats on click
+    function toggleStats() {
+        const firstChild = event.currentTarget.children[0];
+        const secondChild = event.currentTarget.children[1];
+        if (firstChild.classList.contains('hidden')) {
+            firstChild.classList.remove('hidden');
+            secondChild.classList.add('hidden');
+        } else {
+            firstChild.classList.add('hidden');
+            secondChild.classList.remove('hidden');
+        };
+    };
+</script>
+
 <body class="m-0 p-0">
-    <header class="z-0" style="position: relative; overflow: hidden; background-image: url('/images/service.jpg'); background-size: cover; background-position: center;">
+    <header class="z-0 h-[800px]"
+        style="position: relative; overflow: hidden; background-image: url('/images/service.jpg'); background-size: cover; height: 600px; background-position: center;">
         <!-- Content -->
         <h1 class="font-bold z-10">SERVE TO SAVE A LIFE</h1>
         <div id="homeBtnDiv" class="z-50">
@@ -224,7 +195,7 @@
 
     <div class="container flex flex-col gap-3 pt-0" style="width:100%;">
         <p class="text-2xl text-gray-700 text-center">Hundreds of unsheltered people die from the cold every year</p>
-        <p id="youHave.."class="text-2xl text-gray-700 mb-6 text-center">
+        <p id="youHave.." class="text-2xl text-gray-700 mb-6 text-center">
             <strong>YOU</strong> have the power to make a difference!
         </p>
         <div id="volunteerHostDiv" class="flex flex-row gap-6">
@@ -323,28 +294,29 @@
                 </div>
             </div>
         </div>
-
     </div>
-    <br><br>
-    <div id="metricsDiv" class="bg-gray-700 py-2 px-6 shadow-md" style="width:100%;">
-        <br><br><br>
-        <p class="text-center text-white text-5xl mb-8"><strong>Our Impact</strong></p>
+
+    <!-- TABLEAU/STATS SECTION -->
+    <div id="metricsDiv" class="bg-gray-700 py-10 px-6 shadow-md" style="width:100%;">
+        <p class="text-center text-white text-5xl my-12 font-bold">Our Impact</p>
         <div id="metricsSubDiv" class="flex flex-row w-full mt-4 justify-between">
             <div id="vestDelivered" class="flex text-white text-3xl flex-col p-6 items-center m-2">
                 <span class="m-2">Vests Delivered </span>
-                <span class="m-2"><strong>Number here</strong></span>
+                <span class="m-2 font-bold">
+                    <%= itemCount %>
+                </span>
             </div>
             <div id="serviceHours" class="flex text-white text-3xl flex-col p-6 items-center m-2">
                 <span class="m-2">Service Hours</span>
-                <span class="m-2"><strong>
-                        <%= stats.totalServiceHours %>
-                    </strong></span>
+                <span class="m-2 font-bold">
+                    <%= stats.totalServiceHours %>
+                </span>
             </div>
             <div id="eventsCompleted" class="flex text-white text-3xl flex-col p-6 items-center m-2">
                 <span class="m-2">Events Completed</span>
-                <span class="m-2"><strong>
-                        <%= stats.eventCount %>
-                    </strong></span>
+                <span class="m-2 font-bold">
+                    <%= stats.eventCount %>
+                </span>
             </div>
         </div>
         <div class="bg-white p-2 rounded-xl shadow-md flex justify-center items-center mt-4">
@@ -395,7 +367,6 @@
             </div>
         </div>
     </div>
-
 </body>
 
 </html>

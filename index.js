@@ -22,7 +22,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Serve static files (CSS, JavaScript, images) from the "public" folder
 // Example usage in views: <link rel="stylesheet" href="/styles.css">
-app.use(express.static("public")); 
+app.use(express.static("public"));
 
 // Configure session management
 app.use(
@@ -35,8 +35,13 @@ app.use(
 
 // Middleware to check if the user is authenticated
 app.use((req, res, next) => {
-    req.isAuthenticated = () => req.session.authenticated; // Define isAuthenticated method 
-    res.locals.authenticated = req.isAuthenticated(); // Pass authenticated status to views
+    // Helper method to check authentication
+    req.isAuthenticated = () => req.session?.authenticated || false;
+
+    // Make authentication status and user info available in views
+    res.locals.authenticated = req.isAuthenticated();
+    res.locals.user = req.session?.user || null;
+
     next();
 });
 
