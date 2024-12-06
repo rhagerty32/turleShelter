@@ -369,6 +369,7 @@ router.post("/addServiceEvent", (req, res) => {
             console.log("Step 3 event id: " + eventid.eventid)
             if (typeof date === 'string') {
                 const currentDate = new Date(date) || '2020-01-01';
+                currentDate.setDate(currentDate.getDate() + 1)
                 knex("dates")
                     .select("dateid")
                     .where({ date: currentDate })
@@ -406,6 +407,7 @@ router.post("/addServiceEvent", (req, res) => {
             else {
                 for (let i = 0; i < date.length; i++) {
                     const currentDate = new Date(date[i]) || '2020-01-01';
+                    currentDate.setDate(currentDate.getDate() + 1)
                     knex("dates")
                         .select("dateid")
                         .where({ date: currentDate })
@@ -572,32 +574,89 @@ router.post("/addDistributionEvent", (req, res) => {
 });
 router.post("/deleteDate", (req, res) => {
     var { dateid, eventid } = req.body;
-    console.log("date id :::" + dateid + " event id ::: " + eventid)
-    //if can't find date don't worry about it
-    dateid = new Date(dateid)
+    console.log("date id :::" + dateid + " event id ::: " + eventid);
+
+    // Convert to date to avoid issues with time zones
+    dateid = new Date(dateid);
+    
+    // Log to verify the date format
+    console.log('Converted dateid:', dateid);
+
     knex('dates')
         .select('dateid')
         .where({ date: dateid })
         .then(([dateidd]) => {
+            if (!dateidd) {
+                console.log("Date not found in the database.");
+                return res.status(404).send("Date not found.");
+            }
+
             console.log('\x1b[31m%s\x1b[0m', 'Deleting date with date id', dateidd.dateid, "at eventid ", eventid);
+
+            // Log current eventdates for debugging
             knex("eventdates")
                 .where({ eventid })
                 .andWhere({ dateid: dateidd.dateid })
-                .del()
-                .then(deletedRows => {
-                    if (deletedRows > 0) {
-                        console.log("EventDate deleted successfully");
-                        // After successful deletion, proceed to redirect or handle response
-                        res.status(200).send("Date deleted successfully.");
-                    } else {
-                        console.log("No matching eventdates found to delete.");
-                        res.status(404).send("No matching eventdates found.");
-                    }
+                .then((eventDateRows) => {
+                    console.log('EventDate rows before deletion:', eventDateRows);
+
+                    // Perform the deletion
+                    knex("eventdates")
+                        .where({ eventid })
+                        .andWhere({ dateid: dateidd.dateid })
+                        .del()
+                        .then(deletedRows => {
+                            console.log('Number of rows deleted:', deletedRows);
+
+                            if (deletedRows > 0) {
+                                console.log("EventDate deleted successfully");
+                                return res.status(200).send("Date deleted successfully.");
+                            } else {
+                                console.log("No matching eventdates found to delete.");
+                                return res.status(404).send("No matching eventdates found.");
+                            }
+                        })
+                        .catch(err => {
+                            console.error("Error deleting EventDate:", err);
+                            return res.status(500).send("Internal Server Error");
+                        });
+                })
+                .catch(err => {
+                    console.error("Error fetching eventdates:", err);
+                    return res.status(500).send("Internal Server Error");
                 });
         })
-
+        .catch(err => {
+            console.error("Error fetching date:", err);
+            return res.status(500).send("Internal Server Error");
+        });
 });
+router.get("/getCityState", (req, res) => {
+    const { zip } = req.query;
 
+    knex("location")
+        .select("city", "state")
+        .where({ zip })
+        .first()
+        .then((location) => {
+            if (location) {
+                res.json({
+                    places: [
+                        {
+                            city: location.city,
+                            state: location.state,
+                        },
+                    ],
+                });
+            } else {
+                res.status(404).json({ error: "Location not found" });
+            }
+        })
+        .catch((error) => {
+            console.error("Error querying location:", error);
+            res.status(500).send("Internal Server Error");
+        });
+});
 router.post("/editEvent", checkAuthenticated, (req, res) => {
     console.log("Editing Event");
     const {
@@ -637,6 +696,7 @@ router.post("/editEvent", checkAuthenticated, (req, res) => {
 
     } = req.body;
     console.log('\x1b[31m%s\x1b[0m', 'Dates array', date);
+    console.log('\x1b[31m%s\x1b[0m', 'People', firstname);
 
     // Step 1: Update the "location" table with zip, city, and state
     knex("location")
@@ -679,6 +739,7 @@ router.post("/editEvent", checkAuthenticated, (req, res) => {
         })
         .then(() => {
             // Step 3.5: Update the "eventoutcome" table
+            console.log('\x1b[31m%s\x1b[0m', 'updating event outcome table eventid:', eventid, " headcount ", headcount, " servicehours ", servicehours);
             return knex("eventoutcome")
                 .where("eventid", eventid)
                 .update({
@@ -728,6 +789,8 @@ router.post("/editEvent", checkAuthenticated, (req, res) => {
                     const currentlastname = lastname[index] || '';
                     const currentemail = email[index] || '';
                     const currentphonenumber = phonenumber[index] || '';
+                    console.log('\x1b[31m%s\x1b[0m', 'Person being passed:', currentfirstname, " ", currentlastname);
+                    console.log('\x1b[31m%s\x1b[0m', 'Eventid:', eventid);
                     knex("requester")
                         .where("eventid", eventid)
                         .andWhere("firstname", currentfirstname)
@@ -736,6 +799,26 @@ router.post("/editEvent", checkAuthenticated, (req, res) => {
                             lastname: currentlastname,
                             phone: currentphonenumber,
                             email: currentemail
+                        })
+                        .then((newperson) =>{
+                            console.log('\x1b[31m%s\x1b[0m', 'newperson variable:', newperson);
+                            if(newperson){
+                                //if newperson exists, then it was already updated
+                            }
+                            else{
+                                console.log('\x1b[31m%s\x1b[0m', 'person didnt exists and is getting added:', currentfirstname);
+                                knex("requester")
+                                    .insert({
+                                        eventid:eventid,
+                                        firstname: currentfirstname,
+                                        lastname: currentlastname,
+                                        phone: currentphonenumber,
+                                        email: currentemail
+                                    })
+                                    .then(() =>{
+                                        return console.log('\x1b[31m%s\x1b[0m', 'person got added successfully:', currentfirstname);
+                                    })
+                            }
                         })
                         .catch((err) => {
                             console.error("Error:", err);
@@ -756,6 +839,25 @@ router.post("/editEvent", checkAuthenticated, (req, res) => {
                         lastname: currentlastname,
                         phone: currentphonenumber,
                         email: currentemail
+                    })
+                    .then((newperson) =>{
+                        console.log('\x1b[31m%s\x1b[0m', 'newperson variable:', newperson);
+                        if(newperson){
+                            //if newperson exists, then it was already updated
+                        }
+                        else{
+                            knex("requester")
+                                .insert({
+                                    eventid:eventid,
+                                    firstname: currentfirstname,
+                                    lastname: currentlastname,
+                                    phone: currentphonenumber,
+                                    email: currentemail
+                                })
+                                .then(() =>{
+                                    return console.log('\x1b[31m%s\x1b[0m', 'person got added successfully:', currentfirstname);
+                                })
+                        }
                     })
                     .catch((err) => {
                         console.error("Error:", err);
@@ -808,6 +910,7 @@ router.post("/editEvent", checkAuthenticated, (req, res) => {
             } else if (typeof date === 'string') {
                 // If date is a string, process it as a single date
                 const currentDate = new Date(date) || '2020-01-01';
+                currentDate.setDate(currentDate.getDate() + 1)
                 knex("dates")
                     .select("dateid")
                     .where({ date: currentDate })
@@ -898,7 +1001,7 @@ router.get('/events/:eventid', checkAuthenticated, (req, res) => {
         .leftJoin('eventrequest as er', 'e.eventid', 'er.eventid')
         .leftJoin('servicetypes as st', 'er.servicetypeid', 'st.servicetypeid')
         .leftJoin('distributionevent as de', 'de.eventid', 'e.eventid')
-        .leftJoin('eventoutcomes eo', 'eo.eventid', 'e.eventid')
+        .leftJoin('eventoutcome as eo', 'eo.eventid', 'e.eventid')
         .select(
             'e.eventid',
             'e.starttime',
