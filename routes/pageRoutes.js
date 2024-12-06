@@ -51,7 +51,6 @@ router.get("/", (req, res) => {
 });
 
 router.post("/newVolunteer", (req, res) => {
-    console.log("Posting volunteer");
     const {
         firstname,
         lastname,
@@ -108,9 +107,6 @@ router.post("/newVolunteer", (req, res) => {
                                 knex("skilllevel")
                                     .select()
                                     .then((skilllevel) => {
-                                        console.log("Volunteer added");
-                                        console.log(skilllevel);
-                                        console.log({ submitted: true });
                                         res.render("layout", {
                                             title: "Volunteer Request",
                                             page: "volunteerRequest",
@@ -181,10 +177,10 @@ router.get("/stats", checkAuthenticated, (req, res) => {
         .sum("headcount as totalHeadcount")
         .sum("servicehours as totalServiceHours")
         .then((stats) => {
-            knex("recipients")
-                .count("* as count")
+            knex("eventitems")
+                .sum("quantity as total")
                 .where("itemid", ">", 13)
-                .then((itemCount) => {
+                .then((quantity) => {
                     knex("events")
                         .select("status")
                         .count("eventid as count")
@@ -197,7 +193,7 @@ router.get("/stats", checkAuthenticated, (req, res) => {
                                         title: "Stats",
                                         page: "stats",
                                         stats: stats[0],
-                                        itemCount: itemCount[0].count,
+                                        itemCount: quantity[0].total,
                                         statusCounts: statusCounts,
                                         survey: survey
                                     });
@@ -251,8 +247,6 @@ router.get("/hostAnEvent", (req, res) => {
 })
 
 router.post("/addServiceEvent", (req, res) => {
-    console.log("Adding Service Event");
-    console.log(JSON.stringify(req.body, null, 2));
     const {
         organization,
         status,
@@ -357,7 +351,6 @@ router.post("/addServiceEvent", (req, res) => {
                 .returning("eventid"); // Return the generated eventid
         })
         .then(([eventid]) => {
-            console.log("Step 2 event id: " + eventid.eventid)
             // Step 2: Use the eventid to insert related data into the "eventrequest" table
             return knex("eventrequest")
                 .insert({
@@ -381,7 +374,6 @@ router.post("/addServiceEvent", (req, res) => {
         })
         .then((eventid) => {
             //query in the users one by one
-            console.log("query users event id: " + eventid.eventid)
             if (typeof firstname === 'string') {
                 const currentfirstname = firstname || '';
                 const currentlastname = lastname || '';
@@ -428,7 +420,6 @@ router.post("/addServiceEvent", (req, res) => {
         })
         .then((eventid) => {
             // Step 3: Check if the provided date already exists in the "dates" table
-            console.log("Step 3 event id: " + eventid.eventid)
             if (typeof date === 'string') {
                 const currentDate = new Date(date) || '2020-01-01';
                 currentDate.setDate(currentDate.getDate() + 1)
@@ -516,8 +507,6 @@ router.post("/addServiceEvent", (req, res) => {
 });
 
 router.post("/addDistributionEvent", (req, res) => {
-    console.log("Adding Distribution Event");
-    console.log(JSON.stringify(req.body, null, 2));
     const {
         status,
         date = [],
@@ -553,7 +542,6 @@ router.post("/addDistributionEvent", (req, res) => {
         })
         .then(([eventid]) => {
             // Step 3: Check if the provided date already exists in the "dates" table
-            console.log('\x1b[31m%s\x1b[0m', "Step 3 event id: " + eventid)
             if (typeof date === 'string') {
                 const currentDate = new Date(date) || '2020-01-01';
                 currentDate.setDate(currentDate.getDate() + 1)
@@ -640,31 +628,26 @@ router.post("/addDistributionEvent", (req, res) => {
 });
 router.post("/deleteDate", (req, res) => {
     var { dateid, eventid } = req.body;
-    console.log("date id :::" + dateid + " event id ::: " + eventid);
 
     // Convert to date to avoid issues with time zones
     dateid = new Date(dateid);
 
     // Log to verify the date format
-    console.log('Converted dateid:', dateid);
 
     knex('dates')
         .select('dateid')
         .where({ date: dateid })
         .then(([dateidd]) => {
             if (!dateidd) {
-                console.log("Date not found in the database.");
                 return res.status(404).send("Date not found.");
             }
 
-            console.log('\x1b[31m%s\x1b[0m', 'Deleting date with date id', dateidd.dateid, "at eventid ", eventid);
 
             // Log current eventdates for debugging
             knex("eventdates")
                 .where({ eventid })
                 .andWhere({ dateid: dateidd.dateid })
                 .then((eventDateRows) => {
-                    console.log('EventDate rows before deletion:', eventDateRows);
 
                     // Perform the deletion
                     knex("eventdates")
@@ -672,13 +655,10 @@ router.post("/deleteDate", (req, res) => {
                         .andWhere({ dateid: dateidd.dateid })
                         .del()
                         .then(deletedRows => {
-                            console.log('Number of rows deleted:', deletedRows);
 
                             if (deletedRows > 0) {
-                                console.log("EventDate deleted successfully");
                                 return res.status(200).send("Date deleted successfully.");
                             } else {
-                                console.log("No matching eventdates found to delete.");
                                 return res.status(404).send("No matching eventdates found.");
                             }
                         })
@@ -724,7 +704,6 @@ router.get("/getCityState", (req, res) => {
         });
 });
 router.post("/editEvent", checkAuthenticated, (req, res) => {
-    console.log("Editing Event");
     const {
         organization,
         status,
@@ -759,8 +738,6 @@ router.post("/editEvent", checkAuthenticated, (req, res) => {
         item = [],
         quantity = [],
     } = req.body;
-
-    console.log('\x1b[31m%s\x1b[0m', 'itemarray ', item, " quantity array ", quantity);
 
     // Step 1: Update the "location" table with zip, city, and state
     knex("location")
@@ -823,10 +800,8 @@ router.post("/editEvent", checkAuthenticated, (req, res) => {
                                 })
                                 .then((newitem) => {
                                     if (newitem) {
-                                        console.log('\x1b[31m%s\x1b[0m', 'newitem existed and was updated:',);
                                     }
                                     else {
-                                        console.log('\x1b[31m%s\x1b[0m', 'item didnt exists and is getting added itemid:', currentitemid, " quantity: ", currentquantity);
                                         knex("eventitems")
                                             .insert({
                                                 eventid: eventid,
@@ -834,7 +809,7 @@ router.post("/editEvent", checkAuthenticated, (req, res) => {
                                                 quantity: currentquantity
                                             })
                                             .then(() => {
-                                                return console.log('\x1b[31m%s\x1b[0m', 'items got added successfully currentitemid:', currentitemid);
+                                                return console.log('');
                                             })
                                     }
                                 })
@@ -857,10 +832,8 @@ router.post("/editEvent", checkAuthenticated, (req, res) => {
                             })
                             .then((newitem) => {
                                 if (newitem) {
-                                    console.log('\x1b[31m%s\x1b[0m', 'single newitem existed and was updated:',);
                                 }
                                 else {
-                                    console.log('\x1b[31m%s\x1b[0m', 'single item didnt exists and is getting added itemid:', currentitemid, " quantity: ", currentquantity);
                                     knex("eventitems")
                                         .insert({
                                             eventid: eventid,
@@ -868,7 +841,7 @@ router.post("/editEvent", checkAuthenticated, (req, res) => {
                                             quantity: currentquantity
                                         })
                                         .then(() => {
-                                            return console.log('\x1b[31m%s\x1b[0m', 'singleitem got added successfully itemid:', currentitemid);
+                                            return console.log('');
                                         })
                                 }
                             })
@@ -886,9 +859,6 @@ router.post("/editEvent", checkAuthenticated, (req, res) => {
                     const currentlastname = lastname[index] || '';
                     const currentemail = email[index] || '';
                     const currentphonenumber = phone[index] || '';
-                    console.log('\x1b[31m%s\x1b[0m', 'Person being passed:', currentfirstname, " ", currentlastname);
-                    console.log('\x1b[31m%s\x1b[0m', 'email and phone:', currentemail, " ", currentphonenumber);
-                    console.log('\x1b[31m%s\x1b[0m', 'Eventid:', eventid);
                     knex("requester")
                         .where("eventid", eventid)
                         .andWhere("firstname", currentfirstname)
@@ -902,10 +872,8 @@ router.post("/editEvent", checkAuthenticated, (req, res) => {
 
                             if (newperson) {
                                 //if newperson exists, then it was already updated
-                                console.log('\x1b[31m%s\x1b[0m', 'newperson existed and was updated:', newperson.firstname);
                             }
                             else {
-                                console.log('\x1b[31m%s\x1b[0m', 'person didnt exists and is getting added:', currentfirstname);
                                 knex("requester")
                                     .insert({
                                         eventid: eventid,
@@ -915,7 +883,7 @@ router.post("/editEvent", checkAuthenticated, (req, res) => {
                                         email: currentemail
                                     })
                                     .then(() => {
-                                        return console.log('\x1b[31m%s\x1b[0m', 'person got added successfully:', currentfirstname);
+                                        return console.log('');
                                     })
                             }
                         })
@@ -930,8 +898,6 @@ router.post("/editEvent", checkAuthenticated, (req, res) => {
                 const currentlastname = lastname || '';
                 const currentemail = email[1] || '';
                 const currentphonenumber = phone[1] || '';
-                console.log('\x1b[31m%s\x1b[0m', 'Single Person being passed:', currentfirstname, " ", currentlastname);
-                console.log('\x1b[31m%s\x1b[0m', 'email and phone:', currentemail, " ", currentphonenumber);
                 knex("requester")
                     .where("eventid", eventid)
                     .andWhere("firstname", currentfirstname)
@@ -945,7 +911,6 @@ router.post("/editEvent", checkAuthenticated, (req, res) => {
 
                         if (newperson) {
                             //if newperson exists, then it was already updated
-                            console.log('\x1b[31m%s\x1b[0m', 'single person updated:');
                         }
                         else {
                             knex("requester")
@@ -957,7 +922,7 @@ router.post("/editEvent", checkAuthenticated, (req, res) => {
                                     email: currentemail
                                 })
                                 .then(() => {
-                                    return console.log('\x1b[31m%s\x1b[0m', 'single person got added successfully:', currentfirstname);
+                                    return console.log('');
                                 })
                         }
                     })
@@ -971,7 +936,7 @@ router.post("/editEvent", checkAuthenticated, (req, res) => {
                 .where({ eventid })
                 .del()
                 .then(() => {
-                    return console.log('\x1b[31m%s\x1b[0m', 'cleared all dateids for eventid ', eventid);
+                    return console.log('');
 
                     0
                 });
@@ -980,7 +945,6 @@ router.post("/editEvent", checkAuthenticated, (req, res) => {
                 date.forEach((currentDate, index) => {
                     const dateToUpdate = new Date(currentDate) || '2020-01-01';
                     dateToUpdate.setDate(dateToUpdate.getDate() + 1)
-                    console.log('\x1b[31m%s\x1b[0m', 'datetoupdate:', dateToUpdate);
                     knex("dates")
                         .select("dateid")
                         .where({ date: dateToUpdate })
@@ -1355,16 +1319,13 @@ router.get('/discoveryMethod', (req, res) => {
 
 
 router.post('/submitDiscoveryMethod', (req, res) => {
-    console.log('Request body:', req.body); // Log the request body
     const discoverymethod = req.body.discoverymethod; // Ensure the correct value is coming in
 
-    console.log('Discovery Method:', discoverymethod); // Log the discovery method
     // SQL query targeting the "survey" table
     knex('survey')
         .where({ discoverymethod }) // Match the correct discoverymethod
         .increment('total', 1) // Increment the total column by 1
         .then((result) => {
-            console.log('Rows affected:', result); // Log the number of rows affected
             if (result === 0) {
                 // If no rows are updated, it means the discoverymethod doesn't exist
                 return res.status(404).send('Discovery method not found.');

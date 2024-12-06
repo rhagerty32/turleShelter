@@ -51,11 +51,9 @@
 
         for (let i in elements) {
             if (eventType.checked) {
-                console.log('Distribution Event');
                 document.getElementById('addEventForm').action = '/addDistributionEvent';
                 elements[i].classList.add('hidden');
             } else {
-                console.log('Service Event');
                 document.getElementById('addEventForm').action = '/addServiceEvent';
                 elements[i].classList.remove('hidden');
             };
