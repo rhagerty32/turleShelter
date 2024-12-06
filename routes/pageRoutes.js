@@ -9,6 +9,7 @@ require('dotenv').config()
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: true }));
 
+// Middleware to check if the user is authenticated
 function checkAuthenticated(req, res, next) {
     if (req.isAuthenticated && req.isAuthenticated()) {
         return next();
@@ -19,20 +20,24 @@ function checkAuthenticated(req, res, next) {
 
 // Define routes for each page
 router.get("/", (req, res) => {
+    // Query event outcome statistics
     knex("eventoutcome")
         .count("eventid as eventCount")
         .sum("headcount as totalHeadcount")
         .sum("servicehours as totalServiceHours")
         .then((stats) => {
+            // Query total quantity of items with itemid > 13
             knex("eventitems")
                 .sum("quantity as total")
                 .where("itemid", ">", 13)
                 .then((quantity) => {
+                    // Query event status counts
                     knex("events")
                         .select("status")
                         .count("eventid as count")
                         .groupBy("status")
                         .then((statusCounts) => {
+                            // Render the home page with the queried data
                             res.render("layout", {
                                 title: "Home",
                                 page: "home",
@@ -50,6 +55,7 @@ router.get("/", (req, res) => {
         });
 });
 
+// Route to add a new volunteer
 router.post("/newVolunteer", (req, res) => {
     const {
         firstname,
@@ -132,13 +138,14 @@ router.post("/newVolunteer", (req, res) => {
         });
 });
 
-
+// Route to render the login page
 router.get("/login", (req, res) => {
     res.render("pages/login", {
         originalUrl: req.session.originalUrl || "/",
     });
 });
 
+// Route to handle login form submission
 router.post("/login", async (req, res) => {
     const email = req.body.email.toLowerCase();
     const password = req.body.password.toLowerCase();
@@ -162,6 +169,7 @@ router.post("/login", async (req, res) => {
         });
 });
 
+// Route to handle logout
 router.get("/logout", async (req, res) => {
     req.session.destroy((err) => {
         if (err) {
@@ -171,24 +179,30 @@ router.get("/logout", async (req, res) => {
     });
 });
 
+// Route to render statistics page
 router.get("/stats", checkAuthenticated, (req, res) => {
+    // Query event outcome statistics
     knex("eventoutcome")
         .count("eventid as eventCount")
         .sum("headcount as totalHeadcount")
         .sum("servicehours as totalServiceHours")
         .then((stats) => {
+            // Query total quantity of items with itemid > 13
             knex("eventitems")
                 .sum("quantity as total")
                 .where("itemid", ">", 13)
                 .then((quantity) => {
+                    // Query event status counts
                     knex("events")
                         .select("status")
                         .count("eventid as count")
                         .groupBy("status")
                         .then((statusCounts) => {
+                            // Query survey data
                             knex("survey")
                                 .select()
                                 .then((survey) => {
+                                    // Render the stats page with the queried data
                                     res.render("layout", {
                                         title: "Stats",
                                         page: "stats",
@@ -207,6 +221,7 @@ router.get("/stats", checkAuthenticated, (req, res) => {
         });
 });
 
+// Route to render contact page
 router.get("/contact", (req, res) => {
     res.render("layout", {
         title: "Contact",
@@ -214,12 +229,12 @@ router.get("/contact", (req, res) => {
     });
 });
 
+// Route to render volunteer request page
 router.get("/volunteerRequest", (req, res) => {
     knex("skilllevel")
         .select()
         .then((skilllevel) => {
             res.render("layout", {
-
                 title: "Volunteer Request",
                 page: "volunteerRequest",
                 skilllevel: skilllevel,
@@ -228,6 +243,7 @@ router.get("/volunteerRequest", (req, res) => {
         })
 });
 
+// Route to render host an event page
 router.get("/hostAnEvent", (req, res) => {
     knex("servicetypes")
         .select()
@@ -236,7 +252,6 @@ router.get("/hostAnEvent", (req, res) => {
                 .select()
                 .then((dates) => {
                     res.render("layout", {
-
                         title: "Host an Event",
                         page: "hostAnEvent",
                         servicetypes: servicetypes,
@@ -246,6 +261,7 @@ router.get("/hostAnEvent", (req, res) => {
         })
 })
 
+// Route to add a new service event
 router.post("/addServiceEvent", (req, res) => {
     const {
         organization,
@@ -677,15 +693,18 @@ router.post("/deleteDate", (req, res) => {
             return res.status(500).send("Internal Server Error");
         });
 });
+// Route to get city and state based on zip code
 router.get("/getCityState", (req, res) => {
     const { zip } = req.query;
 
+    // Query the location table to get city and state for the given zip
     knex("location")
         .select("city", "state")
         .where({ zip })
         .first()
         .then((location) => {
             if (location) {
+                // If location is found, send the city and state in the response
                 res.json({
                     places: [
                         {
@@ -695,14 +714,18 @@ router.get("/getCityState", (req, res) => {
                     ],
                 });
             } else {
+                // If location is not found, send a 404 error
                 res.status(404).json({ error: "Location not found" });
             }
         })
         .catch((error) => {
+            // Handle any errors that occur during the query
             console.error("Error querying location:", error);
             res.status(500).send("Internal Server Error");
         });
 });
+
+// Route to edit an existing event
 router.post("/editEvent", checkAuthenticated, (req, res) => {
     const {
         organization,
@@ -1027,7 +1050,9 @@ router.post("/editEvent", checkAuthenticated, (req, res) => {
 });
 
 
+// Route to get all events
 router.get("/events", checkAuthenticated, (req, res) => {
+    // Query to get event details along with related data
     knex("events as e")
         .leftJoin("eventdates as ed", "e.eventid", "ed.eventid")
         .leftJoin("dates as d", "ed.dateid", "d.dateid")
@@ -1049,9 +1074,11 @@ router.get("/events", checkAuthenticated, (req, res) => {
             ELSE 4 
         END`)
         .then((events) => {
+            // Query to get service types
             knex("servicetypes")
                 .select()
                 .then((servicetypes) => {
+                    // Render the events page with the queried data
                     res.render("layout", {
                         title: "Events",
                         page: "events",
@@ -1064,11 +1091,13 @@ router.get("/events", checkAuthenticated, (req, res) => {
             console.error("Error updating volunteer:", error);
             res.status(500).send("Internal Server Error");
         });
-})
+});
 
+// Route to get details of a single event
 router.get('/events/:eventid', checkAuthenticated, (req, res) => {
     const eventid = req.params.eventid;
 
+    // Query to get event details along with related data
     knex('events as e')
         .leftJoin('eventdates as ed', 'e.eventid', 'ed.eventid')
         .leftJoin('dates as d', 'ed.dateid', 'd.dateid')
@@ -1106,35 +1135,41 @@ router.get('/events/:eventid', checkAuthenticated, (req, res) => {
             'de.temperature',
             'eo.headcount',
             'eo.servicehours'
-
         )
         .where('e.eventid', eventid)
         .first()
         .then((event) => {
+            // Query to get service types
             knex('servicetypes')
                 .select()
                 .then((servicetypes) => {
+                    // Query to get items
                     knex('items')
                         .select()
                         .then((items) => {
+                            // Query to get dates related to the event
                             knex('dates as d')
                                 .join('eventdates as ed', 'd.dateid', 'ed.dateid')
                                 .select('d.date')
                                 .where('ed.eventid', eventid)
                                 .then((dates) => {
+                                    // Query to get requesters related to the event
                                     knex('requester')
                                         .select('firstname', 'lastname', 'email', 'phone')
                                         .where({ eventid })
                                         .then((requesters) => {
+                                            // Query to get recipients related to the event
                                             knex('recipients')
                                                 .select('name', 'itemid')
                                                 .where({ eventid })
                                                 .then((recipients) => {
+                                                    // Query to get event items related to the event
                                                     knex('eventitems')
                                                         .join('items as i', "i.itemid", 'eventitems.itemid')
                                                         .select('i.itemid', 'description', 'quantity')
                                                         .where({ eventid })
                                                         .then((eventitems) => {
+                                                            // Render the single event page with the queried data
                                                             res.render('layout', {
                                                                 title: 'Single Event',
                                                                 page: 'singleEvent',
@@ -1167,18 +1202,23 @@ router.get('/events/:eventid', checkAuthenticated, (req, res) => {
         })
 });
 
+// Route to get all volunteers
 router.get("/volunteers", checkAuthenticated, (req, res) => {
+    // Query to get all volunteers
     knex("volunteer")
         .select()
         .orderBy("lastname", "asc")
         .then((volunteers) => {
+            // Query to get all skill levels
             knex("skilllevel")
                 .select()
                 .orderBy("skillid", "asc")
                 .then((skilllevel) => {
+                    // Query to get all locations
                     knex("location")
                         .select()
                         .then((location) => {
+                            // Render the volunteers page with the queried data
                             res.render("layout", {
                                 title: "Volunteers",
                                 page: "volunteers",
@@ -1203,7 +1243,7 @@ router.get("/volunteers", checkAuthenticated, (req, res) => {
         });
 });
 
-
+// Route to edit a volunteer
 router.post("/editVolunteer", (req, res) => {
     const {
         firstname,
@@ -1223,11 +1263,14 @@ router.post("/editVolunteer", (req, res) => {
         range,
         leader,
     } = req.body;
+
+    // Insert or update location data
     knex("location")
         .insert({ zip: zip || 0, city: city || '', state: state || '' })
         .onConflict("zip") // If zip exists, update city/state
         .merge() // Merge updates for existing zip
         .then(() => {
+            // Update volunteer data
             knex("volunteer")
                 .where({ email })
                 .update({
@@ -1245,7 +1288,6 @@ router.post("/editVolunteer", (req, res) => {
                     range: range || 0,
                     jobrole: jobrole || 'Volunteer',
                     zip: zip || 0,
-
                 })
                 .then(() => {
                     res.redirect("/volunteers");
@@ -1260,9 +1302,12 @@ router.post("/editVolunteer", (req, res) => {
             res.status(500).send("Internal Server Error");
         });
 });
+
+// Route to delete an event
 router.post("/deleteEvent", (req, res) => {
     const { eventid } = req.body;
 
+    // Delete event by eventid
     knex("events")
         .where({ eventid })
         .del()
@@ -1275,9 +1320,11 @@ router.post("/deleteEvent", (req, res) => {
         });
 });
 
+// Route to delete a volunteer
 router.post("/deleteVolunteer", (req, res) => {
     const { email } = req.body;
 
+    // Delete volunteer by email
     knex("volunteer")
         .where({ email })
         .del()
@@ -1290,12 +1337,14 @@ router.post("/deleteVolunteer", (req, res) => {
         });
 });
 
+// Route to render the login page
 router.get("/login", (req, res) => {
     res.render("pages/login", {
         originalUrl: req.session.originalUrl || "/",
     });
 });
 
+// Route to handle logout
 router.post("/logout", (req, res) => {
     req.session.destroy((err) => {
         if (err) {
