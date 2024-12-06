@@ -7,6 +7,31 @@
     <title>Turtle Shelter - How'd you hear about us?</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
+<style>
+    .volunteer-button-container {
+    position: fixed; /* Fixes the button in the viewport */
+    bottom: 20px; /* Positions it 20px from the bottom */
+    right: 20px; /* Positions it 20px from the right */
+    z-index: 1000; /* Ensures it's above other elements */
+}
+
+.volunteer-button {
+    background-color: #808080; /* Matches the color of the "Submit" button */
+    color: #fff; /* White text */
+    padding: 8px 12px; /* Smaller padding for a smaller button */
+    font-size: 14px; /* Adjust font size */
+    border: none; /* Removes border */
+    border-radius: 5px; /* Rounds the corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Adds a slight shadow */
+    transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+}
+
+.volunteer-button:hover {
+    background-color: #004d38; /* Darker green for hover */
+}
+
+</style>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -68,6 +93,16 @@
             </form>
         </section>
     </div>
+    <div style="position: relative;">
+    </form>
+    <form action="/volunteerRequest" method="GET" style="text-align: center; margin-top: 10px;">
+        <button type="submit" class="volunteer-button">Become a Volunteer</button>
+    </form>
+    </div>
+    
+    
+    
+    
 </body>
 
 </html>

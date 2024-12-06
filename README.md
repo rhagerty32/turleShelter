@@ -1,5 +1,5 @@
 # For TA Grading
-- **URL**: `http://turtleproject.is404.net`
+- **URL**: http://turtleproject.is404.net
 - **Username**: `johndoe@example.com`
 - **Password**: `password123`
 
@@ -21,8 +21,6 @@
 
 ### **Admin Login**
 - **URL**: `/admin`
-- **Username**: `johndoe@example.com`
-- **Password**: `password123`
 - **Description**: Access the admin panel to manage events, users, volunteers and see administrative stats.
 - **Volunteers**:
     - View and manage volunteer information.
