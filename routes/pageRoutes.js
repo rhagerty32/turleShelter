@@ -164,14 +164,27 @@ router.get("/stats", checkAuthenticated, (req, res) => {
         .sum("headcount as totalHeadcount")
         .sum("servicehours as totalServiceHours")
         .then((stats) => {
-            res.render("layout", {
-                title: "Stats",
-                page: "stats",
-                stats: stats[0],
-            });
+            knex("recipients")
+                .count("* as count")
+                .where("itemid", ">", 13)
+                .then((itemCount) => {
+                    knex("events")
+                        .select("status")
+                        .count("eventid as count")
+                        .groupBy("status")
+                        .then((statusCounts) => {
+                            res.render("layout", {
+                                title: "Stats",
+                                page: "stats",
+                                stats: stats[0],
+                                itemCount: itemCount[0].count,
+                                statusCounts: statusCounts,
+                            });
+                        })
+                })
         })
         .catch((error) => {
-            console.error("Error querying eventoutcome:", error);
+            console.error("Error querying events:", error);
             res.status(500).send("Internal Server Error");
         });
 });
@@ -209,9 +222,9 @@ router.get("/hostAnEvent", (req, res) => {
                         title: "Host an Event",
                         page: "hostAnEvent",
                         servicetypes: servicetypes,
-                        dates:dates
+                        dates: dates
                     });
-        })
+                })
         })
 })
 
@@ -311,28 +324,28 @@ router.post("/addServiceEvent", (req, res) => {
                         res.status(500).send("Error adding requester info");
                     });
             }
-            else{
+            else {
 
-            
-            for (let i = 0; i < firstname.length; i++) {
-                const currentfirstname = firstname[i] || '';
-                const currentlastname = lastname[i] || '';
-                const currentemail = email[i] || '';
-                const currentphonenumber = phonenumber[i] || '';
-                knex("requester")
-                    .insert({
-                        eventid: eventid.eventid || 0,
-                        firstname: currentfirstname,
-                        lastname: currentlastname,
-                        phone: currentphonenumber,
-                        email: currentemail
-                    })
-                    .returning("eventid")
-                    .catch((err) => {
-                        console.error("Error:", err);
-                        res.status(500).send("Error adding requester info");
-                    });
-                  }
+
+                for (let i = 0; i < firstname.length; i++) {
+                    const currentfirstname = firstname[i] || '';
+                    const currentlastname = lastname[i] || '';
+                    const currentemail = email[i] || '';
+                    const currentphonenumber = phonenumber[i] || '';
+                    knex("requester")
+                        .insert({
+                            eventid: eventid.eventid || 0,
+                            firstname: currentfirstname,
+                            lastname: currentlastname,
+                            phone: currentphonenumber,
+                            email: currentemail
+                        })
+                        .returning("eventid")
+                        .catch((err) => {
+                            console.error("Error:", err);
+                            res.status(500).send("Error adding requester info");
+                        });
+                }
             }
             return eventid
         })
@@ -340,80 +353,80 @@ router.post("/addServiceEvent", (req, res) => {
             // Step 3: Check if the provided date already exists in the "dates" table
             console.log("Step 3 event id: " + eventid.eventid)
             if (typeof date === 'string') {
-              const currentDate = new Date(date) || '2020-01-01';
-              knex("dates")
-                  .select("dateid")
-                  .where({ date: currentDate })
-                  .first() // Only get the first matching record
-                  .then(existingDate => {
-                      if (existingDate) {
-                          // Date already exists, use the existing dateid
-                          const dateId = existingDate.dateid;
-                          return knex("eventdates")
-                              .insert({ eventid: eventid.eventid || 0, dateid: dateId })
-                              .onConflict(["eventid", "dateid"]) // Handle duplicate key
-                              .ignore();
-                      } else {
-                          // Date does not exist, insert it
-                          return knex("dates")
-                              .insert({ date: currentDate })
-                              .returning("dateid")
-                              .then(([newDateId]) => {
-                                  const dateId = newDateId.dateid;
-                                  return knex("eventdates")
-                                      .insert({ eventid: eventid.eventid || 0, dateid: dateId })
-                                      .onConflict(["eventid", "dateid"])
-                                      .ignore();
-                              });
-                      }
-                  })
-                  .then(() => {
-                          res.redirect("/events"); // Redirect after the last insert
-                  })
-                  .catch(err => {
-                      console.error("Error inserting date:", err);
-                      res.status(500).send("Error processing dates and eventdates");
-                  });
+                const currentDate = new Date(date) || '2020-01-01';
+                knex("dates")
+                    .select("dateid")
+                    .where({ date: currentDate })
+                    .first() // Only get the first matching record
+                    .then(existingDate => {
+                        if (existingDate) {
+                            // Date already exists, use the existing dateid
+                            const dateId = existingDate.dateid;
+                            return knex("eventdates")
+                                .insert({ eventid: eventid.eventid || 0, dateid: dateId })
+                                .onConflict(["eventid", "dateid"]) // Handle duplicate key
+                                .ignore();
+                        } else {
+                            // Date does not exist, insert it
+                            return knex("dates")
+                                .insert({ date: currentDate })
+                                .returning("dateid")
+                                .then(([newDateId]) => {
+                                    const dateId = newDateId.dateid;
+                                    return knex("eventdates")
+                                        .insert({ eventid: eventid.eventid || 0, dateid: dateId })
+                                        .onConflict(["eventid", "dateid"])
+                                        .ignore();
+                                });
+                        }
+                    })
+                    .then(() => {
+                        res.redirect("/events"); // Redirect after the last insert
+                    })
+                    .catch(err => {
+                        console.error("Error inserting date:", err);
+                        res.status(500).send("Error processing dates and eventdates");
+                    });
             }
-            else{
-              for (let i = 0; i < date.length; i++) {
-                  const currentDate = new Date(date[i]) || '2020-01-01';
-                  knex("dates")
-                      .select("dateid")
-                      .where({ date: currentDate })
-                      .first() // Only get the first matching record
-                      .then(existingDate => {
-                          if (existingDate) {
-                              // Date already exists, use the existing dateid
-                              const dateId = existingDate.dateid;
-                              return knex("eventdates")
-                                  .insert({ eventid: eventid.eventid || 0, dateid: dateId })
-                                  .onConflict(["eventid", "dateid"]) // Handle duplicate key
-                                  .ignore();
-                          } else {
-                              // Date does not exist, insert it
-                              return knex("dates")
-                                  .insert({ date: currentDate })
-                                  .returning("dateid")
-                                  .then(([newDateId]) => {
-                                      const dateId = newDateId.dateid;
-                                      return knex("eventdates")
-                                          .insert({ eventid: eventid.eventid || 0, dateid: dateId })
-                                          .onConflict(["eventid", "dateid"])
-                                          .ignore();
-                                  });
-                          }
-                      })
-                      .then(() => {
-                          if (i === date.length - 1) {
-                              res.redirect("/events"); // Redirect after the last insert
-                          }
-                      })
-                      .catch(err => {
-                          console.error("Error inserting date:", err);
-                          res.status(500).send("Error processing dates and eventdates");
-                      });
-              }
+            else {
+                for (let i = 0; i < date.length; i++) {
+                    const currentDate = new Date(date[i]) || '2020-01-01';
+                    knex("dates")
+                        .select("dateid")
+                        .where({ date: currentDate })
+                        .first() // Only get the first matching record
+                        .then(existingDate => {
+                            if (existingDate) {
+                                // Date already exists, use the existing dateid
+                                const dateId = existingDate.dateid;
+                                return knex("eventdates")
+                                    .insert({ eventid: eventid.eventid || 0, dateid: dateId })
+                                    .onConflict(["eventid", "dateid"]) // Handle duplicate key
+                                    .ignore();
+                            } else {
+                                // Date does not exist, insert it
+                                return knex("dates")
+                                    .insert({ date: currentDate })
+                                    .returning("dateid")
+                                    .then(([newDateId]) => {
+                                        const dateId = newDateId.dateid;
+                                        return knex("eventdates")
+                                            .insert({ eventid: eventid.eventid || 0, dateid: dateId })
+                                            .onConflict(["eventid", "dateid"])
+                                            .ignore();
+                                    });
+                            }
+                        })
+                        .then(() => {
+                            if (i === date.length - 1) {
+                                res.redirect("/events"); // Redirect after the last insert
+                            }
+                        })
+                        .catch(err => {
+                            console.error("Error inserting date:", err);
+                            res.status(500).send("Error processing dates and eventdates");
+                        });
+                }
             }
         })
 
@@ -454,11 +467,11 @@ router.post("/addDistributionEvent", (req, res) => {
                 })
                 .returning("eventid") // Return the generated eventid
                 .then((eventid) => {
-                  // Step 3: Check if the provided date already exists in the "dates" table
-                  console.log("Step 3 event id: " + eventid.eventid)
-                  if (typeof date === 'string') {
-                    const currentDate = new Date(date) || '2020-01-01';
-                    currentDate.setDate(currentDate.getDate()+1);
+                    // Step 3: Check if the provided date already exists in the "dates" table
+                    console.log("Step 3 event id: " + eventid.eventid)
+                    if (typeof date === 'string') {
+                        const currentDate = new Date(date) || '2020-01-01';
+                        currentDate.setDate(currentDate.getDate() + 1);
                         knex("dates")
                             .select("dateid")
                             .where({ date: currentDate })
@@ -486,56 +499,56 @@ router.post("/addDistributionEvent", (req, res) => {
                                 }
                             })
                             .then(() => {
-                            
-                                    res.redirect("/events"); // Redirect after the last insert
-                                
-                            })
-                            .catch(err => {
-                                console.error("Error inserting date:", err);
-                                res.status(500).send("Error processing dates and eventdates");
-                            });
-                  }
-                  else{
-                    for (let i = 0; i < date.length; i++) {
-                        const currentDate = new Date(date[i]) || '2020-01-01';
-                        knex("dates")
-                            .select("dateid")
-                            .where({ date: currentDate })
-                            .first() // Only get the first matching record
-                            .then(existingDate => {
-                                if (existingDate) {
-                                    // Date already exists, use the existing dateid
-                                    const dateId = existingDate.dateid;
-                                    return knex("eventdates")
-                                        .insert({ eventid: eventid.eventid || 0, dateid: dateId })
-                                        .onConflict(["eventid", "dateid"]) // Handle duplicate key
-                                        .ignore();
-                                } else {
-                                    // Date does not exist, insert it
-                                    return knex("dates")
-                                        .insert({ date: currentDate })
-                                        .returning("dateid")
-                                        .then(([newDateId]) => {
-                                            const dateId = newDateId.dateid;
-                                            return knex("eventdates")
-                                                .insert({ eventid: eventid.eventid || 0, dateid: dateId })
-                                                .onConflict(["eventid", "dateid"])
-                                                .ignore();
-                                        });
-                                }
-                            })
-                            .then(() => {
-                                if (i === date.length - 1) {
-                                    res.redirect("/events"); // Redirect after the last insert
-                                }
+
+                                res.redirect("/events"); // Redirect after the last insert
+
                             })
                             .catch(err => {
                                 console.error("Error inserting date:", err);
                                 res.status(500).send("Error processing dates and eventdates");
                             });
                     }
-                  }
-              })
+                    else {
+                        for (let i = 0; i < date.length; i++) {
+                            const currentDate = new Date(date[i]) || '2020-01-01';
+                            knex("dates")
+                                .select("dateid")
+                                .where({ date: currentDate })
+                                .first() // Only get the first matching record
+                                .then(existingDate => {
+                                    if (existingDate) {
+                                        // Date already exists, use the existing dateid
+                                        const dateId = existingDate.dateid;
+                                        return knex("eventdates")
+                                            .insert({ eventid: eventid.eventid || 0, dateid: dateId })
+                                            .onConflict(["eventid", "dateid"]) // Handle duplicate key
+                                            .ignore();
+                                    } else {
+                                        // Date does not exist, insert it
+                                        return knex("dates")
+                                            .insert({ date: currentDate })
+                                            .returning("dateid")
+                                            .then(([newDateId]) => {
+                                                const dateId = newDateId.dateid;
+                                                return knex("eventdates")
+                                                    .insert({ eventid: eventid.eventid || 0, dateid: dateId })
+                                                    .onConflict(["eventid", "dateid"])
+                                                    .ignore();
+                                            });
+                                    }
+                                })
+                                .then(() => {
+                                    if (i === date.length - 1) {
+                                        res.redirect("/events"); // Redirect after the last insert
+                                    }
+                                })
+                                .catch(err => {
+                                    console.error("Error inserting date:", err);
+                                    res.status(500).send("Error processing dates and eventdates");
+                                });
+                        }
+                    }
+                })
                 .catch((err) => {
                     console.error("EventRequest error:", err);
                     res.status(500).send("Error updating eventRequest");
@@ -549,12 +562,12 @@ router.post("/deleteDate", (req, res) => {
     dateid = new Date(dateid)
     knex('dates')
         .select('dateid')
-        .where({date:dateid})
-        .then(([dateidd]) =>{
-            console.log('\x1b[31m%s\x1b[0m', 'Deleting date with date id',  dateidd.dateid , "at eventid ", eventid);
+        .where({ date: dateid })
+        .then(([dateidd]) => {
+            console.log('\x1b[31m%s\x1b[0m', 'Deleting date with date id', dateidd.dateid, "at eventid ", eventid);
             knex("eventdates")
                 .where({ eventid })
-                .andWhere({ dateid : dateidd.dateid })
+                .andWhere({ dateid: dateidd.dateid })
                 .del()
                 .then(deletedRows => {
                     if (deletedRows > 0) {
@@ -567,7 +580,7 @@ router.post("/deleteDate", (req, res) => {
                     }
                 });
         })
-    
+
 });
 
 router.post("/editEvent", checkAuthenticated, (req, res) => {
@@ -608,7 +621,7 @@ router.post("/editEvent", checkAuthenticated, (req, res) => {
 
 
     } = req.body;
-    console.log('\x1b[31m%s\x1b[0m', 'Dates array',  date);
+    console.log('\x1b[31m%s\x1b[0m', 'Dates array', date);
 
     // Step 1: Update the "location" table with zip, city, and state
     knex("location")
@@ -661,13 +674,13 @@ router.post("/editEvent", checkAuthenticated, (req, res) => {
                     // Step 3.5.2: Update the "eventitems" table
                     if (Array.isArray(itemid) && itemid.length > 0) {
                         itemid.forEach((currentitemid, index) => {
-                            const currentquantity = quantity[i] ||0;
+                            const currentquantity = quantity[i] || 0;
                             knex("eventitems")
                                 .where("eventid", eventid)
                                 .andWhere("itemid", currentitemid)
                                 .update({
-                                    itemid: currentitemid||0,
-                                    quantity: currentquantity ||0,
+                                    itemid: currentitemid || 0,
+                                    quantity: currentquantity || 0,
                                 })
                                 .catch((err) => {
                                     console.error("Error:", err);
@@ -683,8 +696,8 @@ router.post("/editEvent", checkAuthenticated, (req, res) => {
                             .where("eventid", eventid)
                             .andWhere("firstname", currentfirstname)
                             .update({
-                                itemid: currentitemid||0,
-                                quantity:currentquantity ||0,
+                                itemid: currentitemid || 0,
+                                quantity: currentquantity || 0,
                             })
                             .catch((err) => {
                                 console.error("Error:", err);
@@ -739,7 +752,7 @@ router.post("/editEvent", checkAuthenticated, (req, res) => {
             if (Array.isArray(date) && date.length > 0) {
                 date.forEach((currentDate, index) => {
                     const dateToUpdate = new Date(currentDate) || '2020-01-01';
-                    dateToUpdate.setDate(dateToUpdate.getDate()+1)
+                    dateToUpdate.setDate(dateToUpdate.getDate() + 1)
                     knex("dates")
                         .select("dateid")
                         .where({ date: dateToUpdate })
@@ -751,8 +764,8 @@ router.post("/editEvent", checkAuthenticated, (req, res) => {
                                     .insert({ eventid: eventid, dateid: existingDate.dateid })
                                     .onConflict(["eventid", "dateid"]) // Handle duplicate key
                                     .merge(); // Update the entry if it already exists
-                                    
-                                
+
+
                             } else {
                                 // Date doesn't exist, insert it and link with eventdates
                                 return knex("dates")
@@ -769,7 +782,7 @@ router.post("/editEvent", checkAuthenticated, (req, res) => {
                         })
                         .then(() => {
                             if (index === date.length - 1) {
-                                res.redirect("/events/"+eventid); // Redirect after last update
+                                res.redirect("/events/" + eventid); // Redirect after last update
                             }
                         })
                         .catch(err => {
@@ -860,7 +873,7 @@ router.get("/events", checkAuthenticated, (req, res) => {
         });
 })
 
-router.get('/events/:eventid',checkAuthenticated, (req, res) => {
+router.get('/events/:eventid', checkAuthenticated, (req, res) => {
     const eventid = req.params.eventid;
 
     knex('events as e')
@@ -869,8 +882,8 @@ router.get('/events/:eventid',checkAuthenticated, (req, res) => {
         .leftJoin('location as l', 'e.zip', 'l.zip')
         .leftJoin('eventrequest as er', 'e.eventid', 'er.eventid')
         .leftJoin('servicetypes as st', 'er.servicetypeid', 'st.servicetypeid')
-        .leftJoin('distributionevent as de','de.eventid', 'e.eventid')
-        .leftJoin('eventoutcomes eo','eo.eventid','e.eventid')
+        .leftJoin('distributionevent as de', 'de.eventid', 'e.eventid')
+        .leftJoin('eventoutcomes eo', 'eo.eventid', 'e.eventid')
         .select(
             'e.eventid',
             'e.starttime',
@@ -920,44 +933,44 @@ router.get('/events/:eventid',checkAuthenticated, (req, res) => {
                                         .select('firstname', 'lastname', 'email', 'phone')
                                         .where({ eventid })
                                         .then((requesters) => {
-                                          knex('recipients')
-                                            .select('name', 'itemid')
-                                            .where({ eventid })
-                                            .then((recipients) => {
-                                              knex('eventitems')
-                                                .select('itemid', 'quantity')
+                                            knex('recipients')
+                                                .select('name', 'itemid')
                                                 .where({ eventid })
-                                                .then((eventitems) => {
-                                                  knex('items')
-                                                    .select('itemid', 'description')
-                                                    .then((items) => {
-                                                        res.render('layout', {
-                                                            title: 'Single Event',
-                                                            page: 'singleEvent',
-                                                            event: event,
-                                                            servicetypes: servicetypes,
-                                                            items: items,
-                                                            dates: dates,
-                                                            requesters: requesters,
-                                                            recipients:recipients,
-                                                            eventitems:eventitems,
-                                                            items:items
+                                                .then((recipients) => {
+                                                    knex('eventitems')
+                                                        .select('itemid', 'quantity')
+                                                        .where({ eventid })
+                                                        .then((eventitems) => {
+                                                            knex('items')
+                                                                .select('itemid', 'description')
+                                                                .then((items) => {
+                                                                    res.render('layout', {
+                                                                        title: 'Single Event',
+                                                                        page: 'singleEvent',
+                                                                        event: event,
+                                                                        servicetypes: servicetypes,
+                                                                        items: items,
+                                                                        dates: dates,
+                                                                        requesters: requesters,
+                                                                        recipients: recipients,
+                                                                        eventitems: eventitems,
+                                                                        items: items
+                                                                    });
+                                                                })
+                                                                .catch((error) => {
+                                                                    console.error('Error querying recipients:', error);
+                                                                    res.status(500).send('Internal Server Error');
+                                                                });
+                                                        })
+                                                        .catch((error) => {
+                                                            console.error('Error querying recipients:', error);
+                                                            res.status(500).send('Internal Server Error');
                                                         });
                                                 })
                                                 .catch((error) => {
                                                     console.error('Error querying recipients:', error);
                                                     res.status(500).send('Internal Server Error');
                                                 });
-                                              })
-                                              .catch((error) => {
-                                                  console.error('Error querying recipients:', error);
-                                                  res.status(500).send('Internal Server Error');
-                                              });
-                                            })
-                                            .catch((error) => {
-                                                console.error('Error querying recipients:', error);
-                                                res.status(500).send('Internal Server Error');
-                                            });
                                         })
                                         .catch((error) => {
                                             console.error('Error querying requesters:', error);
@@ -1104,39 +1117,39 @@ router.post("/logout", (req, res) => {
 
 //discoveryMethod route
 router.get('/discoveryMethod', (req, res) => {
-  try {
-    // Render the discoverymethod.ejs page
-    res.render('pages/discoveryMethod'); // Ensure this matches your EJS file's name
-  } catch (err) {
-    console.error('Error loading the discovery method page:', err.message);
-    res.status(500).send('An error occurred while loading the page.');
-  }
+    try {
+        // Render the discoverymethod.ejs page
+        res.render('pages/discoveryMethod'); // Ensure this matches your EJS file's name
+    } catch (err) {
+        console.error('Error loading the discovery method page:', err.message);
+        res.status(500).send('An error occurred while loading the page.');
+    }
 });
 
 
 router.post('/submitDiscoveryMethod', (req, res) => {
-  console.log('Request body:', req.body); // Log the request body
-  const discoverymethod = req.body.discoverymethod; // Ensure the correct value is coming in
-  
-  console.log('Discovery Method:', discoverymethod); // Log the discovery method
-  // SQL query targeting the "survey" table
-  knex('survey')
-  .where({ discoverymethod }) // Match the correct discoverymethod
-  .increment('total', 1) // Increment the total column by 1
-  .then((result) => {
-  console.log('Rows affected:', result); // Log the number of rows affected
-    if (result === 0) {
-      // If no rows are updated, it means the discoverymethod doesn't exist
-      return res.status(404).send('Discovery method not found.');
-    }
+    console.log('Request body:', req.body); // Log the request body
+    const discoverymethod = req.body.discoverymethod; // Ensure the correct value is coming in
 
-      // Success response
-      
-    })
-    .catch((err) => {
-      console.error('Error updating the total column:', err.message);
-      res.status(500).send('Something went wrong!');
-    });
+    console.log('Discovery Method:', discoverymethod); // Log the discovery method
+    // SQL query targeting the "survey" table
+    knex('survey')
+        .where({ discoverymethod }) // Match the correct discoverymethod
+        .increment('total', 1) // Increment the total column by 1
+        .then((result) => {
+            console.log('Rows affected:', result); // Log the number of rows affected
+            if (result === 0) {
+                // If no rows are updated, it means the discoverymethod doesn't exist
+                return res.status(404).send('Discovery method not found.');
+            }
+
+            // Success response
+
+        })
+        .catch((err) => {
+            console.error('Error updating the total column:', err.message);
+            res.status(500).send('Something went wrong!');
+        });
 });
 
 module.exports = router;
