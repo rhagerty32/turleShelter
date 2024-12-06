@@ -1,27 +1,21 @@
 <script>
     let burgerView = false;
-    // to toggle the link text based on the background
     let txtColor = 'text-black';
     let titleColor = 'rgb(13 148 136 / 80%)';
 
-    // Check if we're on the homepage and adjust colors accordingly
     if (window.location.pathname === '/') {
         txtColor = 'text-white';
         titleColor = '#40d6ca';
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        // Get all elements with the class name 'navButton'
         const homeLinks = document.getElementsByClassName('navButton');
-
-        // Check if elements with the class 'navButton' exist
         if (homeLinks.length > 0) {
             for (let i = 0; i < homeLinks.length; i++) {
                 homeLinks[i].classList.add(txtColor);
             }
         }
 
-        // Check if the element with the id 'navTitle' exists
         const navTitle = document.getElementById('navTitle');
         if (navTitle) {
             navTitle.style.color = titleColor;
@@ -41,21 +35,17 @@
         }
     }
 
-    // Function to handle clicks outside the menu to close it
     function closeMenuOnClickOutside(event) {
         if (burgerView) {
             const linkDiv = document.getElementById('linksDiv');
             const burgerMenuDiv = document.getElementById('burgerMenuDiv');
-
-            // Check if the click target is outside the menu and burger icon
             if (!burgerMenuDiv.contains(event.target) && !linkDiv.contains(event.target)) {
-                linkDiv.classList.add('hidden'); // Show the links div if clicked outside
+                linkDiv.classList.add('hidden');
                 document.getElementById('burgerDrop').classList.add('hidden');
             }
         }
     }
 
-    // Add the event listener for clicks outside the menu
     window.addEventListener('click', closeMenuOnClickOutside);
 
     function toggleBurger() {
@@ -72,45 +62,44 @@
 
     function handleBurgerClick() {
         const dropdown = document.getElementById('burgerDrop');
-        console.log('burg')
         if (dropdown.classList.contains('hidden')) {
             dropdown.classList.remove('hidden');
         } else {
             dropdown.classList.add('hidden');
         }
-
     }
 
-    // Function to show the dropdown when the admin button is hovered over
     function handleAdminHover(event) {
         const dropdown = document.getElementById('dropdownDiv');
-        // Add 'block' to make the dropdown visible
         dropdown.classList.remove('hidden');
     }
 
-    // Function to hide the dropdown when the mouse leaves the admin button
     function handleAdminLeave(event) {
         const dropdown = document.getElementById('dropdownDiv');
         dropdown.classList.add('hidden');
     }
 
-
-    // event handlers for mobile responsiveness
     window.addEventListener('resize', () => {
         makeLinksBurger();
-        // able to add more function here on the same event listener
     });
 
     window.addEventListener('load', () => {
         makeLinksBurger();
     });
 
-    function handleAdminHoverBurg() {
-
-    }
-    function handleAdminLeaveBurg() {
-
-    }
+    fetch('/session-data')
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            const session = data;
+            if (session.user.jobrole === "Volunteer") {
+                const adminLink = document.getElementById('adminLink');
+                const dropdownDiv = document.getElementById('dropdownDiv');
+                if (adminLink) adminLink.style.display = 'none';
+                if (dropdownDiv) dropdownDiv.style.display = 'none';
+            }
+        })
+        .catch(error => console.error('Error fetching session data:', error));
 </script>
 
 

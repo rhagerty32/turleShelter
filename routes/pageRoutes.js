@@ -139,6 +139,7 @@ router.post("/login", async (req, res) => {
             req.session.authenticated = true;
             req.session.user = {
                 email: user.email,
+                jobrole: user.jobrole
             };
             res.redirect("/");
         })
@@ -1150,6 +1151,14 @@ router.post('/submitDiscoveryMethod', (req, res) => {
             console.error('Error updating the total column:', err.message);
             res.status(500).send('Something went wrong!');
         });
+});
+
+// Route to get session data
+router.get("/session-data", (req, res) => {
+    res.json({
+        authenticated: req.session.authenticated || false,
+        user: req.session.user || null,
+    });
 });
 
 module.exports = router;
