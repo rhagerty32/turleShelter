@@ -696,8 +696,6 @@ router.post("/editEvent", checkAuthenticated, (req, res) => {
         servicehours,
         item = [],
         quantity = [],
-
-
     } = req.body;
     
     console.log('\x1b[31m%s\x1b[0m', 'itemarray ', item, " quantity array ", quantity);
@@ -1198,7 +1196,7 @@ router.post("/editVolunteer", (req, res) => {
         leader,
     } = req.body;
     knex("location")
-        .insert({ zip, city, state })
+        .insert({ zip:zip||0, city:city || '', state:state ||'' })
         .onConflict("zip") // If zip exists, update city/state
         .merge() // Merge updates for existing zip
         .then(() => {
@@ -1218,6 +1216,7 @@ router.post("/editVolunteer", (req, res) => {
                     leader:leader ||false,
                     range:range||0,
                     jobrole: jobrole || 'Volunteer',
+                    zip:zip || 0,
 
                 })
                 .then(() => {
