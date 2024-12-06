@@ -1194,6 +1194,7 @@ router.post("/editVolunteer", (req, res) => {
         password,
         jobrole,
         teacher,
+        range,
         leader,
     } = req.body;
     knex("location")
@@ -1215,6 +1216,7 @@ router.post("/editVolunteer", (req, res) => {
                     password: password || '',
                     teacher:teacher ||false,
                     leader:leader ||false,
+                    range:range||0,
                     jobrole: jobrole || 'Volunteer',
 
                 })
