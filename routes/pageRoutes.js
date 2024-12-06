@@ -617,8 +617,32 @@ router.post("/deleteDate", (req, res) => {
             return res.status(500).send("Internal Server Error");
         });
 });
+router.get("/getCityState", (req, res) => {
+    const { zip } = req.query;
 
-
+    knex("location")
+        .select("city", "state")
+        .where({ zip })
+        .first()
+        .then((location) => {
+            if (location) {
+                res.json({
+                    places: [
+                        {
+                            city: location.city,
+                            state: location.state,
+                        },
+                    ],
+                });
+            } else {
+                res.status(404).json({ error: "Location not found" });
+            }
+        })
+        .catch((error) => {
+            console.error("Error querying location:", error);
+            res.status(500).send("Internal Server Error");
+        });
+});
 router.post("/editEvent", checkAuthenticated, (req, res) => {
     console.log("Editing Event");
     const {
@@ -701,6 +725,7 @@ router.post("/editEvent", checkAuthenticated, (req, res) => {
         })
         .then(() => {
             // Step 3.5: Update the "eventoutcome" table
+            console.log('\x1b[31m%s\x1b[0m', 'updating event outcome table eventid:', eventid, " headcount ", headcount, " servicehours ", servicehours);
             return knex("eventoutcome")
                 .where("eventid", eventid)
                 .update({
