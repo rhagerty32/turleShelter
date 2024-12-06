@@ -18,10 +18,6 @@ Welcome to the Turtle Shelter Website Project! This Node.js and EJS-powered webs
 - **URL**: `/hostAnEvent`
 - **Description**: Both these buttons will link to an event form. When submitted this will information will be displayed in the events tab which is in the dropdown under the admin tab which is available after login
 
-### **Volunteer Signup**
-- **URL**: `/volunteer`
-- **Description**: Join our team of volunteers and help sew vests or distribute them.
-
 ### **Contact Us**
 - **URL**: `/contact`
 - **Description**: A way for donors, volunteers, or those in need to get in touch with the Turtle Shelter team.
@@ -30,79 +26,16 @@ Welcome to the Turtle Shelter Website Project! This Node.js and EJS-powered webs
 - **URL**: `/admin`
 - **Username**: `johndoe@example.com`
 - **Password**: `password123`
-- **Description**: Access the admin panel to manage site content and user data.
+- **Description**: Access the admin panel to manage events, users, volunteers and see administrative stats.
+- **Volunteers**:
+    - View and manage volunteer information.
+- **Events**:
+    - Create, edit, and delete events.
+    - View event details, change status, add event dates, add event contacts.
+    - Manage event schedules and locations.
 
----
+- **Stats**:
+    - View statistics on donations, volunteers, and events.
+    - Admin facing tableau dashboard
 
-## Installation and Setup 🐢
-
-Follow these steps to get the Turtle Shelter website up and running on your server.
-
-### Prerequisites
-- **Node.js** (v18 or later)
-- **NPM**
-
-### Steps to Install
-1. **Clone the Repository**:
-    ```bash
-    git clone https://github.com/your-username/turtle-shelter-website.git
-    cd turtle-shelter-website
-    ```
-
-2. **Install Dependencies**:
-    ```bash
-    npm install
-    ```
-
-3. **Run the Application**:
-    ```bash
-    npm start
-    ```
-
-4. Open your browser and visit:
-    ```
-    http://localhost:3000
-    ```
-
----
-
-## Directory Structure 📂
-
-```plaintext
-turtle-shelter-website/
-├── public/          # Static files (CSS, images, etc.)
-├── views/           # EJS templates for the site pages
-│   ├── partials/    # Reusable EJS components like headers and footers
-│   ├── index.ejs    # Home page
-│   ├── donate.ejs   # Donation page
-│   ├── adopt.ejs    # Adopt-a-Vest page
-├── routes/          # Routing files for different parts of the site
-│   ├── index.js     # Routes for the home page and main site
-│   ├── donate.js    # Routes for the donation functionality
-├── app.js           # Main application file
-├── package.json     # NPM configuration
-├── README.md        # This guide
-```
-
----
-
-## How TAs Can Use the Website for Grading
-
-1. **Access the Admin Panel**:
-   - **URL**: `/admin`
-   - **Username**: `johndoe@example.com`
-   - **Password**: `password123`
-
-2. **Review Site Content**:
-   - Navigate through the different pages (Home, Adopt-a-Vest, Donation Portal, Volunteer Signup, Contact Us) to ensure all functionalities are working as expected.
-
-3. **Check Admin Functionalities**:
-   - Log in to the admin panel to verify the ability to manage site content and user data.
-
-4. **Test Donation and Volunteer Signup**:
-   - Use the donation portal and volunteer signup forms to ensure they are functioning correctly.
-
----
-
-Thank you for reviewing the Turtle Shelter Website Project! 🐢💚
 
