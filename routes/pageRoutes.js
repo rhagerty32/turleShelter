@@ -1193,6 +1193,8 @@ router.post("/editVolunteer", (req, res) => {
         notes,
         password,
         jobrole,
+        teacher,
+        leader,
     } = req.body;
     knex("location")
         .insert({ zip, city, state })
@@ -1211,6 +1213,8 @@ router.post("/editVolunteer", (req, res) => {
                     discoverymethod: discoverymethod || '',
                     notes: notes || '',
                     password: password || '',
+                    teacher:teacher ||false,
+                    leader:leader ||false,
                     jobrole: jobrole || 'Volunteer',
 
                 })
