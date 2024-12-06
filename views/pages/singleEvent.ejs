@@ -370,8 +370,66 @@
                                         <% }); %>
                                 </div>
                             </div>
+                            <% } %>
+                                <% if (event.organization) { %>
+                                    <!-- HEAD COUNT SERVICE HOURS -->
+                                    <div class="grid grid-cols-1 md:grid-cols-1 gap-6">
+                                        <div class="bg-white shadow-md rounded-xl p-4 border flex flex-col gap-4">
+                                            <h3 class="text-xl font-bold text-gray-800">
+                                                Contact Information</h3>
+                                            <div class="flex flex-col gap-4">
+                                                <% requesters.forEach(function(requester) { %>
+                                                    <div class="flex flex-col gap-0">
+                                                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                                            <div>
+                                                                <label class="block text-gray-700">Name</label>
+                                                                <p class="mt-2 text-gray-600">
+                                                                    <%= requester.firstname %>
+                                                                        <%= requester.lastname %>
+                                                                </p>
+                                                            </div>
+                                                            <div>
+                                                                <label class="block text-gray-700">Phone</label>
+                                                                <p class="mt-2 text-gray-600">
+                                                                    <%= requester.phone %>
+                                                                </p>
+                                                            </div>
+                                                            <div>
+                                                                <label class="block text-gray-700">Email</label>
+                                                                <p class="mt-2 text-gray-600">
+                                                                    <%= requester.email %>
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <% }); %>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <% } %>
                         </div>
-                        <% } %>
+                        <!-- ITEMS -->
+                        <% if (event.organization && event.status==="Completed" ) { %>
+                            <div class="bg-white shadow-md rounded-xl mt-6 p-4 border flex flex-col gap-4">
+                                <% eventitems.forEach(function(eventitem) { %>
+                                    <div id="itemDiv" class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label for="item" class="block text-gray-700">Item</label>
+                                            <p class="mt-2 text-gray-600">
+                                                <%= eventitem.description %>
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <label for="quantity" class="block text-gray-700">Quantity</label>
+                                            <p class="mt-2 text-gray-600">
+                                                <%= eventitem.quantity %>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <% }); %>
+                            </div>
+                            <% } %>
+
         </div>
 
         <!-- EDITOR -->
