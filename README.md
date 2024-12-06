@@ -1,6 +1,7 @@
-# Turtle Shelter Website 🐢
-
-Welcome to the Turtle Shelter Website Project! This Node.js and EJS-powered website is designed for a school project to demonstrate web development skills. The site supports **Turtle Shelter**, a nonprofit organization dedicated to crafting vests for homeless individuals.
+# For TA Grading
+- **URL**: `http://turtleproject.is404.net`
+- **Username**: `johndoe@example.com`
+- **Password**: `password123`
 
 ---
 
@@ -17,10 +18,6 @@ Welcome to the Turtle Shelter Website Project! This Node.js and EJS-powered webs
 ### **Host and Event / Host**
 - **URL**: `/hostAnEvent`
 - **Description**: Both these buttons will link to an event form. When submitted this will information will be displayed in the events tab which is in the dropdown under the admin tab which is available after login
-
-### **Contact Us**
-- **URL**: `/contact`
-- **Description**: A way for donors, volunteers, or those in need to get in touch with the Turtle Shelter team.
 
 ### **Admin Login**
 - **URL**: `/admin`
