@@ -355,6 +355,7 @@ router.post("/addServiceEvent", (req, res) => {
             console.log("Step 3 event id: " + eventid.eventid)
             if (typeof date === 'string') {
                 const currentDate = new Date(date) || '2020-01-01';
+                currentDate.setDate(currentDate.getDate() + 1)
                 knex("dates")
                     .select("dateid")
                     .where({ date: currentDate })
@@ -392,6 +393,7 @@ router.post("/addServiceEvent", (req, res) => {
             else {
                 for (let i = 0; i < date.length; i++) {
                     const currentDate = new Date(date[i]) || '2020-01-01';
+                    currentDate.setDate(currentDate.getDate() + 1)
                     knex("dates")
                         .select("dateid")
                         .where({ date: currentDate })
@@ -558,31 +560,64 @@ router.post("/addDistributionEvent", (req, res) => {
 });
 router.post("/deleteDate", (req, res) => {
     var { dateid, eventid } = req.body;
-    console.log("date id :::" + dateid + " event id ::: " + eventid)
-    //if can't find date don't worry about it
-    dateid = new Date(dateid)
+    console.log("date id :::" + dateid + " event id ::: " + eventid);
+
+    // Convert to date to avoid issues with time zones
+    dateid = new Date(dateid);
+    
+    // Log to verify the date format
+    console.log('Converted dateid:', dateid);
+
     knex('dates')
         .select('dateid')
         .where({ date: dateid })
         .then(([dateidd]) => {
+            if (!dateidd) {
+                console.log("Date not found in the database.");
+                return res.status(404).send("Date not found.");
+            }
+
             console.log('\x1b[31m%s\x1b[0m', 'Deleting date with date id', dateidd.dateid, "at eventid ", eventid);
+
+            // Log current eventdates for debugging
             knex("eventdates")
                 .where({ eventid })
                 .andWhere({ dateid: dateidd.dateid })
-                .del()
-                .then(deletedRows => {
-                    if (deletedRows > 0) {
-                        console.log("EventDate deleted successfully");
-                        // After successful deletion, proceed to redirect or handle response
-                        res.status(200).send("Date deleted successfully.");
-                    } else {
-                        console.log("No matching eventdates found to delete.");
-                        res.status(404).send("No matching eventdates found.");
-                    }
+                .then((eventDateRows) => {
+                    console.log('EventDate rows before deletion:', eventDateRows);
+
+                    // Perform the deletion
+                    knex("eventdates")
+                        .where({ eventid })
+                        .andWhere({ dateid: dateidd.dateid })
+                        .del()
+                        .then(deletedRows => {
+                            console.log('Number of rows deleted:', deletedRows);
+
+                            if (deletedRows > 0) {
+                                console.log("EventDate deleted successfully");
+                                return res.status(200).send("Date deleted successfully.");
+                            } else {
+                                console.log("No matching eventdates found to delete.");
+                                return res.status(404).send("No matching eventdates found.");
+                            }
+                        })
+                        .catch(err => {
+                            console.error("Error deleting EventDate:", err);
+                            return res.status(500).send("Internal Server Error");
+                        });
+                })
+                .catch(err => {
+                    console.error("Error fetching eventdates:", err);
+                    return res.status(500).send("Internal Server Error");
                 });
         })
-
+        .catch(err => {
+            console.error("Error fetching date:", err);
+            return res.status(500).send("Internal Server Error");
+        });
 });
+
 
 router.post("/editEvent", checkAuthenticated, (req, res) => {
     console.log("Editing Event");
@@ -794,6 +829,7 @@ router.post("/editEvent", checkAuthenticated, (req, res) => {
             } else if (typeof date === 'string') {
                 // If date is a string, process it as a single date
                 const currentDate = new Date(date) || '2020-01-01';
+                currentDate.setDate(currentDate.getDate() + 1)
                 knex("dates")
                     .select("dateid")
                     .where({ date: currentDate })
@@ -884,7 +920,7 @@ router.get('/events/:eventid', checkAuthenticated, (req, res) => {
         .leftJoin('eventrequest as er', 'e.eventid', 'er.eventid')
         .leftJoin('servicetypes as st', 'er.servicetypeid', 'st.servicetypeid')
         .leftJoin('distributionevent as de', 'de.eventid', 'e.eventid')
-        .leftJoin('eventoutcomes eo', 'eo.eventid', 'e.eventid')
+        .leftJoin('eventoutcome as eo', 'eo.eventid', 'e.eventid')
         .select(
             'e.eventid',
             'e.starttime',
