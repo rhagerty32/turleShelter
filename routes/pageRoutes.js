@@ -658,6 +658,7 @@ router.post("/editEvent", checkAuthenticated, (req, res) => {
 
     } = req.body;
     console.log('\x1b[31m%s\x1b[0m', 'Dates array', date);
+    console.log('\x1b[31m%s\x1b[0m', 'People', firstname);
 
     // Step 1: Update the "location" table with zip, city, and state
     knex("location")
@@ -749,6 +750,8 @@ router.post("/editEvent", checkAuthenticated, (req, res) => {
                     const currentlastname = lastname[index] || '';
                     const currentemail = email[index] || '';
                     const currentphonenumber = phonenumber[index] || '';
+                    console.log('\x1b[31m%s\x1b[0m', 'Person being passed:', currentfirstname, " ", currentlastname);
+                    console.log('\x1b[31m%s\x1b[0m', 'Eventid:', eventid);
                     knex("requester")
                         .where("eventid", eventid)
                         .andWhere("firstname", currentfirstname)
@@ -757,6 +760,26 @@ router.post("/editEvent", checkAuthenticated, (req, res) => {
                             lastname: currentlastname,
                             phone: currentphonenumber,
                             email: currentemail
+                        })
+                        .then((newperson) =>{
+                            console.log('\x1b[31m%s\x1b[0m', 'newperson variable:', newperson);
+                            if(newperson){
+                                //if newperson exists, then it was already updated
+                            }
+                            else{
+                                console.log('\x1b[31m%s\x1b[0m', 'person didnt exists and is getting added:', currentfirstname);
+                                knex("requester")
+                                    .insert({
+                                        eventid:eventid,
+                                        firstname: currentfirstname,
+                                        lastname: currentlastname,
+                                        phone: currentphonenumber,
+                                        email: currentemail
+                                    })
+                                    .then(() =>{
+                                        return console.log('\x1b[31m%s\x1b[0m', 'person got added successfully:', currentfirstname);
+                                    })
+                            }
                         })
                         .catch((err) => {
                             console.error("Error:", err);
@@ -777,6 +800,25 @@ router.post("/editEvent", checkAuthenticated, (req, res) => {
                         lastname: currentlastname,
                         phone: currentphonenumber,
                         email: currentemail
+                    })
+                    .then((newperson) =>{
+                        console.log('\x1b[31m%s\x1b[0m', 'newperson variable:', newperson);
+                        if(newperson){
+                            //if newperson exists, then it was already updated
+                        }
+                        else{
+                            knex("requester")
+                                .insert({
+                                    eventid:eventid,
+                                    firstname: currentfirstname,
+                                    lastname: currentlastname,
+                                    phone: currentphonenumber,
+                                    email: currentemail
+                                })
+                                .then(() =>{
+                                    return console.log('\x1b[31m%s\x1b[0m', 'person got added successfully:', currentfirstname);
+                                })
+                        }
                     })
                     .catch((err) => {
                         console.error("Error:", err);
