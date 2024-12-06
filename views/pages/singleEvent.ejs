@@ -376,28 +376,21 @@
                                     <div class="grid grid-cols-1 md:grid-cols-1 gap-6">
                                         <div class="bg-white shadow-md rounded-xl p-4 border flex flex-col gap-4">
                                             <h3 class="text-xl font-bold text-gray-800">
-                                                Contact Information</h3>
+                                                Post-Event Information</h3>
                                             <div class="flex flex-col gap-4">
                                                 <% requesters.forEach(function(requester) { %>
                                                     <div class="flex flex-col gap-0">
-                                                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                                             <div>
-                                                                <label class="block text-gray-700">Name</label>
+                                                                <label class="block text-gray-700">Head Count</label>
                                                                 <p class="mt-2 text-gray-600">
-                                                                    <%= requester.firstname %>
-                                                                        <%= requester.lastname %>
+                                                                    <%= event.headcount %>
                                                                 </p>
                                                             </div>
                                                             <div>
-                                                                <label class="block text-gray-700">Phone</label>
+                                                                <label class="block text-gray-700">Service Hours</label>
                                                                 <p class="mt-2 text-gray-600">
-                                                                    <%= requester.phone %>
-                                                                </p>
-                                                            </div>
-                                                            <div>
-                                                                <label class="block text-gray-700">Email</label>
-                                                                <p class="mt-2 text-gray-600">
-                                                                    <%= requester.email %>
+                                                                    <%= event.servicehours%>
                                                                 </p>
                                                             </div>
                                                         </div>
@@ -411,6 +404,8 @@
                         <!-- ITEMS -->
                         <% if (event.organization && event.status==="Completed" ) { %>
                             <div class="bg-white shadow-md rounded-xl mt-6 p-4 border flex flex-col gap-4">
+                                <h3 class="text-xl font-bold text-gray-800">
+                                    Items Made</h3>
                                 <% eventitems.forEach(function(eventitem) { %>
                                     <div id="itemDiv" class="grid grid-cols-2 gap-4">
                                         <div>
@@ -723,26 +718,27 @@
                                                                 <div id="itemSection"
                                                                     class="flex flex-col completedEvent hidden">
                                                                     <div id="itemDiv" class="grid grid-cols-2 gap-4">
-                                                                        <div>
-                                                                            <label for="item"
-                                                                                class="block text-gray-700">Item</label>
-                                                                            <select name="item" id="item"
-                                                                                class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
-                                                                                <% items.forEach(function(item) { %>
-                                                                                    <option value="<%= item.itemid %>">
-                                                                                        <%= item.description %>
+                                                                        <% eventitems.forEach(function(eventitem) { %>
+                                                                            <div>
+                                                                                <label for="item"
+                                                                                    class="block text-gray-700">Item</label>
+                                                                                <select name="item" id="item"
+                                                                                    class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                                                                                    <option
+                                                                                        value="<%= eventitem.itemid %>">
+                                                                                        <%= eventitem.description %>
                                                                                     </option>
-                                                                                    <% }); %>
-                                                                            </select>
-                                                                        </div>
-                                                                        <div>
-                                                                            <label for="quantity"
-                                                                                class="block text-gray-700">Quantity</label>
-                                                                            <input name="quantity" type="number"
-                                                                                id="quantity"
-                                                                                value="<%= event.quantity %>"
-                                                                                class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
-                                                                        </div>
+                                                                                </select>
+                                                                            </div>
+                                                                            <div>
+                                                                                <label for="quantity"
+                                                                                    class="block text-gray-700">Quantity</label>
+                                                                                <input name="quantity" type="number"
+                                                                                    id="quantity"
+                                                                                    value="<%= eventitem.quantity %>"
+                                                                                    class="mt-2 w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500 outline-teal-500">
+                                                                            </div>
+                                                                            <% }); %>
                                                                     </div>
                                                                     <!-- ADD ITEM BUTTON -->
                                                                     <div class="col-span-2">
