@@ -35,8 +35,9 @@ router.get("/", (req, res) => {
 });
 
 router.post("/newVolunteer", (req, res) => {
-    console.log("Posting volunteer")
-    const { firstname,
+    console.log("Posting volunteer");
+    const {
+        firstname,
         lastname,
         skillid,
         city,
@@ -50,55 +51,75 @@ router.post("/newVolunteer", (req, res) => {
         availability,
         range,
         discoverymethod,
-        notes, } =
-        req.body;
-    knex("location")
-        .insert({ zip, city, state })
-        .onConflict("zip") // If zip exists, update city/state
-        .merge() // Merge updates for existing zip
-        .then(() => {
-            knex("volunteer")
-                .insert({
-                    firstname: firstname || '',
-                    lastname: lastname || '',
-                    skillid: skillid || 0,
-                    zip: zip || '',
-                    phonenumber: phonenumber || '',
-                    email: email || '',
-                    password: password || '',
-                    teacher: teacher || '',
-                    leader: leader || '',
-                    availability: availability || '',
-                    range: range || '',
-                    discoverymethod: discoverymethod || '',
-                    notes: notes || '',
-                    jobrole: 'Volunteer'
-                })
-                .then(() => {
-                    knex("skilllevel")
-                        .select()
-                        .then((skilllevel) => {
-                            console.log("Volunteer added")
-                            console.log(skilllevel)
-                            console.log({ submitted: true })
-                            res.render("layout", {
-                                title: "Volunteer Request",
-                                page: "volunteerRequest",
-                                skilllevel: skilllevel,
-                                submitted: true,
+        notes,
+    } = req.body;
+
+    // Check if the email already exists
+    knex("volunteer")
+        .where({ email })
+        .first() // Get the first matching record
+        .then((existingVolunteer) => {
+            if (existingVolunteer) {
+                // If email already exists, return an error message
+                res.status(400).send("Email already used. Please use a different email.");
+            } else {
+                // Insert location data (with conflict handling)
+                knex("location")
+                    .insert({ zip, city, state })
+                    .onConflict("zip") // If zip exists, update city/state
+                    .merge() // Merge updates for existing zip
+                    .then(() => {
+                        // Insert volunteer data
+                        knex("volunteer")
+                            .insert({
+                                firstname: firstname || '',
+                                lastname: lastname || '',
+                                skillid: skillid || 0,
+                                zip: zip || '',
+                                phonenumber: phonenumber || '',
+                                email: email || '',
+                                password: password || '',
+                                teacher: teacher || '',
+                                leader: leader || '',
+                                availability: availability || '',
+                                range: range || '',
+                                discoverymethod: discoverymethod || '',
+                                notes: notes || '',
+                                jobrole: 'Volunteer',
+                            })
+                            .then(() => {
+                                // Retrieve and render skill levels
+                                knex("skilllevel")
+                                    .select()
+                                    .then((skilllevel) => {
+                                        console.log("Volunteer added");
+                                        console.log(skilllevel);
+                                        console.log({ submitted: true });
+                                        res.render("layout", {
+                                            title: "Volunteer Request",
+                                            page: "volunteerRequest",
+                                            skilllevel: skilllevel,
+                                            submitted: true,
+                                        });
+                                    });
+                            })
+                            .catch((error) => {
+                                console.error("Error adding volunteer:", error);
+                                res.status(500).send("Internal Server Error");
                             });
-                        })
-                })
-                .catch((error) => {
-                    console.error("Error adding volunteer:", error);
-                    res.status(500).send("Internal Server Error");
-                });
+                    })
+                    .catch((error) => {
+                        console.error("Error adding user:", error);
+                        res.status(500).send("Internal Server Error");
+                    });
+            }
         })
         .catch((error) => {
-            console.error("Error adding user:", error);
-            res.status(500).send("Internal Server Error");
+            console.error("Error checking for existing email:", error);
+            return res.json({ success: false, message: "Email already used. Please use a different email." });
         });
 });
+
 
 router.get("/login", (req, res) => {
     res.render("pages/login", {
