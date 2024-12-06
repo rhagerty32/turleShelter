@@ -1057,7 +1057,7 @@ router.get('/events/:eventid', checkAuthenticated, (req, res) => {
                                                 .then((recipients) => {
                                                     knex('eventitems')
                                                         .join('items as i', "i.itemid", 'eventitems.itemid')
-                                                        .select('description', 'quantity')
+                                                        .select('i.itemid', 'description', 'quantity')
                                                         .where({eventid})
                                                         .then((eventitems) => { 
                                                                     res.render('layout', {
